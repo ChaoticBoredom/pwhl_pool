@@ -1,0 +1,3 @@
+schedule_todays_games:
+  cron: "5 0 * * *"
+  class: "GameScheduler"

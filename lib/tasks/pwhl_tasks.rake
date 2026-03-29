@@ -113,8 +113,9 @@ namespace :pwhl do
 
     games = JSON.parse(res.body).dig("SiteKit", "Schedule")
     teams = League::Team.all.to_h { |team| [team.short_code, team] }
+    game_data_service = Pwhl::GameData.new
     games.each do |g|
-      Pwhl::GameData.update_game_data(nil, g)
+      game_data_service.update_game_data(nil, g)
     end
   end
 
@@ -140,10 +141,11 @@ namespace :pwhl do
       )
       games = JSON.parse(res.body).dig("SiteKit", "Player", "games")
       puts "Importing data from #{games.count} games for player #{p.api_id}..."
+      game_data_service = Pwhl::GameData.new
       games.each do |g|
         lg = League::Game.find_by(api_id: g["id"], league: pwhl)
 
-        Pwhl::GameData.update_player_game_data(p.id, lg.id, g)
+        game_data_service.update_player_game_data(p.id, lg.id, g)
       end
     end
   end

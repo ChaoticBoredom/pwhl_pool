@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_11_111954) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_25_112542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -20,11 +20,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_111954) do
     t.uuid "away_team_id", null: false
     t.integer "away_team_score"
     t.datetime "created_at", null: false
-    t.date "date", null: false
     t.uuid "home_team_id", null: false
     t.integer "home_team_score"
     t.uuid "league_id", null: false
     t.string "season_id", null: false
+    t.timestamptz "start_time", null: false
     t.integer "status"
     t.string "type", null: false
     t.datetime "updated_at", null: false
@@ -76,26 +76,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_111954) do
     t.index ["pool_id"], name: "index_pool_boxes_on_pool_id"
   end
 
-  create_table "pool_scoring", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "pool_scorings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.float "goalie_assists"
-    t.float "goalie_goals"
-    t.float "goalie_penalty_minutes"
-    t.float "goalie_saves"
-    t.float "goalie_shutouts"
-    t.float "goalie_wins"
+    t.string "field_name", null: false
     t.uuid "pool_id", null: false
-    t.float "skater_assists"
-    t.float "skater_goals"
-    t.float "skater_hits"
-    t.float "skater_penalty_minutes"
-    t.float "skater_shots"
+    t.integer "position", null: false
     t.datetime "updated_at", null: false
-    t.index ["pool_id"], name: "index_pool_scoring_on_pool_id"
+    t.float "value", null: false
+    t.index ["pool_id", "field_name", "position"], name: "index_pool_scorings_on_pool_id_and_field_name_and_position", unique: true
+    t.index ["pool_id"], name: "index_pool_scorings_on_pool_id"
   end
 
   create_table "pool_team_players", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "added_at", precision: nil, null: false
     t.datetime "created_at", null: false
+    t.datetime "dropped_at", precision: nil
     t.uuid "league_player_id", null: false
     t.uuid "pool_team_id", null: false
     t.datetime "updated_at", null: false
@@ -193,7 +188,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_111954) do
   add_foreign_key "league_players", "leagues"
   add_foreign_key "league_teams", "leagues"
   add_foreign_key "pool_boxes", "pools"
-  add_foreign_key "pool_scoring", "pools"
+  add_foreign_key "pool_scorings", "pools"
   add_foreign_key "pool_team_players", "league_players"
   add_foreign_key "pool_team_players", "pool_teams"
   add_foreign_key "pool_teams", "pools"

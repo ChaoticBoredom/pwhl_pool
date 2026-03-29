@@ -1,21 +1,72 @@
 class Pwhl::GameData
-  def self.update_game_data(game_id, game_data = nil)
-    @pwhl ||= League.find_by(short_name: "PWHL")
-    @teams ||= League::Team.where(league: @pwhl).to_h { |team| [team.api_id, team] }
+  def initialize
+    @pwhl = League.find_by(short_name: "PWHL")
+    @teams = League::Team.where(league: @pwhl).to_h { |t| [t.api_id, t] }
+  end
 
+  def update_live_game(game_id)
+    game = League::Game.find(game_id)
+
+    res = Connections::ConnectionHelper.pwhl_connection.get(nil,
+      {
+        feed: "gc",
+        tab: "gamesummary",
+        game_id: game.api_id,
+        site_id: 0,
+        lang: "eng",
+      }
+    )
+
+    data = JSON.parse(res.body).dig("GC", "Gamesummary")
+
+    # TODO: Add game status to Game and update here
+    # game.status = data.fetch("status")
+
+    update_game_data(game_id, data.fetch("meta"))
+
+    ["home_team_lineup", "visitor_team_lineup"].each do |t|
+      data.dig(t, "goalies").each do |goalie_data|
+        # Goalies have extra data in a whole field of their own, and it isn't always populated at first :(
+        additional_data = data.dig("goalies", t.split("_").first) || []
+        additional_data = additional_data.select { |r| r.fetch("player_id", -1) == goalie_data.fetch("player_id", 0) }.first || {}
+        rec = Pwhl::GoalieStat.find_or_initialize_by(
+          league_player: Pwhl::Goalie.find_by(api_id: goalie_data.fetch("player_id")),
+          league_game_id: game.id,
+          league_team: @teams[data.dig(t.split("_").first, "id")]
+        )
+
+        rec = update_goalie_data(rec, goalie_data.merge(additional_data))
+        rec.save
+      end
+
+      data.dig(t, "players").each do |player_data|
+        rec = Pwhl::SkaterStat.find_or_initialize_by(
+          league_player: Pwhl::Skater.find_by(api_id: player_data.fetch("player_id")),
+          league_game_id: game.id,
+          league_team: @teams[data.dig(t.split("_").first, "id")]
+        )
+
+        rec = update_skater_data(rec, player_data)
+        rec.save
+      end
+    end
+  end
+
+  def update_game_data(game_id, game_data = nil)
     # 0 information, how're we supposed to do anything?!?
     return if game_id.nil? && game_data.nil?
 
     if game_id.nil?
-      game = League::Game.find_by(
+      game = League::Game.find_or_initialize_by(
         league: @pwhl,
         api_id: game_data["id"],
         season_id: game_data["season_id"]
       )
+    else
+      game = League::Game.find(game_id)
     end
 
     if game_data.nil?
-      game = League::Game.find(id: game_id)
       res = Connections::ConnectionHelper.pwhl_connection.get(nil,
         {
           feed: "gc",
@@ -25,6 +76,7 @@ class Pwhl::GameData
           lang: "eng",
         }
       )
+      start_time = JSON.parse(res.body).dig("GC", "Gamesummary").fetch("game_date_iso_8601")
 
       game_data = JSON.parse(res.body).dig("GC", "Gamesummary", "meta")
     end
@@ -41,15 +93,20 @@ class Pwhl::GameData
     when ["1", "0", "0"]
       :in_progress
     when ["1", "1", "0"]
-      :pending
+      # Game is over, stats folks are verifying shit
+      :pending_final
     else
       :final
     end
 
+    # ISO start time is slightly different, try this to grab it
+    start_time ||= game_data.fetch("GameDateISO8601", nil)
+    start_time ||= DateTime.parse("#{game_data.fetch("date_played", nil)} #{game_data.fetch("schedule_time", nil)} #{game_data.fetch("timezone_short", nil)}")
+
     game.league = @pwhl
     game.api_id = game_data["id"]
     game.season_id = game_data["season_id"]
-    game.date = game_data["date_played"]
+    game.start_time = start_time
     game.home_team = @teams[game_data["home_team"]]
     game.away_team = @teams[game_data["visiting_team"]]
     game.status = status
@@ -59,10 +116,7 @@ class Pwhl::GameData
     game.save
   end
 
-  def self.update_player_game_data(player_id, game_id, game_data = nil)
-    @pwhl ||= League.find_by(short_name: "PWHL")
-    @teams ||= League::Team.where(league: @pwhl).to_h { |team| [team.api_id, team] }
-
+  def update_player_game_data(player_id, game_id, game_data = nil)
     player = League::Player.find(player_id)
     game = League::Game.find(game_id)
 
@@ -84,30 +138,49 @@ class Pwhl::GameData
 
     rec = player.records.find_or_initialize_by(league_game: game)
 
-    rec.goals = game_data["goals"]
-    rec.assists = game_data["assists"]
     rec.league_team ||= @teams[game_data["player_team"]]
 
     if player.is_a?(Pwhl::Skater)
-      rec.penalty_minutes = game_data["penalty_minutes"].to_f * 60
-      rec.shots = game_data["shots"]
-      rec.hits = game_data["hits"]
-      rec.time_on_ice = Time.parse("0:#{game_data["ice_time_minutes_seconds"]}").seconds_since_midnight.to_i
-      rec.plus_minus = game_data["plus_minus"]
-      rec.power_play_goals = game_data["power_play_goals"]
-      rec.short_handed_goals = game_data["short_handed_goals"]
-      rec.shots_blocked = game_data["shots_blocked_by_player"]
-      rec.faceoffs_taken = game_data["faceoffs_taken"]
-      rec.faceoffs_won = game_data["faceoffs_won"]
+      rec = update_skater_data(rec, game_data)
     else
-      rec.win = game_data["win"] == "1"
-      rec.shutout = game_data["shutout"] == "1"
-      rec.saves = game_data["saves"]
-      rec.goals_against = game_data["goals_against"]
-      rec.shots_against = game_data["shots_against"]
-      rec.penalty_minutes = (game_data["penalty_minutes"].presence&.to_f || 0) * 60
-      rec.time_on_ice = game_data["seconds_played"].to_i
+      rec = update_goalie_data(rec, game_data)
     end
     rec.save
+  end
+
+  private
+
+  def update_goalie_data(rec, data)
+    rec.goals = data.fetch("goals", 0)
+    rec.assists = data.fetch("assists", 0)
+
+    rec.win = data.fetch("win", 0) == "1"
+    rec.shutout = data.fetch("shutout", 0) == "1"
+    rec.saves = data.fetch("saves", 0)
+    rec.goals_against = data.fetch("goals_against", 0)
+    rec.shots_against = data.fetch("shots_against", 0)
+    rec.penalty_minutes = data.fetch("pim", 0) * 60
+    rec.time_on_ice = data.fetch("seconds_played", 0).to_i || data.fetch("seconds", 0).to_i
+
+    rec
+  end
+
+  def update_skater_data(rec, data)
+    rec.goals = data.fetch("goals", 0)
+    rec.assists = data.fetch("assists", 0)
+
+    rec.penalty_minutes = data.fetch("pim", 0) * 60
+    rec.shots = data.fetch("shots", 0)
+    rec.hits = data.fetch("hits", 0)
+    rec.time_on_ice = Time.parse("0:#{data.fetch("ice_time_minutes_seconds", 0)}").seconds_since_midnight.to_i
+    rec.plus_minus = data.fetch("plusminus", 0)
+    rec.power_play_goals = data.fetch("power_play_goals", 0)
+    rec.short_handed_goals = data.fetch("short_handed_goals", 0)
+    rec.shots_blocked = data.fetch("shots_blocked_by_player", 0)
+    # Different endpoints have different labels >:(
+    rec.faceoffs_taken = data.fetch("faceoffs_taken", data.fetch("faceoff_attempts", 0))
+    rec.faceoffs_won = data.fetch("faceoffs_won", data.fetch("faceoff_wins", 0))
+
+    rec
   end
 end

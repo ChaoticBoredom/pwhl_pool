@@ -1,7 +1,7 @@
 class League::Game < ApplicationRecord
   before_validation :set_type, on: :create
 
-  validates :api_id, :season_id, :type, :date, :home_team, :away_team, :status, presence: true
+  validates :api_id, :season_id, :type, :start_time, :home_team, :away_team, :status, presence: true
 
   belongs_to :league
   belongs_to :home_team, class_name: "League::Team", foreign_key: "home_team_id"
@@ -10,6 +10,7 @@ class League::Game < ApplicationRecord
   enum :status, {
     scheduled: 0,
     in_progress: 10,
+    pending_final: 21,
     final: 20,
   }
 

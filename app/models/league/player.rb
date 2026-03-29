@@ -1,29 +1,25 @@
 class League::Player < ApplicationRecord
-  before_create :set_type
+  include PlayerPositions
 
   belongs_to :league
   belongs_to :current_team, class_name: "League::Team"
 
-  enum :position, {
-    skater: 100,
-    goalie: 200,
-  }
-
-  private
-
-  def set_type
-    prefix = case league.short_name
-    when "PWHL"
-      "Pwhl"
+  def initialize(attributes = nil)
+    super
+    if league && position
+      self.type = "#{league.short_name.classify}::#{position.classify}"
     end
+  end
 
-    suffix = case position
-    when "skater"
-      "Skater"
-    when "goalie"
-      "Goalie"
+  def self.inherited(subclass)
+    super
+  end
+
+  def self.find_sti_class(type_name)
+    if type_name.include?("::")
+      type_name.constantize
+    else
+      super
     end
-
-    self.type = [prefix, suffix].join("::")
   end
 end
