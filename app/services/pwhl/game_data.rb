@@ -25,29 +25,32 @@ class Pwhl::GameData
     update_game_data(game_id, data.fetch("meta"))
 
     ["home_team_lineup", "visitor_team_lineup"].each do |t|
+      current_team = @teams[data.dig(t.split("_").first, "id")]
       data.dig(t, "goalies").each do |goalie_data|
         # Goalies have extra data in a whole field of their own, and it isn't always populated at first :(
         additional_data = data.dig("goalies", t.split("_").first) || []
         additional_data = additional_data.select { |r| r.fetch("player_id", -1) == goalie_data.fetch("player_id", 0) }.first || {}
+        player = find_or_create_player(goalie_data, "goalie", current_team)
         rec = Pwhl::GoalieStat.find_or_initialize_by(
-          league_player: Pwhl::Goalie.find_by(api_id: goalie_data.fetch("player_id")),
+          league_player: player,
           league_game_id: game.id,
-          league_team: @teams[data.dig(t.split("_").first, "id")]
+          league_team: current_team
         )
 
         rec = update_goalie_data(rec, goalie_data.merge(additional_data))
-        rec.save
+        rec.save!
       end
 
       data.dig(t, "players").each do |player_data|
+        player = find_or_create_player(player_data, "skater", current_team)
         rec = Pwhl::SkaterStat.find_or_initialize_by(
-          league_player: Pwhl::Skater.find_by(api_id: player_data.fetch("player_id")),
+          league_player: player,
           league_game_id: game.id,
           league_team: @teams[data.dig(t.split("_").first, "id")]
         )
 
         rec = update_skater_data(rec, player_data)
-        rec.save
+        rec.save!
       end
     end
   end
@@ -145,10 +148,19 @@ class Pwhl::GameData
     else
       rec = update_goalie_data(rec, game_data)
     end
-    rec.save
+    rec.save!
   end
 
   private
+
+  def find_or_create_player(data, position, team)
+    League::Player.find_or_create_by(api_id: data.fetch("player_id")) do |player|
+      player.name = data.values_at("first_name", "last_name").join(" ")
+      player.position = position
+      player.league = @pwhl
+      player.current_team = team
+    end
+  end
 
   def update_goalie_data(rec, data)
     rec.goals = data.fetch("goals", 0)
@@ -159,7 +171,7 @@ class Pwhl::GameData
     rec.saves = data.fetch("saves", 0)
     rec.goals_against = data.fetch("goals_against", 0)
     rec.shots_against = data.fetch("shots_against", 0)
-    rec.penalty_minutes = data.fetch("pim", 0) * 60
+    rec.penalty_minutes = data.fetch("pim", 0).to_i * 60
     rec.time_on_ice = data.fetch("seconds_played", 0).to_i || data.fetch("seconds", 0).to_i
 
     rec
@@ -169,10 +181,10 @@ class Pwhl::GameData
     rec.goals = data.fetch("goals", 0)
     rec.assists = data.fetch("assists", 0)
 
-    rec.penalty_minutes = data.fetch("pim", 0) * 60
+    rec.penalty_minutes = data.fetch("pim", 0).to_i * 60
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
-    rec.time_on_ice = Time.parse("0:#{data.fetch("ice_time_minutes_seconds", 0)}").seconds_since_midnight.to_i
+    rec.time_on_ice = data.fetch("seconds", 0).to_i
     rec.plus_minus = data.fetch("plusminus", 0)
     rec.power_play_goals = data.fetch("power_play_goals", 0)
     rec.short_handed_goals = data.fetch("short_handed_goals", 0)

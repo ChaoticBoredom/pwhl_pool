@@ -1,25 +1,15 @@
 class League::Player < ApplicationRecord
   include PlayerPositions
+  before_save :sync_sti_type, if: -> { position_changed? || league_id_changed? }
 
   belongs_to :league
   belongs_to :current_team, class_name: "League::Team"
 
-  def initialize(attributes = nil)
-    super
-    if league && position
-      self.type = "#{league.short_name.classify}::#{position.classify}"
-    end
-  end
+  private
 
-  def self.inherited(subclass)
-    super
-  end
-
-  def self.find_sti_class(type_name)
-    if type_name.include?("::")
-      type_name.constantize
-    else
-      super
-    end
+  def sync_sti_type
+    prefix = league.short_name.capitalize
+    suffix = position.capitalize
+    self.type = [prefix, suffix].compact.join("::")
   end
 end

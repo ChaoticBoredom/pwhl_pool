@@ -7,6 +7,13 @@ class Pool::Team < ApplicationRecord
 
   def score_for_date(date)
     players = pool_team_players.for_date(date)
-    scores = pool.scoring
+
+    players.sum { |p| p.score_for_date(date) }
+  end
+
+  def total_score
+    players = pool_team_players
+
+    players.map(&:score_for_season).sum
   end
 end
