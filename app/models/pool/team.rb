@@ -1,9 +1,21 @@
 class Pool::Team < ApplicationRecord
+  attribute :total_score, :float, default: 0
+
   belongs_to :user
+  # Lets us call `.owner` on the team seamlessly
+  belongs_to :owner, class_name: "User", foreign_key: "user_id"
   belongs_to :pool
 
   has_many :pool_team_players, class_name: "Pool::TeamPlayer", foreign_key: "pool_team_id"
   has_many :league_players, through: :pool_team_players
+
+  def current_team
+    pool_team_players.includes(:league_player).current
+  end
+
+  def previous_team
+    pool_team_players.includes(:league_player).non_current
+  end
 
   def score_for_date(date)
     players = pool_team_players.for_date(date)
@@ -12,8 +24,14 @@ class Pool::Team < ApplicationRecord
   end
 
   def total_score
-    players = pool_team_players
+    dropped_scores = Rails.cache.fetch("#{cache_key_with_version}/partial_total_dropped", expires_in: 24.hours) do
+      players = pool_team_players.includes(:pool, :league_player).non_current
 
-    players.map(&:score_for_season).sum
+      players.map(&:score_for_season).sum
+    end
+
+    players = pool_team_players.includes(:pool, :league_player).current
+
+    dropped_scores + players.map(&:score_for_season).sum
   end
 end

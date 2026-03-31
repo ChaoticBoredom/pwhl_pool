@@ -37,7 +37,8 @@ class Pwhl::GameData
           league_team: current_team
         )
 
-        rec = update_goalie_data(rec, goalie_data.merge(additional_data))
+        # Reverse merge, additional_data is per period but has win/shutout info
+        rec = update_goalie_data(rec, goalie_data.reverse_merge(additional_data))
         rec.save!
       end
 

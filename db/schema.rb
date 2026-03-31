@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_25_112542) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_090649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -92,7 +92,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_112542) do
     t.datetime "created_at", null: false
     t.datetime "dropped_at", precision: nil
     t.uuid "league_player_id", null: false
+    t.uuid "pool_id", null: false
     t.uuid "pool_team_id", null: false
+    t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.index ["league_player_id"], name: "index_pool_team_players_on_league_player_id"
     t.index ["pool_team_id"], name: "index_pool_team_players_on_pool_team_id"
@@ -112,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_112542) do
     t.uuid "league_id", null: false
     t.string "name", null: false
     t.integer "pool_type", null: false
+    t.string "season_id", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"

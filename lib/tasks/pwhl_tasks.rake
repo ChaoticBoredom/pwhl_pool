@@ -82,9 +82,9 @@ namespace :pwhl do
         pl = League::Player.find_or_create_by(
           league: league,
           api_id: p.dig("row", "player_id"),
+          position: args.position,
         )
         pl.name = p.dig("row", "name")
-        pl.position = args.position
         pl.current_team = teams.select { |t| t.short_code == p.dig("row", "team_code") }.first
         pl.save!
       rescue => e
