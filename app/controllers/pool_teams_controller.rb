@@ -1,7 +1,7 @@
 class PoolTeamsController < ApplicationController
   def show
     id = params.extract_value(:id)
-    @pool_team = Pool::Team.find(id)
+    @pool_team = Pool::Team.includes(pool_team_players: :league_player).find(id)
     render json: @pool_team,
       only: [:id, :team_name, :total_score],
       include: {
