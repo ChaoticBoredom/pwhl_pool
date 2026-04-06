@@ -25,12 +25,15 @@ module Authentication
     end
 
     def find_session_by_token
-      Session.find_by(token: request.headers[:authorization]&.split(" ")[-1])
+      authenticate_with_http_token do |token, _options|
+        Session.find_by(token: token)
+      end
     end
 
     def request_authentication
-      session[:return_to_after_authenticating] = request.url
-      redirect_to new_session_path
+      # session[:return_to_after_authenticating] = request.url
+      # redirect_to new_session_path
+      render json: { error: "Not authenticated" }, status: :unauthorized
     end
 
     def after_authentication_url

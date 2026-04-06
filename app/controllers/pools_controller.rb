@@ -1,4 +1,9 @@
 class PoolsController < ApplicationController
+  def index
+    @pools = Pool.where(id: current_user.pool_teams.pluck(:pool_id))
+    render json: @pools
+  end
+
   def show
     id = params.extract_value(:id)
     @pool = Pool.includes(:pool_teams).find(id)

@@ -6,7 +6,15 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(params.permit(:email_address, :password))
+    login_params = params.permit(
+      :email_address,
+      :password,
+      session: [:email_address, :password]
+    )
+
+    email = login_params[:email_address] || login_params.dig(:session, :email_params)
+    password = login_params[:password] || login_params.dig(:session, :password)
+    if user = User.authenticate_by(email_address: email, password: password)
       start_new_session_for user
       render json: { data: { token: Current.session.token } }
     else

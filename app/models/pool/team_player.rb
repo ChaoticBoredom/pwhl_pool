@@ -8,7 +8,7 @@ class Pool::TeamPlayer < ApplicationRecord
 
   delegate :name, :current_team_id, to: :league_player
 
-  before_create :denormalize_fields
+  before_validation :denormalize_fields, on: :create
 
   scope :current, -> { where(dropped_at: nil) }
   scope :non_current, -> { where.not(dropped_at: nil) }
@@ -54,7 +54,6 @@ class Pool::TeamPlayer < ApplicationRecord
 
   def scores
     partial = Rails.cache.fetch("#{cache_key_with_version}/scores_upto_today", expires_at: Time.current.tomorrow.beginning_of_day) do
-      binding.pry
       {
         month_to_date: score_for_date_range(DateTime.current.all_month, true),
         week_to_date: score_for_date_range(DateTime.current.all_week, true),
