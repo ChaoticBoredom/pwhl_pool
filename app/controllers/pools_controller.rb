@@ -5,7 +5,7 @@ class PoolsController < ApplicationController
   end
 
   def show
-    id = params.extract_value(:id)
+    id = params[:id]
     @pool = Pool.includes(:pool_teams).find(id)
     render json: @pool,
       only: [:name, :pool_type],
@@ -14,7 +14,7 @@ class PoolsController < ApplicationController
         admin: { only: [:id, :name] },
         pool_teams: {
           include: { user: { only: [:id, :name] } },
-          only: [:id, :team_name] },
+          only: [:id, :team_name, :total_score] },
       }
   end
 end
