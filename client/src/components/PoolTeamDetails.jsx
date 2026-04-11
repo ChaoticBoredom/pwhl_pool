@@ -6,7 +6,7 @@ function PoolTeamDetails() {
   const { id } = useParams()
   const [poolTeam, setPoolTeam] = useState(null)
   const token = localStorage.getItem('session_token')
-  const poolGrid = "grid-cols-[1fr+80px_80px]"
+  const poolGrid = "grid-cols-[1fr+80px_80px_80px]"
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${id}`, {
@@ -32,15 +32,17 @@ function PoolTeamDetails() {
       <div className="mt-6">
         <DataRow isHeader gridClass={poolGrid}>
           <div>Player</div>
-          <div>Yesterday</div>
           <div>Today</div>
+          <div>Yesterday</div>
+          <div>Month-to-Date</div>
         </DataRow>
 
         {poolTeam.current_team?.map(player => (
-          <DataRow gridClass={poolGrid}>
+          <DataRow key={player.league_player_id} gridClass={poolGrid}>
             <div className="font-medium">{player.name}</div>
-            <div className="text-right">{player.scores.yesterday}</div>
             <div className="text-right">{player.scores.today}</div>
+            <div className="text-right">{player.scores.yesterday}</div>
+            <div className="text-right">{player.scores.month_to_date}</div>
           </DataRow>
         ))}
       </div>

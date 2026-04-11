@@ -1,7 +1,7 @@
 class League::Game < ApplicationRecord
-  before_validation :set_type, on: :create
+  before_validation :sync_sti_type, if: -> { league_id_changed? }
 
-  validates :api_id, :season_id, :type, :start_time, :home_team, :away_team, :status, presence: true
+  validates :api_id, :season_id, :type, :start_time, :home_team, :away_team, presence: true
 
   belongs_to :league
   belongs_to :home_team, class_name: "League::Team", foreign_key: "home_team_id"
@@ -12,14 +12,11 @@ class League::Game < ApplicationRecord
     in_progress: 10,
     pending_final: 21,
     final: 20,
-  }
+  }, validate: true
 
   private
 
-  def set_type
-    self.type = case league.short_name
-    when "PWHL"
-      "Pwhl::Game"
-    end
+  def sync_sti_type
+    self.type = "#{league.short_name.capitalize}::Game"
   end
 end

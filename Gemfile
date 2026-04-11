@@ -46,8 +46,9 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
-  gem "rspec-set"
   gem "factory_bot_rails"
+  gem "faker"
+  gem "shoulda-matchers", "~> 7.0"
 
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
@@ -62,3 +63,4 @@ end
 gem "sidekiq", "~> 8.1"
 
 gem "sidekiq-cron", "~> 2.3"
+

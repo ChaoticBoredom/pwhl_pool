@@ -1,5 +1,6 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:email_address) }
+  it { should normalize(:email_address).from("  soMEthing@BAD.com\n").to("something@bad.com") }
 end
