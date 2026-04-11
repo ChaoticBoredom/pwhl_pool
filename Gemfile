@@ -63,4 +63,3 @@ end
 gem "sidekiq", "~> 8.1"
 
 gem "sidekiq-cron", "~> 2.3"
-

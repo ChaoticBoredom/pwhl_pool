@@ -33,7 +33,7 @@ class BasicDbStructure < ActiveRecord::Migration[8.1]
       t.references :league, type: :uuid, null: false, foreign_key: true
 
       t.index [:api_id, :league_id], unique: true
-      
+
       t.timestamps
     end
 
@@ -70,7 +70,7 @@ class BasicDbStructure < ActiveRecord::Migration[8.1]
       t.references :league_team, type: :uuid, null: false, foreign_key: true
 
       t.index [:league_player_id, :league_game_id], unique: true
-      
+
       t.timestamps
     end
 
