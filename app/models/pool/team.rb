@@ -27,11 +27,11 @@ class Pool::Team < ApplicationRecord
     dropped_scores = Rails.cache.fetch("#{cache_key_with_version}/partial_total_dropped", expires_in: 24.hours) do
       players = pool_team_players.includes(:pool, :league_player).non_current
 
-      players.map(&:score_for_season).sum
+      players.map(&:score_for_pool).sum
     end
 
     players = pool_team_players.includes(:pool, :league_player).current
 
-    dropped_scores + players.map(&:score_for_season).sum
+    dropped_scores + players.map(&:score_for_pool).sum
   end
 end

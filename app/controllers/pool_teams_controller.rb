@@ -7,12 +7,12 @@ class PoolTeamsController < ApplicationController
       include: {
         owner: { only: [:id, :name] },
         current_team: {
-          only: [:id, :league_player_id, :scores],
-          methods: [:name, :current_team_id],
+          only: [:id, :league_player_id],
+          methods: [:name, :current_team_id, :scores],
         },
         previous_team: {
-          only: [:id, :league_player_id, :scores, :dropped_at],
-          methods: [:name, :current_team_id],
+          only: [:id, :league_player_id, :dropped_at],
+          methods: [:name, :current_team_id, :scores],
         },
       }
   end
