@@ -10,6 +10,8 @@ module PwhlPlayerStat
     belongs_to :league_game, class_name: "League::Game"
     belongs_to :league_player, class_name: "League::Player"
 
+    delegate :start_time, :season_id, to: :league_game
+
     scope :for_date_range, ->(date_range) { joins(:league_game).where(league_game: { start_time: date_range }) }
     scope :for_season, ->(season_id) { joins(:league_game).where(league_game: { season_id: season_id }) }
 

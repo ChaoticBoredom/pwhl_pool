@@ -36,13 +36,28 @@ module PlayerScoring
   end
 
   def score_for_date(date, pool = pool_to_use)
-    calculate_aggregate(records.for_date(date), pool)
+    target_date = date.to_date
+
+    stat = if records.loaded?
+      records.to_a.detect { |r| r.league_game.start_time.to_date == target_date }
+    else
+      records.for_date(target_date)
+    end
+
+    calculate_aggregate(stat, pool)
   end
 
   def score_for_date_range(date_range, pool = pool_to_use)
-    calculate_aggregate(records.
-      for_season(pool.season_id).
-      for_date_range(date_range), pool)
+    return 0 if pool.nil?
+
+    if records.loaded?
+      stats = records.to_a.select { |r| date_range.cover?(r.start_time.to_date) }
+      calculate_aggregate(stats, pool)
+    else
+      calculate_aggregate(records.
+        for_season(pool.season_id).
+        for_date_range(date_range), pool)
+    end
   end
 
   def score_for_season(pool = pool_to_use)
@@ -79,6 +94,7 @@ module PlayerScoring
 
   def calculate_aggregate(scope, pool)
     return 0 if scope.blank?
+    return 0 if pool.nil?
 
     scorings = get_scoring_fields(pool)
     fields = scorings.pluck(:field_name)

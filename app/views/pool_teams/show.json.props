@@ -1,0 +1,38 @@
+json.id @pool_team.id
+json.team_name @pool_team.team_name
+json.total_score @pool_team.total_score
+
+json.owner do
+	json.id @pool_team.owner.id
+	json.name @pool_team.owner.name
+end
+
+json.current_team do
+  json.array! @pool_team.current_team do |rp|
+    player = rp.league_player
+    json.id = rp.id
+    json.league_player_id player.id
+    json.name player.name
+    json.current_team_id player.current_team_id
+
+    json.scores do
+      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }
+      json.for_pool rp.score_for_pool
+    end
+  end
+end
+
+json.previous_team do
+  json.array! @pool_team.previous_team do |rp|
+    player = rp.league_player
+    json.id = rp.id
+    json.league_player_id = player.id
+    json.name player.name
+    json.current_team_id player.current_team_id
+
+    json.scores do
+      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }
+      json.for_pool rp.score_for_pool
+    end
+  end
+end

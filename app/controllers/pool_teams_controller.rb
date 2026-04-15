@@ -2,18 +2,25 @@ class PoolTeamsController < ApplicationController
   def show
     id = params[:id]
     @pool_team = Pool::Team.includes(pool_team_players: :league_player).find(id)
-    render json: @pool_team,
-      only: [:id, :team_name, :total_score],
-      include: {
-        owner: { only: [:id, :name] },
-        current_team: {
-          only: [:id, :league_player_id],
-          methods: [:name, :current_team_id, :scores],
-        },
-        previous_team: {
-          only: [:id, :league_player_id, :dropped_at],
-          methods: [:name, :current_team_id, :scores],
-        },
-      }
+    @pool = @pool_team.pool
+
+    # Preload data to speedify things
+    all_players = @pool_team.league_players.to_a
+    goalies = all_players.select(&:goalie?)
+    skaters = all_players.select(&:skater?)
+
+    today_range = Date.current.all_day
+
+    ActiveRecord::Associations::Preloader.new(
+      records: goalies,
+      associations: { records: :league_game},
+    ).call
+
+    ActiveRecord::Associations::Preloader.new(
+      records: skaters,
+      associations: { records: :league_game},
+    ).call
+
+    render :show
   end
 end

@@ -1,0 +1,13 @@
+pool_context = local_assigns[:pool] || player.pool_to_use
+
+cache_key = "json_scores/#{player.cache_key_with_version}/#{pool_context.id}/#{Date.current}"
+
+json.today player.score_for_today(pool_context)
+json.history cache: cache_key do
+  scores_hash = player.scores(pool_context)
+
+  json.yesterday      scores_hash[:yesterday]
+  json.week_to_date   scores_hash[:week_to_date]
+  json.month_to_date  scores_hash[:month_to_date]
+  json.season_to_date scores_hash[:season_to_date]
+end

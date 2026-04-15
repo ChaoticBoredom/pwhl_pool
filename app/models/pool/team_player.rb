@@ -5,6 +5,8 @@ class Pool::TeamPlayer < ApplicationRecord
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
 
+  validates :added_at, presence: true
+
   delegate :name, :current_team_id, :records, to: :league_player
 
   before_validation :denormalize_fields, on: :create
@@ -18,8 +20,11 @@ class Pool::TeamPlayer < ApplicationRecord
   end
 
   def score_for_pool
-    score = score_for_date_range(clip_date_range(pool.start_end_range))
-    score
+    cache_key = "#{cache_key_with_version}/#{updated_at.to_i}"
+    expiry = current? ? Time.current.tomorrow.beginning_of_day : nil
+    Rails.cache.fetch(cache_key, expires_at: expiry) do
+      score_for_date_range(clip_date_range(pool.start_end_range))
+    end
   end
 
   def pool_to_use

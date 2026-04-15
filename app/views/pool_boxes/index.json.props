@@ -1,0 +1,20 @@
+json.boxes do
+  json.array! @boxes do |box|
+    json.id box.id
+    json.name box.name
+
+    json.players do
+      json.array! box.players do |player|
+        json.id player.id
+        json.name player.name
+        json.current_team_id player.current_team_id
+
+        json.selected @selected_ids.include?(player.id)
+
+        json.scores do
+          json.partial! partial: 'players/scores', locals: {player: player, pool: box.pool}
+        end
+      end
+    end
+  end
+end
