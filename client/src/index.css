@@ -97,6 +97,92 @@ p {
   margin: 0;
 }
 
+.player-display-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.player-identity {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.team-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.player-score-container {
+  text-align: right;
+  min-width: 60px;
+}
+
+.score-value {
+  display: block;
+  font-family: monospace;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.score-label {
+  font-size: 0.6rem;
+  color: #999;
+}
+
+.box-container {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.box-container h3 {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.5rem;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Spacing between individual player rows */
+}
+
+.player-option {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.player-option:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* Style for when a player is selected */
+.player-option:has(input:checked) {
+  background-color: #f5f3ff;
+  border-color: #8b5cf6;
+}
+
 code,
 .counter {
   font-family: var(--mono);

@@ -4,7 +4,7 @@ class PoolBoxesController < ApplicationController
 
     current_pool_team = current_user&.pool_teams&.find_by(pool_id: params[:pool_id])
     if current_pool_team
-      @selected_ids = current_pool_team.current_team.pluck(:id)
+      @selected_ids = current_pool_team.current_team.pluck(:league_player_id)
     end
 
     all_players = @boxes.flat_map(&:players).uniq

@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
     password = login_params[:password] || login_params.dig(:session, :password)
     if user = User.authenticate_by(email_address: email, password: password)
       start_new_session_for user
-      render json: { data: { token: Current.session.token } }
+      render json: { data: { token: Current.session.token, user: user.id } }
     else
       render json: {}, status: :unauthorized
     end

@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext';
 import { DataRow } from './DataRow'
 
 function PoolTeamDetails() {
-  const { id } = useParams()
+  const { poolId, teamId } = useParams()
   const [poolTeam, setPoolTeam] = useState(null)
-  const token = localStorage.getItem('session_token')
-  const poolGrid = "grid-cols-[1fr+80px_80px_80px]"
+  const { currentUser, token } = useAuth();
+  const poolGrid = "grid-cols-[1fr+80px_80px_100px]"
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${teamId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -18,9 +19,11 @@ function PoolTeamDetails() {
     .then(res => res.json())
     .then(data => setPoolTeam(data))
     .catch(err => console.error("Error fetching pool team details:", err))
-  }, [id, token])
+  }, [teamId, token])
 
   if (!poolTeam) return <div>Loading pool team details...</div>
+
+  const isOwner = currentUser && poolTeam.owner.id === currentUser;
 
   return (
     <div>
@@ -28,21 +31,25 @@ function PoolTeamDetails() {
         ← Back to Dashboard
       </Link>
       <h1 className="text-2xl font-bold my-4">{poolTeam.team_name}</h1>
+      {isOwner && <Link to={`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`}
+        className="trade-link bg-purple-600 text-white px-4 py-2 rounded">
+        Trade Players
+      </Link>}
       <h2 className="text-2xl font-bold my-4">{poolTeam.owner?.name}</h2>
       <div className="mt-6">
         <DataRow isHeader gridClass={poolGrid}>
           <div>Player</div>
-          <div>Today</div>
-          <div>Yesterday</div>
-          <div>Month-to-Date</div>
+          <div className="text-right">Today</div>
+          <div className="text-right">Yesterday</div>
+          <div className="text-right">Month-to-Date</div>
         </DataRow>
 
         {poolTeam.current_team?.map(player => (
           <DataRow key={player.league_player_id} gridClass={poolGrid}>
             <div className="font-medium">{player.name}</div>
-            <div className="text-right">{player.scores.today}</div>
-            <div className="text-right">{player.scores.yesterday}</div>
-            <div className="text-right">{player.scores.month_to_date}</div>
+            <div className="text-right">{player.scores.today.toFixed(2)}</div>
+            <div className="text-right">{player.scores.history.yesterday.toFixed(2)}</div>
+            <div className="text-right">{player.scores.history.month_to_date.toFixed(2)}</div>
           </DataRow>
         ))}
       </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useAuth } from  '../context/AuthContext'
 
 export default function LoginForm({ onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const  { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,9 +19,7 @@ export default function LoginForm({ onLoginSuccess }) {
 
       if (response.ok) {
         const result = await response.json()
-        const token = result.data.token
-        localStorage.setItem('session_token', token)
-        onLoginSuccess()
+        login(result.data.user, result.data.token);
       } else {
         alert("Invalid email or password")
       }

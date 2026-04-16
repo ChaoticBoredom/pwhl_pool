@@ -1,0 +1,94 @@
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import BoxSelection from './BoxSelection'
+
+const PlayerSelection = () => {
+  const { poolId, teamId } = useParams();
+  const [boxes, setBoxes] = useState([]);
+  const token = localStorage.getItem('session_token');
+  const navigate = useNavigate();
+  const [selections, setSelections] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!poolId) return;
+    fetch(`${import.meta.env.VITE_API_URL}/pools/${poolId}/pool_boxes`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json()).then(data => {
+      setBoxes(data.boxes);
+      const initial = {};
+      data.boxes.forEach(b => {
+        const selected = b.players.find(p => p.selected);
+        if (selected) initial[b.id] = selected.id;
+      });
+      setSelections(initial);
+    })
+    .catch(err => console.error("Fetch Error:", err));
+  }, [poolId]);
+
+  const handleSubmit = async () => {
+    setIsSaving(true);
+    const payload = {
+      pool_id: poolId,
+      new_player_ids: Object.values(selections)
+    };
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${teamId}/update_roster`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const added = data.added_players.join(', ');
+        const dropped = data.dropped_players.join(', ');
+        alert(`Sucessfully added: ${added}\n\nSuccessfully dropped: ${dropped}`);
+        navigate(`/pools/${poolId}/teams/${teamId}`);
+      } else {
+        const err = await response.json();
+        alert(`Error: ${err.errors?.join(', ') || 'Failed to update'}`);
+      }
+    } catch (error) {
+      console.error("Save failed", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="selection-page">
+      <div className="selection-header">
+        <h1>Select Players</h1>
+        <button 
+          onClick={handleSubmit} 
+          disabled={isSaving || boxes.length === 0}
+          className="save-button"
+        >
+          {isSaving ? "Saving..." : "Confirm Roster"}
+        </button>
+      </div>
+      <div className="selection-grid">
+        {boxes.map(box => (
+          <BoxSelection
+            key={box.id}
+            box={box}
+            selectedPlayerId={selections[box.id]}
+            onSelect={(playerId) => setSelections({...selections, [box.id]: playerId})}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default PlayerSelection
