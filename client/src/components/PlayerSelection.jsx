@@ -69,19 +69,23 @@ const PlayerSelection = () => {
     }
   };
 
+  const saveButton = (extraClass = "") => (
+    <button
+      className={`btn-primary ${extraClass}`}
+      onClick={handleSubmit}
+      disabled={isSaving || Object.keys(selections).length != boxes.length}
+    >
+      {isSaving ? 'Saving...' : 'Save Roster'}
+    </button>
+  );
+
   return (
-    <div className="selection-page">
-      <div className="selection-header">
+    <div className="selection-container">
+      <header className="selection-header">
         <h1>Select Players</h1>
-        <button 
-          onClick={handleSubmit} 
-          disabled={isSaving || boxes.length === 0}
-          className="save-button"
-        >
-          {isSaving ? "Saving..." : "Confirm Roster"}
-        </button>
-      </div>
-      <div className="selection-grid">
+        {saveButton("btn-top")}
+      </header>
+      <div className="grid">
         {boxes.map(box => (
           <BoxSelection
             key={box.id}
@@ -93,6 +97,12 @@ const PlayerSelection = () => {
           />
         ))}
       </div>
+      <footer className="selection-footer">
+        {saveButton("btn-full")}
+        <span className="helper-text">
+          Make sure you've selected a player from every box before saving.
+        </span>
+      </footer>
     </div>
   );
 };

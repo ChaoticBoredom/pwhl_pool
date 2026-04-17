@@ -8,7 +8,7 @@ function PoolTeamDetails() {
   const { poolId, teamId } = useParams()
   const [poolTeam, setPoolTeam] = useState(null)
   const { currentUser, token } = useAuth();
-  const poolGrid = "grid-cols-[1fr+80px_80px_100px]"
+  const poolGrid = "grid-cols-[1fr+80px_80px_100px_80px]"
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${teamId}`, {
@@ -27,30 +27,41 @@ function PoolTeamDetails() {
   const isOwner = currentUser && poolTeam.owner.id === currentUser;
 
   return (
-    <div>
-      <Link to="/" style={{ color: 'blue', textDecoration: 'underline' }}>
-        ← Back to Dashboard
-      </Link>
-      <h1 className="text-2xl font-bold my-4">{poolTeam.team_name}</h1>
-      {isOwner && <Link to={`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`}
-        className="trade-link bg-purple-600 text-white px-4 py-2 rounded">
-        Trade Players
-      </Link>}
-      <h2 className="text-2xl font-bold my-4">{poolTeam.owner?.name}</h2>
-      <div className="mt-6">
-        <DataRow isHeader gridClass={poolGrid}>
+    <div className="selection-container">
+      <Link to="/">← Back to Dashboard</Link>
+
+      <div className="selection-header">
+        <div>
+          <h1 style={{ margin: 0 }}>{poolTeam.team_name}</h1>
+          <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
+        </div>
+        {isOwner && (
+          <Link to={`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`} className="btn-primary btn-top">
+            Trade Players
+          </Link>
+        )}
+      </div>
+
+      <div className="player-list-container">
+        <DataRow isHeader gridClass={`${poolGrid} grid-header`}>
           <div>Player</div>
-          <div className="text-right">Today</div>
-          <div className="text-right">Yesterday</div>
-          <div className="text-right">Month-to-Date</div>
+          <div className="score-cell">Today</div>
+          <div className="score-cell">Yesterday</div>
+          <div className="score-cell">
+            <span className="wrap-header">Month-to-Date</span>
+          </div>
+          <div className="score-cell">
+            <span className="wrap-header">Season</span>
+          </div>
         </DataRow>
 
         {poolTeam.current_team?.map(player => (
-          <DataRow key={player.league_player_id} gridClass={poolGrid}>
+          <DataRow key={player.league_player_id} gridClass={`${poolGrid} grid-row`}>
             <Player player={player} />
-            <div className="text-right">{player.scores.today.toFixed(2)}</div>
-            <div className="text-right">{player.scores.history.yesterday.toFixed(2)}</div>
-            <div className="text-right">{player.scores.history.month_to_date.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.today.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.history.yesterday.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.history.month_to_date.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.history.season_to_date.toFixed(2)}</div>
           </DataRow>
         ))}
       </div>
