@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-	allow_unauthenticated_access only: :create
+  allow_unauthenticated_access only: :create
 
   def create
     @user = User.new(user_params)
@@ -11,7 +11,7 @@ class UsersController < ApplicationController
         data: {
           user: @user.id,
           token: Current.session.token,
-        }
+        },
       }, status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity

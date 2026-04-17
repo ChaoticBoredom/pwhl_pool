@@ -13,12 +13,12 @@ class PoolTeamsController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(
       records: goalies,
-      associations: [ { records: :league_game}, :current_team ],
+      associations: [{ records: :league_game }, :current_team],
     ).call
 
     ActiveRecord::Associations::Preloader.new(
       records: skaters,
-      associations: [ { records: :league_game}, :current_team ],
+      associations: [{ records: :league_game }, :current_team],
     ).call
 
     render :show

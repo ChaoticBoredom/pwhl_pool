@@ -10,7 +10,7 @@ class PoolBoxesController < ApplicationController
     all_players = @boxes.flat_map(&:players).uniq
     ActiveRecord::Associations::Preloader.new(
       records: all_players,
-      associations: [ { records: :league_game}, :current_team ]
+      associations: [{ records: :league_game }, :current_team]
     ).call
 
     render :index

@@ -7,7 +7,7 @@ Sidekiq::Web.use(Rack::Session::Cookie, secret: secret_key_base)
 Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
 
-  post '/users', to: 'users#create'
+  post "/users", to: "users#create"
   resource :session
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
