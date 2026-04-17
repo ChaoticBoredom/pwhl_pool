@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_13_104235) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_090636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -101,8 +101,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_104235) do
   end
 
   create_table "pool_teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.uuid "pool_id", null: false
     t.string "team_name"
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.uuid "user_id", null: false
     t.index ["pool_id"], name: "index_pool_teams_on_pool_id"
     t.index ["user_id"], name: "index_pool_teams_on_user_id"

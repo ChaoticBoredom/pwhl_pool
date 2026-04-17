@@ -88,7 +88,6 @@ const PlayerSelection = () => {
             box={box}
             selectedPlayerId={selections[box.id]}
             onSelect={(playerId) => {
-              console.log("HELLO")
               setSelections({...selections, [box.id]: playerId});
             }}
           />

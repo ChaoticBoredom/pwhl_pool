@@ -24,6 +24,16 @@ class PoolTeamsController < ApplicationController
     render :show
   end
 
+  def create
+    @team = Current.user.pool_teams.new(team_params)
+
+    if @team.save
+      render json: { data: @team }, status: :created
+    else
+      render json: { errors: @team.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   def update_roster
     @pool_team = Pool::Team.find(params[:id])
     return head :forbidden unless current_user == @pool_team.owner
@@ -49,5 +59,11 @@ class PoolTeamsController < ApplicationController
       added_players: added_names,
       dropped_players: dropped_names,
     }
+  end
+
+  private
+
+  def team_params
+    params.require(:team).permit(:team_name, :pool_id)
   end
 end
