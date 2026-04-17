@@ -14,7 +14,7 @@ json.current_team do
     json.id = rp.id
     json.league_player_id player.id
     json.name player.name
-    json.current_team_id player.current_team_id
+    json.current_team_short_code player.current_team_short_code
 
     json.scores do
       json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }
@@ -29,7 +29,7 @@ json.previous_team do
     json.id = rp.id
     json.league_player_id = player.id
     json.name player.name
-    json.current_team_id player.current_team_id
+    json.current_team_id player.current_team_short_code
 
     json.scores do
       json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }

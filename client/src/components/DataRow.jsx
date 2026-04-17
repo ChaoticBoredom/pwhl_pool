@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function DataRow({ to, children, gridClass = "grid-cols-3", isHeader = false }) {
+export function DataRow({ to, children, gridClass = "grid-cols-3", isHeader = false, onClick }) {
   const baseClasses = `grid ${gridClass} items-center w-full px-4 py-3`;
 
   if (isHeader) {
@@ -12,7 +12,9 @@ export function DataRow({ to, children, gridClass = "grid-cols-3", isHeader = fa
   }
 
   const Content = (
-    <div className={`${baseClasses} bg-white border border-gray-100 rounded hover:bg-blue-50 transition-all shadow-sm group mb-2 cursor-pointer`}>
+    <div
+      onClick={onClick}
+      className={`${baseClasses} bg-white border border-gray-100 rounded hover:bg-blue-50 transition-all shadow-sm group mb-2 cursor-pointer`}>
       {children}
     </div>
   );

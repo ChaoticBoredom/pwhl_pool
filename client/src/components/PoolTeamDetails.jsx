@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import { DataRow } from './DataRow'
+import Player from './Player'
 
 function PoolTeamDetails() {
   const { poolId, teamId } = useParams()
@@ -46,7 +47,7 @@ function PoolTeamDetails() {
 
         {poolTeam.current_team?.map(player => (
           <DataRow key={player.league_player_id} gridClass={poolGrid}>
-            <div className="font-medium">{player.name}</div>
+            <Player player={player} />
             <div className="text-right">{player.scores.today.toFixed(2)}</div>
             <div className="text-right">{player.scores.history.yesterday.toFixed(2)}</div>
             <div className="text-right">{player.scores.history.month_to_date.toFixed(2)}</div>

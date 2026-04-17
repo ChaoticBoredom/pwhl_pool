@@ -8,6 +8,8 @@ class League::Player < ApplicationRecord
   belongs_to :league
   belongs_to :current_team, class_name: "League::Team"
 
+  delegate :short_code, to: :current_team, prefix: true
+
   private
 
   def sync_sti_type

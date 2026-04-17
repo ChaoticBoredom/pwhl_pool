@@ -7,7 +7,7 @@ json.boxes do
       json.array! box.players do |player|
         json.id player.id
         json.name player.name
-        json.current_team_id player.current_team_id
+        json.current_team_short_code player.current_team_short_code
 
         json.selected @selected_ids.include?(player.id)
 

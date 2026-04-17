@@ -57,13 +57,13 @@ body {
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  text-align: center;
+  align-items: flex-start;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
-  display: flex;
+  display: block;
   flex-direction: column;
   box-sizing: border-box;
 }
@@ -140,6 +140,7 @@ p {
 
 .box-container {
   background: white;
+  width: 100%;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 1.5rem;
@@ -159,17 +160,27 @@ p {
 .player-list {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 0.75rem; /* Spacing between individual player rows */
 }
 
 .player-option {
   display: flex;
   align-items: center;
+  width: 100%;
   padding: 0.75rem;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   cursor: pointer;
   transition: all 0.2s ease;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.player-option > :nth-child(1) {
+  flex: 1;
+  display: flex;
+  min-width: 0;
 }
 
 .player-option:hover {
@@ -179,8 +190,38 @@ p {
 
 /* Style for when a player is selected */
 .player-option:has(input:checked) {
+  width: 100%;
   background-color: #f5f3ff;
   border-color: #8b5cf6;
+}
+
+.player-identity-vertical {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.player-name {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: #1e293b;
+}
+
+.team-badge-small {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-top: 2px; /* Small gap between name and team */
+}
+
+.score-display-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  min-width: 60px;
 }
 
 code,

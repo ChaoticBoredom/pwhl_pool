@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import BoxSelection from './BoxSelection'
 
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
   const [boxes, setBoxes] = useState([]);
-  const token = localStorage.getItem('session_token');
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [selections, setSelections] = useState({});
   const [isSaving, setIsSaving] = useState(false);
@@ -48,12 +49,15 @@ const PlayerSelection = () => {
         body: JSON.stringify(payload)
       });
 
+
       if (response.ok) {
         const data = await response.json();
         const added = data.added_players.join(', ');
         const dropped = data.dropped_players.join(', ');
         alert(`Sucessfully added: ${added}\n\nSuccessfully dropped: ${dropped}`);
         navigate(`/pools/${poolId}/teams/${teamId}`);
+      } else if (response.status === 403) {
+        alert("You do not have permission to edit this team");
       } else {
         const err = await response.json();
         alert(`Error: ${err.errors?.join(', ') || 'Failed to update'}`);
@@ -83,7 +87,10 @@ const PlayerSelection = () => {
             key={box.id}
             box={box}
             selectedPlayerId={selections[box.id]}
-            onSelect={(playerId) => setSelections({...selections, [box.id]: playerId})}
+            onSelect={(playerId) => {
+              console.log("HELLO")
+              setSelections({...selections, [box.id]: playerId});
+            }}
           />
         ))}
       </div>

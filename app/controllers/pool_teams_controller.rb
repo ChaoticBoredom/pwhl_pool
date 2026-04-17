@@ -13,12 +13,12 @@ class PoolTeamsController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(
       records: goalies,
-      associations: { records: :league_game },
+      associations: [ { records: :league_game}, :current_team ],
     ).call
 
     ActiveRecord::Associations::Preloader.new(
       records: skaters,
-      associations: { records: :league_game },
+      associations: [ { records: :league_game}, :current_team ],
     ).call
 
     render :show
@@ -26,6 +26,8 @@ class PoolTeamsController < ApplicationController
 
   def update_roster
     @pool_team = Pool::Team.find(params[:id])
+    return head :forbidden unless current_user == @pool_team.owner
+
     @pool = @pool_team.pool
 
     original_team = @pool_team.current_team.pluck(:league_player_id)
