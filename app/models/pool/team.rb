@@ -13,11 +13,11 @@ class Pool::Team < ApplicationRecord
   has_many :league_players, through: :pool_team_players
 
   def current_team
-    pool_team_players.includes(:league_player).current
+    pool_team_players.includes(league_player: :current_team).current
   end
 
   def previous_team
-    pool_team_players.includes(:league_player).non_current
+    pool_team_players.includes(league_player: :current_team).non_current
   end
 
   def score_for_date(date)
