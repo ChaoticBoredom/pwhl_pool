@@ -17,8 +17,8 @@ json.current_team do
     json.current_team_short_code player.current_team_short_code
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }
-      json.for_pool rp.score_for_pool
+      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool, service: @pss }
+      json.for_pool rp.score_for_pool(@pss)
     end
   end
 end
@@ -32,8 +32,8 @@ json.previous_team do
     json.current_team_id player.current_team_short_code
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool }
-      json.for_pool rp.score_for_pool
+      json.partial! partial: 'players/scores', locals: { player: player, pool: @pool, service: @pss }
+      json.for_pool rp.score_for_pool(@pss)
     end
   end
 end

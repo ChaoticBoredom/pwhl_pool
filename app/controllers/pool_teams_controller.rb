@@ -21,6 +21,8 @@ class PoolTeamsController < ApplicationController
       associations: [{ records: :league_game }, :current_team],
     ).call
 
+    @pss = PlayerScoringService.new(@pool.scoring, @pool)
+
     render :show
   end
 

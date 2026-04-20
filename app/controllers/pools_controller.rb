@@ -1,6 +1,7 @@
 class PoolsController < ApplicationController
   def index
-    @pools = Pool.where(id: current_user.pool_teams.pluck(:pool_id))
+    @pools = Pool.where(id: current_user.pool_teams.pluck(:pool_id)).
+      or(Pool.where(admin_id: current_user.id))
     render json: @pools
   end
 
@@ -14,7 +15,9 @@ class PoolsController < ApplicationController
         admin: { only: [:id, :name] },
         pool_teams: {
           include: { user: { only: [:id, :name] } },
-          only: [:id, :team_name, :total_score] },
+          only: [:id, :team_name],
+          methods: [:total_score],
+        },
       }
   end
 end

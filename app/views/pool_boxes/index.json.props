@@ -12,7 +12,7 @@ json.boxes do
         json.selected @selected_ids.include?(player.id)
 
         json.scores do
-          json.partial! partial: 'players/scores', locals: {player: player, pool: box.pool}
+          json.partial! partial: 'players/scores', locals: {player: player, pool: box.pool, service: @pss}
         end
       end
     end

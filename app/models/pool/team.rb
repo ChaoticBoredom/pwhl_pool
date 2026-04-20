@@ -1,6 +1,4 @@
 class Pool::Team < ApplicationRecord
-  attribute :total_score, :float, default: 0
-
   belongs_to :user
   # Lets us call `.owner` on the team seamlessly
   belongs_to :owner, class_name: "User", foreign_key: "user_id"
@@ -21,20 +19,29 @@ class Pool::Team < ApplicationRecord
   end
 
   def score_for_date(date)
-    players = pool_team_players.for_date(date)
+    pss = PlayerScoringService.new(pool.scoring, pool)
+    players = pool_team_players.for_date(date).includes(:league_player)
 
-    players.sum { |p| p.score_for_date(date) }
+    players.sum { |p| pss.score_for_date(date, p.league_player) }
+  end
+
+  def score_for_date_range(date_range)
+    pss = PlayerScoringService.new(pool.scoring, pool)
+    pool_team_players.
+      includes(:league_player).
+      map { |pt| pss.score_for_pool_date_range(date_range, pt.league_player) }.sum
   end
 
   def total_score
+    pss = PlayerScoringService.new(pool.scoring, pool)
     dropped_scores = Rails.cache.fetch("#{cache_key_with_version}/partial_total_dropped", expires_in: 24.hours) do
-      players = pool_team_players.includes(:pool, :league_player).non_current
+      players = pool_team_players.includes(:pool, league_player: :records).non_current
 
-      players.map(&:score_for_pool).sum
+      players.map { |p| p.score_for_pool(pss) }.sum
     end
 
-    players = pool_team_players.includes(:pool, :league_player).current
+    players = pool_team_players.includes(:pool, league_player: :records).current
 
-    dropped_scores + players.map(&:score_for_pool).sum
+    dropped_scores + players.map { |p| p.score_for_pool(pss) }.sum
   end
 end
