@@ -40,7 +40,7 @@ function PoolDetails() {
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
             <div className="text-right text-gray-600">{team.user?.name}</div>
-            <div className="text-right font-mono font-bold">{team.total_score}</div>
+            <div className="text-right font-mono font-bold">{team.total_score.toFixed(2)}</div>
           </DataRow>
         ))}
       </div>

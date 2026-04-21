@@ -45,8 +45,10 @@ class PlayerScoringService
   end
 
   def score_for_date_range(date_range, player)
-    records = player.records.for_season(@pool.season_id).for_date_range(date_range)
-    calculate_aggregate(records, player)
+    with_cache(date_range.to_s, player) do
+      records = player.records.for_season(@pool.season_id).for_date_range(date_range)
+      calculate_aggregate(records, player)
+    end
   end
 
   def scores_summary(player)
@@ -83,6 +85,8 @@ class PlayerScoringService
     return 0 if record.nil?
 
     scoring_fields = @scorings[player.position]
+    return 0 if scoring_fields.nil?
+
     fields = scoring_fields.pluck(:field_name)
     records = Array(record)
 
