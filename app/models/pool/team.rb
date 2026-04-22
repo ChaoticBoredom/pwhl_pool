@@ -27,9 +27,12 @@ class Pool::Team < ApplicationRecord
 
   def score_for_date_range(date_range)
     pss = PlayerScoringService.new(pool.scoring, pool)
-    pool_team_players.
-      includes(:league_player).
-      map { |pt| pss.score_for_pool_date_range(date_range, pt.league_player) }.sum
+    # pool_team_players.
+    #   includes(:league_player).
+    #   map { |pt| pss.score_for_pool_date_range(date_range, pt.league_player) }.sum
+    res = pss.scores_for_players(pool_team_players)
+    binding.pry
+    res
   end
 
   def total_score

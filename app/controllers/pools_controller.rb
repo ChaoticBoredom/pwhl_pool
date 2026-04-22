@@ -7,7 +7,7 @@ class PoolsController < ApplicationController
 
   def show
     id = params[:id]
-    @pool = Pool.includes(:pool_teams).find(id)
+    @pool = Pool.includes(:pool_teams, :admin).find(id)
     render json: @pool,
       only: [:name, :pool_type],
       include: {

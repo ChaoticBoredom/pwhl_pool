@@ -4,6 +4,33 @@ class PlayerScoringService
     @pool = pool
   end
 
+  def scores_for_players_for_season(players)
+    player_ids = players.map(&:league_player_id)
+    skater_stats = Pwhl::SkaterStat
+      .joins(:league_game)
+      .where(league_player_id: player_ids)
+      .where(league_games: { season_id: @pool.season_id })
+      .group_by(&:league_player_id)
+
+    goalie_stats = Pwhl::GoalieStat
+      .joins(:league_game)
+      .where(league_player_id: player_ids)
+      .where(league_games: { season_id: @pool.season_id })
+      .group_by(&:league_player_id)
+
+    players.each_with_object({}) do |player, result|
+      stats = player.is_a?(Pwhl::Goalie) ? goalie_stats : skater_stats
+      date_range = player.clip_date_range(@pool.start_end_range)
+      records = (stats[player.id] || []).select { |r| date_range.cover?(r.league_game.start_time) }
+      result[player.id] = calculate_aggregate(records, player)
+    end
+  end
+
+  def score_for_team_player(team_player)
+    date_range = team_player.clip_date_range(@pool.start_end_range)
+    score_for_date_range(date_range, team_player.league_player)
+  end
+
   def score_for_today(player)
     score_for_date(Time.current, player)
   end

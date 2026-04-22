@@ -20,10 +20,12 @@ class Pool::TeamPlayer < ApplicationRecord
   end
 
   def score_for_pool(pss)
-    score_for_pool_date_range(pss, clip_date_range(pool.start_end_range))
+    puts "SCORE FOR POOL called"
+    score_for_pool_date_range(pss, pool.start_end_range)
   end
 
   def score_for_pool_date_range(pss, date_range)
+    puts "SCORE FOR POOL DATE RANGE called"
     clipped_range = clip_date_range(date_range)
     calc = -> { pss.score_for_date_range(clipped_range, league_player) }
 
