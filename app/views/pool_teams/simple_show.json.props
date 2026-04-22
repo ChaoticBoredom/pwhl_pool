@@ -4,8 +4,8 @@ json.total_score @pool_team.total_score
 json.pool_id @pool.id
 
 json.owner do
-	json.id @pool_team.owner.id
-	json.name @pool_team.owner.name
+  json.id @pool_team.owner.id
+  json.name @pool_team.owner.name
 end
 
 json.current_team do
@@ -14,13 +14,9 @@ json.current_team do
     json.id rp.id
     json.league_player_id player.id
     json.name player.name
-    json.current_team_short_code player.current_team_short_code
     json.added_at rp.added_at
 
-    json.scores do
-      json.partial! partial: 'players/scores', locals: { player: rp, pool: @pool, service: @pss }
-      json.for_pool rp.score_for_pool(@pss)
-    end
+    json.for_pool rp.score_for_pool(@pss)
   end
 end
 
@@ -30,13 +26,9 @@ json.previous_team do
     json.id rp.id
     json.league_player_id player.id
     json.name player.name
-    json.current_team_id player.current_team_short_code
     json.added_at rp.added_at
     json.dropped_at rp.dropped_at
 
-    json.scores do
-      json.partial! partial: 'players/scores', locals: { player: rp, pool: @pool, service: @pss }
-      json.for_pool rp.score_for_pool(@pss)
-    end
+    json.for_pool rp.score_for_pool(@pss)
   end
 end

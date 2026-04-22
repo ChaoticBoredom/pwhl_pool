@@ -19,12 +19,21 @@ class Pool::TeamPlayer < ApplicationRecord
   end
 
   def score_for_pool(pss)
-    pss.score_for_date_range(clip_date_range(pool.start_end_range), league_player)
+    score_for_pool_date_range(pss, clip_date_range(pool.start_end_range))
   end
 
   def score_for_pool_date_range(pss, date_range)
-    date_range = clip_date_range(date_range)
-    pss.score_for_date_range(date_range, league_player)
+    clipped_range = clip_date_range(date_range)
+    calc = -> { pss.score_for_date_range(clipped_range, league_player) }
+
+    return calc.call if current?
+
+    cache_key = [
+      cache_key_with_version,
+      pss.player_scorings_cache_key,
+      clipped_range,
+    ]
+    Rails.cache.fetch(cache_key, &calc)
   end
 
   private

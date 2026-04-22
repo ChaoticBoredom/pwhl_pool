@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_104054) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_010814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -133,7 +133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_104054) do
     t.uuid "league_game_id", null: false
     t.uuid "league_player_id", null: false
     t.uuid "league_team_id", null: false
-    t.integer "penalty_minutes", null: false
+    t.interval "penalty_minutes", null: false
     t.integer "saves", null: false
     t.integer "shots_against", null: false
     t.boolean "shutout", null: false

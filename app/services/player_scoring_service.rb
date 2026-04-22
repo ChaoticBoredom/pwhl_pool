@@ -9,9 +9,7 @@ class PlayerScoringService
   end
 
   def score_for_yesterday(player)
-    with_cache("yesterday", player) do
-      score_for_date(1.day.ago, player)
-    end
+    score_for_date(1.day.ago, player)
   end
 
   def score_for_season(player)
@@ -20,22 +18,16 @@ class PlayerScoringService
 
   # The following '_to_date' methods do not include todays scoring
   def score_for_week_to_date(player)
-    with_cache("week_td", player) do
-      score_for_date_range(Time.current.beginning_of_week..1.day.ago.end_of_day, player)
-    end
+    score_for_date_range(Time.current.beginning_of_week..1.day.ago.end_of_day, player)
   end
 
   def score_for_month_to_date(player)
-    with_cache("month_td", player) do
-      score_for_date_range(Time.current.beginning_of_month..1.day.ago.end_of_day, player)
-    end
+    score_for_date_range(Time.current.beginning_of_month..1.day.ago.end_of_day, player)
   end
 
   def score_for_season_to_date(player)
-    with_cache("season_td", player) do
-      start = @pool.start_end_range.begin
-      score_for_date_range(start..1.day.ago.end_of_day, player)
-    end
+    start = @pool.start_end_range.begin
+    score_for_date_range(start..1.day.ago.end_of_day, player)
   end
 
   def score_for_date(date, player)
@@ -45,10 +37,8 @@ class PlayerScoringService
   end
 
   def score_for_date_range(date_range, player)
-    with_cache(date_range.to_s, player) do
-      records = player.records.for_season(@pool.season_id).for_date_range(date_range)
-      calculate_aggregate(records, player)
-    end
+    records = player.records.for_season(@pool.season_id).for_date_range(date_range)
+    calculate_aggregate(records, player)
   end
 
   def scores_summary(player)
@@ -67,19 +57,11 @@ class PlayerScoringService
       })
   end
 
-  private
-
-  def with_cache(suffix, player, &block)
-    key = [
-      "player_scoring_service",
-      player.cache_key_with_version,
-      @pool.cache_key_with_version,
-      Digest::MD5.hexdigest(@scorings.to_json),
-      Time.current.to_date,
-    ]
-
-    Rails.cache.fetch(key, &block)
+  def player_scorings_cache_key
+    Digest::MD5.hexdigest(@scorings.to_json)
   end
+
+  private
 
   def calculate_aggregate(record, player)
     return 0 if record.nil?

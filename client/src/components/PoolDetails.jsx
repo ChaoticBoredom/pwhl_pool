@@ -36,7 +36,7 @@ function PoolDetails() {
           <div className="text-right">Score</div>
         </DataRow>
 
-        {pool.pool_teams?.map(team => (
+        {pool.pool_teams?.sort((a, b) => b.total_score - a.total_score)?.map(team => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
             <div className="text-right text-gray-600">{team.user?.name}</div>

@@ -1,8 +1,8 @@
-cache_key = "json_scores/#{player.cache_key_with_version}/#{pool.id}/#{Date.current}"
+cache_key = "json_scores/#{player.cache_key_with_version}/#{Date.current}"
 
-json.today service.score_for_today(player)
+json.today service.score_for_today(player.league_player)
 json.history cache: cache_key do
-  scores_hash = service.scores_summary(player)
+  scores_hash = service.scores_summary(player.league_player)
 
   json.yesterday      scores_hash[:yesterday]
   json.week_to_date   scores_hash[:week_to_date]
