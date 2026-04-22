@@ -12,7 +12,8 @@ class Pool::TeamPlayer < ApplicationRecord
 
   scope :current, -> { where(dropped_at: nil) }
   scope :non_current, -> { where.not(dropped_at: nil) }
-  scope :for_date, ->(date) { where(added_at: ...date).where("dropped_at > ? OR dropped_at IS NULL", date) }
+  scope :for_date, ->(date) { where(added_at: ...date).
+                              where("dropped_at > ? OR dropped_at IS NULL", date) }
 
   def current?
     dropped_at.nil?

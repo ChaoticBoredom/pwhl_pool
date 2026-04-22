@@ -72,6 +72,7 @@ RSpec.configure do |config|
 
   Rails.root.glob("spec/support/**/*.rb").sort.each { |f| require f }
 
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryBot::Syntax::Methods
 
   Shoulda::Matchers.configure do |config|

@@ -1,4 +1,4 @@
-cache_key = "json_scores/#{player.cache_key_with_version}/#{Date.current}"
+cache_key = "json_scores/#{player.cache_key_with_version}/#{@pss.player_scorings_cache_key}/#{Date.current}"
 
 json.today service.score_for_today(player.league_player)
 json.history cache: cache_key do
