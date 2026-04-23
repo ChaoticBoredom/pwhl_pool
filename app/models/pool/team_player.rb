@@ -27,7 +27,7 @@ class Pool::TeamPlayer < ApplicationRecord
   def score_for_pool_date_range(pss, date_range)
     puts "SCORE FOR POOL DATE RANGE called"
     clipped_range = clip_date_range(date_range)
-    calc = -> { pss.score_for_date_range(clipped_range, league_player) }
+    calc = ->(*args) { pss.score_for_date_range(clipped_range, league_player) }
 
     return calc.call if current?
 
@@ -45,7 +45,7 @@ class Pool::TeamPlayer < ApplicationRecord
     effective_start = [date_range.begin, added_at].max
     effective_end = [date_range.end, dropped_at].compact.min
 
-    effective_start..effective_end
+    effective_start.to_date..effective_end.to_date
   end
 
   def denormalize_fields

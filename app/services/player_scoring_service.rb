@@ -64,6 +64,7 @@ class PlayerScoringService
   end
 
   def score_for_date_range(date_range, player)
+    date_range = date_range.begin.beginning_of_day..date_range.end.end_of_day
     records = player.records.for_season(@pool.season_id).for_date_range(date_range)
     calculate_aggregate(records, player)
   end

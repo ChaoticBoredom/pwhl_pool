@@ -30,8 +30,7 @@ class Pool::Team < ApplicationRecord
     # pool_team_players.
     #   includes(:league_player).
     #   map { |pt| pss.score_for_pool_date_range(date_range, pt.league_player) }.sum
-    res = pss.scores_for_players(pool_team_players)
-    binding.pry
+    res = pss.scores_for_players_for_season(pool_team_players)
     res
   end
 
