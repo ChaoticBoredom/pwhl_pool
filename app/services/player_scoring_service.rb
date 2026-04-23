@@ -64,10 +64,6 @@ class PlayerScoringService
     end
   end
 
-  def player_scorings_cache_key
-    Digest::MD5.hexdigest(@scorings.to_json)
-  end
-
   private
 
   # *_to_date intentionally exclude today, so we can add it and not recalculate
