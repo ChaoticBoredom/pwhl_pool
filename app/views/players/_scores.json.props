@@ -1,11 +1,21 @@
-cache_key = "json_scores/#{player.cache_key_with_version}/#{@pss.player_scorings_cache_key}/#{Date.current}"
+json.pool_score summary[:pool_score]
 
-json.today service.score_for_today(player.league_player)
-json.history cache: cache_key do
-  scores_hash = service.scores_summary(player.league_player)
+json.scores do
+  scores = summary[:scores]
 
-  json.yesterday      scores_hash[:yesterday]
-  json.week_to_date   scores_hash[:week_to_date]
-  json.month_to_date  scores_hash[:month_to_date]
-  json.season_to_date scores_hash[:season_to_date]
+  json.today scores[:today]
+  json.yesterday scores[:yesterday]
+  json.week_to_date scores[:week_to_date]
+  json.month_to_date scores[:month_to_date]
+  json.season_to_date scores[:season_to_date]
+end
+
+json.clipped_scores do
+  clipped = summary[:clipped_scores]
+
+  json.today clipped[:today]
+  json.yesterday clipped[:yesterday]
+  json.week_to_date clipped[:week_to_date]
+  json.month_to_date clipped[:month_to_date]
+  json.season_to_date clipped[:season_to_date]
 end

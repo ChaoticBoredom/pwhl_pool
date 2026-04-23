@@ -19,34 +19,7 @@ class Pool::TeamPlayer < ApplicationRecord
     dropped_at.nil?
   end
 
-  def score_for_pool(pss)
-    puts "SCORE FOR POOL called"
-    score_for_pool_date_range(pss, pool.start_end_range)
-  end
-
-  def score_for_pool_date_range(pss, date_range)
-    puts "SCORE FOR POOL DATE RANGE called"
-    clipped_range = clip_date_range(date_range)
-    calc = ->(*args) { pss.score_for_date_range(clipped_range, league_player) }
-
-    return calc.call if current?
-
-    cache_key = [
-      cache_key_with_version,
-      pss.player_scorings_cache_key,
-      clipped_range,
-    ]
-    Rails.cache.fetch(cache_key, &calc)
-  end
-
   private
-
-  def clip_date_range(date_range)
-    effective_start = [date_range.begin, added_at].max
-    effective_end = [date_range.end, dropped_at].compact.min
-
-    effective_start.to_date..effective_end.to_date
-  end
 
   def denormalize_fields
     self.pool_id ||= pool_team.pool_id

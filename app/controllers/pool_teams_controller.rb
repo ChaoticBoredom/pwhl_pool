@@ -1,54 +1,30 @@
 class PoolTeamsController < ApplicationController
   def show
     id = params[:id]
-    @pool_team = Pool::Team.includes(pool_team_players: :league_player).find(id)
+    @pool_team = Pool::Team.
+      includes(pool_team_players: { league_player: :current_team }).
+      find(id)
     @pool = @pool_team.pool
-
-    # Preload data to speedify things
-    all_players = @pool_team.league_players.to_a
-    goalies = all_players.select(&:goalie?)
-    skaters = all_players.select(&:skater?)
-
-    today_range = Date.current.all_day
-
-    ActiveRecord::Associations::Preloader.new(
-      records: goalies,
-      associations: [{ records: :league_game }, :current_team],
-    ).call
-
-    ActiveRecord::Associations::Preloader.new(
-      records: skaters,
-      associations: [{ records: :league_game }, :current_team],
-    ).call
-
     @pss = PlayerScoringService.new(@pool.scoring, @pool)
+    @current_team = @pool_team.current_team.to_a
+    @previous_team = @pool_team.previous_team.to_a
+
+    @player_summaries = @pss.player_summaries(@pool_team.pool_team_players.to_a)
 
     render :show
   end
 
   def simple_show
     id = params[:pool_team_id]
-    @pool_team = Pool::Team.includes(pool_team_players: :league_player).find(id)
+    @pool_team = Pool::Team.
+      includes(pool_team_players: { league_player: :current_team }).
+      find(id)
     @pool = @pool_team.pool
-
-    # Preload data to speedify things
-    all_players = @pool_team.league_players.to_a
-    goalies = all_players.select(&:goalie?)
-    skaters = all_players.select(&:skater?)
-
-    today_range = Date.current.all_day
-
-    ActiveRecord::Associations::Preloader.new(
-      records: goalies,
-      associations: [{ records: :league_game }, :current_team],
-    ).call
-
-    ActiveRecord::Associations::Preloader.new(
-      records: skaters,
-      associations: [{ records: :league_game }, :current_team],
-    ).call
-
     @pss = PlayerScoringService.new(@pool.scoring, @pool)
+    @current_team = @pool_team.current_team.to_a
+    @previous_team = @pool_team.previous_team.to_a
+
+    @player_summaries = @pss.player_summaries(@pool_team.pool_team_players.to_a)
 
     render :simple_show
   end

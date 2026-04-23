@@ -18,32 +18,11 @@ class Pool::Team < ApplicationRecord
     pool_team_players.includes(league_player: :current_team).non_current
   end
 
-  def score_for_date(date)
-    pss = PlayerScoringService.new(pool.scoring, pool)
-    players = pool_team_players.for_date(date).includes(:league_player)
-
-    players.sum { |p| pss.score_for_date(date, p.league_player) }
-  end
-
-  def score_for_date_range(date_range)
-    pss = PlayerScoringService.new(pool.scoring, pool)
-    # pool_team_players.
-    #   includes(:league_player).
-    #   map { |pt| pss.score_for_pool_date_range(date_range, pt.league_player) }.sum
-    res = pss.scores_for_players_for_season(pool_team_players)
-    res
-  end
-
   def total_score
     pss = PlayerScoringService.new(pool.scoring, pool)
-    dropped_scores = Rails.cache.fetch("#{cache_key_with_version}/partial_total_dropped", expires_in: 24.hours) do
-      players = pool_team_players.includes(:pool, league_player: :records).non_current
 
-      players.map { |p| p.score_for_pool(pss) }.sum
-    end
-
-    players = pool_team_players.includes(:pool, league_player: :records).current
-
-    dropped_scores + players.map { |p| p.score_for_pool(pss) }.sum
+    all_players = pool_team_players.to_a
+    scores = pss.bulk_season_scores(all_players)
+    scores.values.sum
   end
 end
