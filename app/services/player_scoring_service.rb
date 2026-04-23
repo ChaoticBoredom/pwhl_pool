@@ -14,7 +14,7 @@ class PlayerScoringService
       records = records_map[tp.league_player_id] || []
       active_range = player_active_range(tp)
 
-      r_hash[tp.league_player_id] = {
+      r_hash[tp.id] = {
         pool_score: season_score_from_records(records, player.position, active_range),
         scores: build_scores_summary(records, player.position),
         clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),

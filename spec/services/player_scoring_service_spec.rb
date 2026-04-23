@@ -64,7 +64,7 @@ RSpec.describe PlayerScoringService do
         added_at: added_at,
         dropped_at: dropped_at
       )
-      service.player_summaries([tp])[skater.id]
+      service.player_summaries([tp])[tp.id]
     end
 
     context "with a game today" do
@@ -506,7 +506,7 @@ RSpec.describe PlayerScoringService do
         goals: 5)
 
       tp = create_team_player(skater, pool_team, added_at: season_start)
-      result = service.player_summaries([tp])[skater.id]
+      result = service.player_summaries([tp])[tp.id]
 
       expect(result[:pool_score]).to eq(0)
       expect(result[:scores][:today]).to eq(0)
@@ -525,7 +525,7 @@ RSpec.describe PlayerScoringService do
         goals: 5)
 
       tp = create_team_player(skater, pool_team, added_at: season_start)
-      result = service.player_summaries([tp])[skater.id]
+      result = service.player_summaries([tp])[tp.id]
 
       expect(result[:pool_score]).to eq(0)
       expect(result[:scores][:today]).to eq(0)
@@ -547,7 +547,7 @@ RSpec.describe PlayerScoringService do
       create(:pwhl_skater_stat, league_player: skater, league_game: out_of_season_game, goals: 5)
 
       tp = create_team_player(skater, pool_team, added_at: season_start)
-      result = service.player_summaries([tp])[skater.id]
+      result = service.player_summaries([tp])[tp.id]
 
       expect(result[:scores][:season_to_date]).to eq(0)
     end

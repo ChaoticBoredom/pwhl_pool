@@ -11,7 +11,7 @@ end
 json.current_team do
   json.array! @current_team do |tp|
     player = tp.league_player
-    summary = @player_summaries[tp.league_player_id]
+    summary = @player_summaries[tp.id]
     
     json.id tp.id
     json.league_player_id player.id
@@ -28,7 +28,7 @@ end
 json.previous_team do
   json.array! @previous_team do |tp|
     player = tp.league_player
-    summary = @player_summaries[tp.league_player_id]
+    summary = @player_summaries[tp.id]
     
     json.id tp.id
     json.league_player_id player.id
