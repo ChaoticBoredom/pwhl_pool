@@ -21,8 +21,7 @@ class Pool::Team < ApplicationRecord
   def total_score
     pss = PlayerScoringService.new(pool.scoring, pool)
 
-    all_players = pool_team_players.to_a
-    scores = pss.bulk_season_scores(all_players)
-    scores.values.sum
+    scores = pss.bulk_team_scores([self])
+    scores[id] || 0.0
   end
 end

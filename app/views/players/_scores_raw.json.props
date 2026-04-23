@@ -1,0 +1,5 @@
+json.today summary[:today]
+json.yesterday summary[:yesterday]
+json.week_to_date summary[:week_to_date]
+json.month_to_date summary[:month_to_date]
+json.season_to_date summary[:season_to_date]

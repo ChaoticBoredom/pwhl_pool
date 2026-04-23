@@ -58,12 +58,19 @@ function PoolTeamDetails() {
         {poolTeam.current_team?.map(player => (
           <DataRow key={player.league_player_id} gridClass={`${poolGrid} grid-row`}>
             <Player player={player} />
-            <div className="score-cell">{player.scores.today.toFixed(2)}</div>
-            <div className="score-cell">{player.scores.history.yesterday.toFixed(2)}</div>
-            <div className="score-cell">{player.scores.history.month_to_date.toFixed(2)}</div>
-            <div className="score-cell">{player.scores.history.season_to_date.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.scores.today.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.scores.yesterday.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
+            <div className="score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
           </DataRow>
         ))}
+        <DataRow gridClass={`${poolGrid}`}>
+          <div>Total</div>
+          <div />
+          <div />
+          <div />
+          <div className="score-cell">{poolTeam.total_score.toFixed(2)}</div>
+        </DataRow>
       </div>
     </div>
   )

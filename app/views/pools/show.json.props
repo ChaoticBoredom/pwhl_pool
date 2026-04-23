@@ -1,0 +1,26 @@
+json.name @pool.name
+json.pool_type @pool.pool_type
+
+json.league do
+  json.id @pool.league.id
+  json.name @pool.league.name
+  json.short_name @pool.league.short_name
+end
+
+json.admin do
+  json.id @pool.admin.id
+  json.name @pool.admin.name
+end
+
+json.pool_teams do
+  json.array! @pool.pool_teams do |team|
+    json.id team.id
+    json.team_name team.team_name
+    json.total_score @team_scores[team.id] || 0.0
+
+    json.user do
+      json.id team.user.id
+      json.name team.user.name
+    end
+  end
+end

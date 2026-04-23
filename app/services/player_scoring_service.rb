@@ -34,16 +34,33 @@ class PlayerScoringService
     }
   end
 
-  def bulk_season_scores(team_players)
-    return {} if team_players.empty?
+  def bulk_team_scores(pool_teams)
+    return {} if pool_teams.empty?
 
-    records_map = load_season_records_for(team_players.map(&:league_player_id))
+    all_team_players = pool_teams.flat_map(&:pool_team_players)
+    return {} if all_team_players.empty?
 
-    team_players.each_with_object({}) do |tp, r_hash|
+    records_map = load_season_records_for(all_team_players.map(&:league_player_id))
+
+    team_totals = Hash.new(0.0)
+    all_team_players.each do |tp|
       records = records_map[tp.league_player_id] || []
       active_range = player_active_range(tp)
-      clipped_records = records_in_range(records, active_range)
-      r_hash[tp.league_player_id] = calculate_aggregate(clipped_records, tp.position)
+      clipped = records_in_range(records, active_range)
+      team_totals[tp.pool_team_id] += calculate_aggregate(clipped, tp.position)
+    end
+
+    team_totals
+  end
+
+  def raw_player_summaries(players)
+    return {} if players.empty?
+
+    records_map = load_season_records_for(players.map(&:id))
+
+    players.each_with_object({}) do |player, r_hash|
+      records = records_map[player.id] || []
+      r_hash[player.id] = build_scores_summary(records, player.position)
     end
   end
 
