@@ -16,9 +16,10 @@ gem "bcrypt", "~> 3.1.22"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
-gem "solid_queue"
-gem "solid_cable"
+# DO NOT USE THESE!!! It will only cause you massive headaches
+# gem "solid_cache"
+# gem "solid_queue"
+# gem "solid_cable"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -63,7 +64,8 @@ group :development, :test do
 end
 
 gem "sidekiq", "~> 8.1"
-
 gem "sidekiq-cron", "~> 2.3"
+gem "redis"
+
 
 gem "props_template", "~> 1.0"
