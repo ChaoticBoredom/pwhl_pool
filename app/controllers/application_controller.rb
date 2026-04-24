@@ -9,7 +9,7 @@ class ApplicationController < ActionController::API
   end
 
   def frontend
-    render file: Rails.root.join('public', 'index.html'), layout: false
+    render file: Rails.root.join("public", "index.html"), layout: false
   end
 
   # Only do this if you are strictly an API and understand the risks
