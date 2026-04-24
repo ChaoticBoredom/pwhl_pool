@@ -27,9 +27,22 @@ class Pool < ApplicationRecord
   end
 
   def start_end_range
-    Rails.cache.fetch("#{cache_key_with_version}/first_last_game", expires_in: 3.days) do
-      start_time, end_time = League::Game.where(league_id: league_id, season_id: season_id).pluck(:start_time).minmax
-      start_time.beginning_of_day..end_time.end_of_day
+    Rails.cache.fetch("#{cache_key_with_version}/first_last_game", expires_in: pool_cache_ttl) do
+      times = League::Game.
+        where(league_id: league_id, season_id: season_id).
+        pluck(:start_time).minmax
+
+      if times.any?
+        times.min.beginning_of_day..times.max.end_of_day
+      else
+        created_at.beginning_of_day..1.year.from_now.end_of_day
+      end
     end
+  end
+
+  private
+
+  def pool_cache_ttl
+    League::Game.exists?(league_id: league_id, season_id: season_id) ? 20.days : 1.hour
   end
 end
