@@ -28,7 +28,7 @@ class PlayerScoringService
     active_range = player_active_range(team_player)
 
     {
-      pool_score: season_score_from_records(recprds, player.position, active_range),
+      pool_score: season_score_from_records(records, player.position, active_range),
       scores: build_scores_summary(records, player.position),
       clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
     }

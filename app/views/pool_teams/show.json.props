@@ -35,6 +35,7 @@ json.previous_team do
     json.name player.name
     json.current_team_short_code player.current_team_short_code
     json.added_at tp.added_at
+    json.dropped_at tp.dropped_at
 
     json.scores do
       json.partial! partial: 'players/scores', locals: { summary: summary }
