@@ -32,7 +32,7 @@ function App() {
 
   useEffect(() => {
     if (currentUser && token && location.pathname === "/") {
-      fetch(`${import.meta.env.VITE_API_URL}/pools`, {
+      fetch(`/pools`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

@@ -11,7 +11,7 @@ function PoolTeamDetails() {
   const poolGrid = "grid-cols-[1fr+80px_80px_100px_80px]"
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${teamId}`, {
+    fetch(`/pool_teams/${teamId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

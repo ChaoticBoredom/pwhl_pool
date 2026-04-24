@@ -10,7 +10,7 @@ function PoolDetails() {
   const poolGrid = "grid-cols-[1fr+120px_80px]"
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/pools/${poolId}`, {
+    fetch(`/pools/${poolId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

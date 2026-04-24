@@ -31,8 +31,8 @@ export default function AuthForm() {
     e.preventDefault()
 
     const endpoint = isLogin
-      ? `${import.meta.env.VITE_API_URL}/session`
-      : `${import.meta.env.VITE_API_URL}/users`;
+      ? `/session`
+      : `/users`;
 
     const payload = isLogin
       ? { email_address: email, password: password }

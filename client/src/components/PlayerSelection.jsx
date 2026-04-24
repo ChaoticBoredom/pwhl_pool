@@ -13,7 +13,7 @@ const PlayerSelection = () => {
 
   useEffect(() => {
     if (!poolId) return;
-    fetch(`${import.meta.env.VITE_API_URL}/pools/${poolId}/pool_boxes`, {
+    fetch(`/pools/${poolId}/pool_boxes`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ const PlayerSelection = () => {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/pool_teams/${teamId}/update_roster`, {
+      const response = await fetch(`/pool_teams/${teamId}/update_roster`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
