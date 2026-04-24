@@ -13,7 +13,7 @@ const PlayerSelection = () => {
 
   useEffect(() => {
     if (!poolId) return;
-    fetch(`/pools/${poolId}/pool_boxes`, {
+    fetch(`/api/pools/${poolId}/pool_boxes`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ const PlayerSelection = () => {
     };
 
     try {
-      const response = await fetch(`/pool_teams/${teamId}/update_roster`, {
+      const response = await fetch(`/api/pool_teams/${teamId}/update_roster`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

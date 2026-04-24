@@ -32,7 +32,7 @@ function App() {
 
   useEffect(() => {
     if (currentUser && token && location.pathname === "/") {
-      fetch(`/pools`, {
+      fetch(`/api/pools`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

@@ -10,7 +10,7 @@ function PoolDetails() {
   const poolGrid = "grid-cols-[1fr+120px_80px]"
 
   useEffect(() => {
-    fetch(`/pools/${poolId}`, {
+    fetch(`/api/pools/${poolId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

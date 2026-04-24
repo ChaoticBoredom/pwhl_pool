@@ -14,7 +14,7 @@ export default function JoinPoolPrompt() {
   useEffect(() => {
     const fetchPoolData = async () => {
       try {
-        const response = await fetch(`/pools/${poolId}`, {
+        const response = await fetch(`/api/pools/${poolId}`, {
           headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ export default function JoinPoolPrompt() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/pool_teams`, {
+      const response = await fetch(`/api/pool_teams`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
