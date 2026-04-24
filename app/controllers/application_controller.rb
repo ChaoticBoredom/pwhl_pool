@@ -4,6 +4,8 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
   include Authentication
 
+  skip_before_action :require_authentication, only: [:frontend], raise: false
+
   def current_user
     Current.user ||= Current.session&.user
   end
