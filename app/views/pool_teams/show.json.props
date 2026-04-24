@@ -9,36 +9,36 @@ json.owner do
 end
 
 json.current_team do
-  json.array! @pool_team.current_team do |rp|
-    player = rp.league_player
+  json.array! @current_team do |tp|
+    player = tp.league_player
+    summary = @player_summaries[tp.id]
     
-    json.id rp.id
+    json.id tp.id
     json.league_player_id player.id
     json.name player.name
     json.current_team_short_code player.current_team_short_code
-    json.added_at rp.added_at
+    json.added_at tp.added_at
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { player: rp, pool: @pool, service: @pss }
-      json.for_pool rp.score_for_pool(@pss)
+      json.partial! partial: 'players/scores', locals: { summary: summary }
     end
   end
 end
 
 json.previous_team do
-  json.array! @pool_team.previous_team do |rp|
-    player = rp.league_player
+  json.array! @previous_team do |tp|
+    player = tp.league_player
+    summary = @player_summaries[tp.id]
     
-    json.id rp.id
+    json.id tp.id
     json.league_player_id player.id
     json.name player.name
-    json.current_team_id player.current_team_short_code
-    json.added_at rp.added_at
-    json.dropped_at rp.dropped_at
+    json.current_team_short_code player.current_team_short_code
+    json.added_at tp.added_at
+    json.dropped_at tp.dropped_at
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { player: rp, pool: @pool, service: @pss }
-      json.for_pool rp.score_for_pool(@pss)
+      json.partial! partial: 'players/scores', locals: { summary: summary }
     end
   end
 end

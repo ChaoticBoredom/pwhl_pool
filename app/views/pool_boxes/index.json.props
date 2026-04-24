@@ -12,7 +12,8 @@ json.boxes do
         json.selected @selected_ids.include?(player.id)
 
         json.scores do
-          json.partial! partial: 'players/scores', locals: {player: player, pool: box.pool, service: @pss}
+          json.partial! partial: 'players/scores_raw',
+            locals: { summary: @player_summaries[player.id] }
         end
       end
     end

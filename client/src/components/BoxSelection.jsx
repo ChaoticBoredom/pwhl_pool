@@ -29,7 +29,7 @@ const BoxSelection = ({ box, selectedPlayerId, onSelect }) => {
               </Player>
               <div className="score-display-vertical">
                 <span className="score-super">SEASON-TO-DATE</span>
-                <span className="score-main">{player.scores.history.season_to_date.toFixed(2)}</span>
+                <span className="score-main">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>
           );

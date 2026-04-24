@@ -11,24 +11,26 @@ end
 json.current_team do
   json.array! @pool_team.current_team do |rp|
     player = rp.league_player
+    summary = @player_summaries[rp.id]
     json.id rp.id
     json.league_player_id player.id
     json.name player.name
     json.added_at rp.added_at
 
-    json.for_pool @pss.score_from_team_player(rp)
+    json.for_pool summary[:pool_score]
   end
 end
 
 json.previous_team do
   json.array! @pool_team.previous_team do |rp|
     player = rp.league_player
+    summary = @player_summaries[rp.id]
     json.id rp.id
     json.league_player_id player.id
     json.name player.name
     json.added_at rp.added_at
     json.dropped_at rp.dropped_at
 
-    json.for_pool @pss.score_from_team_player(rp)
+    json.for_pool summary[:pool_score]
   end
 end
