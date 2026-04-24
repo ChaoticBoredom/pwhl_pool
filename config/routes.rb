@@ -2,10 +2,20 @@ require "sidekiq/web"
 require "sidekiq/cron/web"
 require "rack/session/cookie"
 
+class AdminConstraint
+  def matches?(request)
+    return false unless request.session[:session_id]
+
+    Session.find_by(id: request.session[:session_id]).user.admin?
+  end
+end
+
 secret_key_base = Rails.application.credentials.secret_key_base
 Sidekiq::Web.use(Rack::Session::Cookie, secret: secret_key_base)
 Rails.application.routes.draw do
-  mount Sidekiq::Web => "/sidekiq"
+  constraints AdminConstraint.new do
+    mount Sidekiq::Web => "/sidekiq"
+  end
 
   scope :api, defaults: { format: :json } do
     post "/users", to: "users#create"
