@@ -29,6 +29,16 @@ module PwhlPoolApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Show emails in console, but continue to filter elsewhere
+    console do
+      ActiveSupport.on_load(:active_record) do
+        self.filter_attributes = self.filter_attributes - [:email_address, :email]
+      end
+
+      config.filter_parameters.delete(:email)
+      config.filter_parameters.delete(:email_address)
+    end
+
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
