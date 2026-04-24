@@ -3,7 +3,7 @@ import { PWHL_TEAMS } from '../constants/teams';
 import { DataRow } from './DataRow';
 import Player from './Player';
 
-const BoxSelection = ({ box, selectedPlayerId, onSelect }) => {
+const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
   const selectionGrid = "grid-cols-[1fr_80px]";
 
   return (
@@ -28,7 +28,7 @@ const BoxSelection = ({ box, selectedPlayerId, onSelect }) => {
                 />
               </Player>
               <div className="score-display-vertical">
-                <span className="score-super">SEASON-TO-DATE</span>
+                <span className="score-super">{isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}</span>
                 <span className="score-main">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>

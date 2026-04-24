@@ -10,10 +10,13 @@ class PoolBoxesController < ApplicationController
     end
 
     all_players = @boxes.flat_map(&:players).uniq(&:id)
-
     pss = PlayerScoringService.new(@pool.scoring, @pool)
 
-    @player_summaries = pss.raw_player_summaries(all_players)
+    if @pool.using_reference_season?
+      @player_scores = pss.raw_player_season_totals(all_players, season_id: @pool.display_season_id)
+    else
+      @player_scores = pss.raw_player_summaries(all_players)
+    end
 
     render :index
   end
