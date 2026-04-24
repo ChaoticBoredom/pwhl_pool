@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_24_090038) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_24_111106) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -119,10 +119,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_24_090038) do
     t.uuid "league_id", null: false
     t.string "name", null: false
     t.integer "pool_type", null: false
+    t.string "reference_season_id"
     t.string "season_id", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"
+    t.check_constraint "reference_season_id::text <> season_id::text", name: "pools_reference_season_differs_from_season"
   end
 
   create_table "pwhl_goalie_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

@@ -64,6 +64,18 @@ class PlayerScoringService
     end
   end
 
+  def raw_player_season_totals(players, season_id: nil)
+    return {} if players.empty?
+
+    effective_season = season_id || @pool.display_season_id
+    records_map = load_season_records_for(players.map(&:id), season_id: effective_season)
+
+    players.each_with_object({}) do |player, r_hash|
+      records = records_map[player.id] || []
+      r_hash[player.id] = calculate_aggregate(records, player.position)
+    end
+  end
+
   private
 
   # *_to_date intentionally exclude today, so we can add it and not recalculate
@@ -103,13 +115,13 @@ class PlayerScoringService
       to_a
   end
 
-  def load_season_records_for(player_ids)
+  def load_season_records_for(player_ids, season_id: @pool.season_id)
     records = [Pwhl::SkaterStat, Pwhl::GoalieStat].flat_map do |klass|
       klass.
         includes(:league_game).
         joins(:league_game).
         where(league_player_id: player_ids).
-        where(league_games: { season_id: @pool.season_id }).
+        where(league_games: { season_id: season_id }).
         to_a
     end.group_by(&:league_player_id)
   end

@@ -9,6 +9,7 @@ const PlayerSelection = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
   const [selections, setSelections] = useState({});
+  const [isCurrentSeason, setIsCurrentSeason] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const PlayerSelection = () => {
         if (selected) initial[b.id] = selected.id;
       });
       setSelections(initial);
+      setIsCurrentSeason(!data.using_reference_season);
     })
     .catch(err => console.error("Fetch Error:", err));
   }, [poolId]);
@@ -90,6 +92,7 @@ const PlayerSelection = () => {
           <BoxSelection
             key={box.id}
             box={box}
+            isCurrentSeason={isCurrentSeason}
             selectedPlayerId={selections[box.id]}
             onSelect={(playerId) => {
               setSelections({...selections, [box.id]: playerId});

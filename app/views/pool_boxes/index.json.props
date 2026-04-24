@@ -1,3 +1,5 @@
+json.using_reference_season @pool.using_reference_season?
+
 json.boxes do
   json.array! @boxes do |box|
     json.id box.id
@@ -11,9 +13,14 @@ json.boxes do
 
         json.selected @selected_ids.include?(player.id)
 
+        scores = @player_scores[player.id]
+
         json.scores do
-          json.partial! partial: 'players/scores_raw',
-            locals: { summary: @player_summaries[player.id] }
+          if @pool.using_reference_season?
+            json.season_to_date scores || 0.0
+          else
+            json.partial! partial: 'players/scores_raw', locals: { summary: scores }
+          end
         end
       end
     end
