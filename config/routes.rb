@@ -29,4 +29,5 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  get "*path", to: "application#frontend", constraints: ->(request) { !request.xhr? && request.format.html? }
 end
