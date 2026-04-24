@@ -31,8 +31,8 @@ export default function AuthForm() {
     e.preventDefault()
 
     const endpoint = isLogin
-      ? `/session`
-      : `/users`;
+      ? `/api/session`
+      : `/api/users`;
 
     const payload = isLogin
       ? { email_address: email, password: password }
@@ -88,7 +88,7 @@ export default function AuthForm() {
           required
         />
         <button type="submit" className="btn-primary">
-          {isLogin ? 'Sign In' : 'Join League'}
+          {isLogin ? 'Sign In' : 'Create Account'}
         </button>
       </form>
 
