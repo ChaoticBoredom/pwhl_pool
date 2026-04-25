@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext'
 import AuthForm from './components/AuthForm'
 import PlayerSelection from './components/PlayerSelection'
 import PoolDetails from './components/PoolDetails'
+import PoolScoring from './components/PoolScoring'
 import PoolTeamDetails from './components/PoolTeamDetails'
 import JoinPoolPrompt from './components/JoinPoolPrompt'
 
@@ -66,6 +67,7 @@ function App() {
           currentUser ? <Dashboard pools={pools} onLogout={logout} /> : <Navigate to="/login" replace />
         } />
         <Route path="pools/:poolId" element={<PoolDetails />} />
+        <Route path="pools/:poolId/scoring" element={<PoolScoring />} />
         <Route path="pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
         <Route path="pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
       </Routes>
