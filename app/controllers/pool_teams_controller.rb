@@ -39,6 +39,17 @@ class PoolTeamsController < ApplicationController
     end
   end
 
+  def update
+    @pool_team = Pool::Team.find(params[:id])
+    return head :forbidden unless current_user == @pool_team.owner
+
+    @pool_team.update(team_name: params.permit(:team_name))
+
+    render json: {
+      message: "Team Name updated!",
+    }
+  end
+
   def update_roster
     @pool_team = Pool::Team.find(params[:id])
     return head :forbidden unless current_user == @pool_team.owner

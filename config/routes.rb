@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       resources :pool_boxes, only: [:index]
       resources :pool_scoring, only: [:index]
     end
-    resources :pool_teams, only: [:show, :create] do
+    resources :pool_teams, only: [:show, :create, :update] do
       member do
         post :update_roster
       end
