@@ -495,6 +495,97 @@ RSpec.describe PlayerScoringService do
     end
   end
 
+  describe "#raw_player_season_totals" do
+    around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
+
+    let(:skater) { create(:pwhl_skater, league: league) }
+    let(:service) { build_service(skater_scorings) }
+
+    it "returns a flat Float total per player" do
+      create(:pwhl_skater_stat,
+        league_player: skater,
+        league_game: create_game(start_time: 3.days.ago),
+        goals: 2, assists: 1)
+
+      result = service.raw_player_season_totals([skater])
+      expect(result[skater.id]).to eq(8.0)
+    end
+
+    it "returns an empty hash when input is empty" do
+      expect(service.raw_player_season_totals([])).to eq({})
+    end
+
+    it "returns 0.0 for a a player with no stats in the season" do
+      expect(service.raw_player_season_totals([skater])[skater.id]).to eq(0)
+    end
+
+    it "handles multiple players in one call" do
+      skater2 = create(:pwhl_skater, league: league)
+      create(:pwhl_skater_stat,
+        league_player: skater,
+        league_game: create_game(start_time: 3.days.ago),
+        goals: 1)
+      create(:pwhl_skater_stat,
+        league_player: skater2,
+        league_game: create_game(start_time: 3.days.ago),
+        assists: 2)
+
+      result = service.raw_player_season_totals([skater, skater2])
+      expect(result[skater.id]).to eq(3.0)
+      expect(result[skater2.id]).to eq(4.0)
+    end
+
+    context "with an explicit season_id override" do
+      let(:reference_season_id) { "2023" }
+      let!(:non_included_game) { create(:pwhl_skater_stat,
+        league_player: skater,
+        league_game: create_game(start_time: 3.days.ago),
+        goals: 5) }
+
+      it "loads stats from the specified season" do
+        ref_game = create(:league_game,
+          :final,
+          league: league,
+          season_id: reference_season_id,
+          start_time: Time.zone.parse("2023-01-01 12:00:00"))
+        create(:pwhl_skater_stat, league_player: skater,
+          league_game: ref_game, goals: 1)
+
+        result = service.raw_player_season_totals([skater], season_id: reference_season_id)
+        expect(result[skater.id]).to eq(3.0)
+      end
+
+      it "returns 0 for a player with no stats in the reference_season" do
+        result = service.raw_player_season_totals([skater], season_id: reference_season_id)
+        expect(result[skater.id]).to eq(0)
+      end
+    end
+
+    context "uses pool.display_season_id" do
+      let(:reference_season_id) { "2023" }
+      let(:pool_with_reference) do
+        create(:pool, league: league, season_id: "2025-2026", reference_season_id: "2023").tap do |p|
+          allow(p).to receive(:start_end_range).and_return(season_start..season_end)
+        end
+      end
+
+      let(:reference_service) { described_class.new(skater_scorings, pool_with_reference) }
+
+      it "uses the reference season when no explicit season_id is passed" do
+        ref_game = create(:league_game,
+          :final,
+          league: league,
+          season_id: reference_season_id,
+          start_time: Time.zone.parse("2026-01-01 12:00:00"))
+        create(:pwhl_skater_stat, league_player: skater,
+          league_game: ref_game, goals: 2)
+
+        result = reference_service.raw_player_season_totals([skater])
+        expect(result[skater.id]).to eq(6.0)
+      end
+    end
+  end
+
   describe "with no scoring rules for the player's position" do
     let(:skater) { create(:pwhl_skater, league: league) }
     let(:service) { build_service(goalie_scorings) }

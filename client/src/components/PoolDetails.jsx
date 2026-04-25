@@ -21,6 +21,12 @@ function PoolDetails() {
     .catch(err => console.error("Error fetching pool details:", err))
   }, [poolId, token])
 
+  useEffect(() => {
+    if (pool?.name) {
+      document.title = `Fantasy - ${pool.name}`;
+    }
+  }, [pool]);
+
   if (!pool) return <div>Loading pool details...</div>
 
   return (
