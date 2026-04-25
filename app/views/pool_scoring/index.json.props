@@ -1,0 +1,15 @@
+json.skaters do
+  json.array! @skater_scorings do |scoring|
+    json.id scoring.id
+    json.field_name scoring.field_name
+    json.value scoring.value
+  end
+end
+
+json.goalies do
+  json.array! @goalie_scorings do |scoring|
+    json.id scoring.id
+    json.field_name scoring.field_name
+    json.value scoring.value
+  end
+end

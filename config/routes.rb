@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     #
     resources :pools do
       resources :pool_boxes, only: [:index]
+      resources :pool_scoring, only: [:index]
     end
     resources :pool_teams, only: [:show, :create] do
       member do
