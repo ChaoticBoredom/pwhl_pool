@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_24_111106) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_25_001306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -72,8 +72,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_24_111106) do
     t.uuid "league_player_ids", default: [], null: false, array: true
     t.string "name", null: false
     t.uuid "pool_id", null: false
+    t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.index ["league_player_ids"], name: "index_pool_boxes_on_league_player_ids", using: :gin
+    t.index ["pool_id", "position"], name: "index_pool_boxes_on_pool_id_and_position", unique: true
     t.index ["pool_id"], name: "index_pool_boxes_on_pool_id"
   end
 

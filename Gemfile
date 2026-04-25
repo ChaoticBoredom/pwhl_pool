@@ -39,6 +39,7 @@ gem "faraday"
 gem "rack-cors"
 
 gem "csv"
+gem "positioning"
 
 group :development, :test do
   gem "pry"
@@ -66,6 +67,5 @@ end
 gem "sidekiq", "~> 8.1"
 gem "sidekiq-cron", "~> 2.3"
 gem "redis"
-
 
 gem "props_template", "~> 1.0"
