@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useLocation, matchPath } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useAuth } from './context/AuthContext'
 import AuthForm from './components/AuthForm'
@@ -30,6 +30,8 @@ function App() {
   const location = useLocation();
   const [pools, setPools] = useState([])
 
+  const isPoolRoute = matchPath("pools/:poolId/*", location.pathname);
+
   useEffect(() => {
     if (currentUser && token && location.pathname === "/") {
       fetch(`/api/pools`, {
@@ -42,7 +44,13 @@ function App() {
         .then(data => setPools(data))
         .catch(err => console.log("Fetch error:", err));
     }
-  }, [currentUser, token, location.pathname]);
+  }, [currentUser, token, location.pathname,]);
+
+  useEffect(() => {
+    if (!isPoolRoute) {
+      document.title = "Fantasy Pools";
+    }
+  }, [location.pathname, isPoolRoute])
 
   return (
     <div style={{ padding: '40px' }}>
