@@ -224,6 +224,9 @@ GEM
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
+    positioning (0.4.8)
+      activerecord (>= 6.1)
+      activesupport (>= 6.1)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -418,6 +421,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   kamal
   pg (~> 1.1)
+  positioning
   props_template (~> 1.0)
   pry
   pry-byebug
