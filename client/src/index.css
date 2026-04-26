@@ -364,6 +364,17 @@ button:disabled {
   @apply px-4 pt-4 pb-0.5 text-xs font-bold uppercase tracking-widest text-gray-500;
 }
 
+.back-to-dashboard {
+  display: inline-block; /* Essential to allow margins to work correctly */
+  margin-bottom: 30px;
+  text-decoration: none;
+  color: #666;
+}
+
+.back-to-dashboard:hover {
+  text-decoration: underline;
+}
+
 .wrap-header {
   max-width: 60px;
   line-height: 1.2;

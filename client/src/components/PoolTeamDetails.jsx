@@ -33,8 +33,6 @@ function PoolTeamDetails() {
       body: JSON.stringify({ team_name: newValue })
     });
 
-    console.log(response)
-
     if (!response.ok) {
       console.log("Pool team update error:");
     }
