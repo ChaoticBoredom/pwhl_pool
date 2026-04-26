@@ -7,7 +7,7 @@ function PoolDetails() {
   const { poolId } = useParams()
   const [pool, setPool] = useState(null)
   const { token, currentUser } = useAuth();
-  const poolGrid = "grid-cols-[1fr+120px_80px]"
+  const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
   useEffect(() => {
     fetch(`/api/pools/${poolId}`, {
@@ -36,6 +36,7 @@ function PoolDetails() {
       <Link to={`/pools/${poolId}/scoring`} className="text-xl">Scoring</Link>
       <div className="mt-6">
         <DataRow isHeader gridClass={poolGrid}>
+          <div />
           <div>Team</div>
           <div className="text-right">Owner</div>
           <div className="text-right">Score</div>
@@ -43,6 +44,7 @@ function PoolDetails() {
 
         {pool.pool_teams?.sort((a, b) => b.total_score - a.total_score)?.map(team => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
+            <div className="font-mono text-xs text-gray-500 tabular-nums">{team.rank}</div>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
             <div className="text-right text-gray-600">{team.user?.name}</div>
             <div className="text-right font-mono font-bold">{team.total_score.toFixed(2)}</div>

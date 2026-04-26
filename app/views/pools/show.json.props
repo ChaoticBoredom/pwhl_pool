@@ -16,6 +16,7 @@ json.pool_teams do
   json.array! @pool.pool_teams do |team|
     json.id team.id
     json.team_name team.team_name
+    json.rank @team_ranks[team.id]
     json.total_score @team_scores[team.id] || 0.0
 
     json.user do
