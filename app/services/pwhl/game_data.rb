@@ -172,8 +172,8 @@ class Pwhl::GameData
     rec.saves = data.fetch("saves", 0)
     rec.goals_against = data.fetch("goals_against", 0)
     rec.shots_against = data.fetch("shots_against", 0)
-    rec.penalty_minutes = data.fetch("pim", 0).to_i * 60
-    rec.time_on_ice = data.fetch("seconds_played", 0).to_i || data.fetch("seconds", 0).to_i
+    rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
+    rec.time_on_ice = parse_time(data.fetch("minutes"))
 
     rec
   end
@@ -182,11 +182,11 @@ class Pwhl::GameData
     rec.goals = data.fetch("goals", 0)
     rec.assists = data.fetch("assists", 0)
 
-    rec.penalty_minutes = data.fetch("pim", 0).to_i * 60
+    rec.penalty_minutes = data.fetch("penalty_minutes", 0).to_i.minutes
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
-    rec.time_on_ice = data.fetch("seconds", 0).to_i
-    rec.plus_minus = data.fetch("plusminus", 0)
+    rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds"))
+    rec.plus_minus = data.fetch("plusminus", 0).to_i
     rec.power_play_goals = data.fetch("power_play_goals", 0)
     rec.short_handed_goals = data.fetch("short_handed_goals", 0)
     rec.shots_blocked = data.fetch("shots_blocked_by_player", 0)
@@ -195,5 +195,11 @@ class Pwhl::GameData
     rec.faceoffs_won = data.fetch("faceoffs_won", data.fetch("faceoff_wins", 0))
 
     rec
+  end
+
+  def parse_time(time)
+    minutes, seconds = time.split(":").map(&:to_i)
+
+    minutes.minutes + seconds.seconds
   end
 end
