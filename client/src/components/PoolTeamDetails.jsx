@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
-import { DataRow } from './DataRow'
+import { DataRow } from './DataRow';
+import { EditableField } from './EditableField';
 import Player from './Player'
 
 function PoolTeamDetails() {
@@ -22,17 +23,41 @@ function PoolTeamDetails() {
     .catch(err => console.error("Error fetching pool team details:", err))
   }, [teamId, token])
 
+  const changeTeamName = async (newValue) => {
+    const response = await fetch(`/api/pool_teams/${teamId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ team_name: newValue })
+    });
+
+    console.log(response)
+
+    if (!response.ok) {
+      console.log("Pool team update error:");
+    }
+
+    return await response.json()
+  }
+
   if (!poolTeam) return <div>Loading pool team details...</div>
 
   const isOwner = currentUser && poolTeam.owner.id === currentUser;
 
   return (
     <div className="selection-container">
-      <Link to="/">← Back to Dashboard</Link>
+      <Link to="/" className="back-to-dashboard">← Back to Dashboard</Link>
 
       <div className="selection-header">
         <div>
-          <h1 style={{ margin: 0 }}>{poolTeam.team_name}</h1>
+          <h1 style={{ margin: 0 }}>
+            {isOwner ? 
+            (<EditableField initialValue={poolTeam.team_name} onSave={changeTeamName} />) :
+            (poolTeam.team_name)
+            }
+          </h1>
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
         </div>
         {isOwner && (

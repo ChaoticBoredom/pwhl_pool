@@ -31,7 +31,7 @@ function PoolDetails() {
 
   return (
     <div>
-      <Link to="/">← Back to Dashboard</Link>
+      <Link to="/" className="back-to-dashboard">← Back to Dashboard</Link>
       <h1 className="text-2xl font-bold my-4">{pool.name}</h1>
       <Link to={`/pools/${poolId}/scoring`} className="text-xl">Scoring</Link>
       <div className="mt-6">

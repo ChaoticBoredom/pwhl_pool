@@ -43,11 +43,11 @@ class PoolTeamsController < ApplicationController
     @pool_team = Pool::Team.find(params[:id])
     return head :forbidden unless current_user == @pool_team.owner
 
-    @pool_team.update(team_name: params.permit(:team_name))
-
-    render json: {
-      message: "Team Name updated!",
-    }
+    if @pool_team.update(team_name_params)
+      render json: { message: "Team Name updated!" }
+    else
+      render json: { errors: @pool_team.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def update_roster
@@ -81,5 +81,9 @@ class PoolTeamsController < ApplicationController
 
   def team_params
     params.require(:team).permit(:team_name, :pool_id)
+  end
+
+  def team_name_params
+    params.require(:pool_team).permit(:team_name)
   end
 end
