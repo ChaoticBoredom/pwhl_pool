@@ -117,7 +117,7 @@ class Pwhl::GameData
     game.home_team_score = game_data["home_goal_count"]
     game.away_team_score = game_data["visiting_goal_count"]
 
-    game.save
+    game.save!
   end
 
   def update_player_game_data(player_id, game_id, game_data = nil)
