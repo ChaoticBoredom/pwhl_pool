@@ -10,6 +10,7 @@ class PoolTeamsController < ApplicationController
     @previous_team = @pool_team.previous_team.to_a
 
     @player_summaries = @pss.player_summaries(@pool_team.pool_team_players.to_a)
+    @player_games = UpcomingGamesService.new.player_schedule(@current_team)
 
     render :show
   end

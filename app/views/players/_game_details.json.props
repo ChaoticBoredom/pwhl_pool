@@ -1,0 +1,9 @@
+json.id game.id
+json.start game.start_time
+json.status game.status
+
+json.home_team game.home_team.short_code
+json.home_team_score game.home_team_score
+
+json.away_team game.away_team.short_code
+json.away_team_score game.away_team_score
