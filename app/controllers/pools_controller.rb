@@ -49,6 +49,9 @@ class PoolsController < ApplicationController
 
       last_score = s
     end
+
+    # No score? Make sure we put them all as last
+    rankings.default = (current_rank + 1).ordinalize
     rankings
   end
 end
