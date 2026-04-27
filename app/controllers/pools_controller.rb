@@ -38,20 +38,14 @@ class PoolsController < ApplicationController
   end
 
   def rank_teams(team_scores)
-    rankings = {}
-    current_rank = 0
-    last_score = nil
-
-    team_scores.sort_by { |t, v| -v }.each.with_index(1) do |(tid, s), i|
-      current_rank = i unless s == last_score
-
-      rankings[tid] = current_rank.ordinalize
-
-      last_score = s
+    ordered_scores = team_scores.values.sort.reverse
+    rankings = team_scores.to_a.inject({}) do |h, (tid, score)|
+      h[tid] = (ordered_scores.index(score) + 1).ordinalize
+      h
     end
 
     # No score? Make sure we put them all as last
-    rankings.default = (current_rank + 1).ordinalize
+    rankings.default = (team_scores.size + 1).ordinalize
     rankings
   end
 end
