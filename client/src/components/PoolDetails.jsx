@@ -29,6 +29,20 @@ function PoolDetails() {
   }, [pool]);
 
   const changePoolName = async (newValue) => {
+    const response = await fetch(`/api/pools/${pool.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: newValue })
+    });
+
+    if (!response.ok) {
+      console.log("Pool update error:")
+    }
+
+    return await response.json()
   }
 
   if (!pool) return <div>Loading pool details...</div>

@@ -1,4 +1,5 @@
 json.name @pool.name
+json.id @pool.id
 json.pool_type @pool.pool_type
 
 json.league do
