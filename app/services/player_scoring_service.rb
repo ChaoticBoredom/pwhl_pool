@@ -42,15 +42,13 @@ class PlayerScoringService
 
     records_map = load_season_records_for(all_team_players.map(&:league_player_id))
 
-    team_totals = Hash.new(0.0)
-    all_team_players.each do |tp|
+    all_team_players.inject(Hash.new(0.0)) do |team_totals, tp|
       records = records_map[tp.league_player_id] || []
       active_range = player_active_range(tp)
       clipped = records_in_range(records, active_range)
       team_totals[tp.pool_team_id] += calculate_aggregate(clipped, tp.position)
+      team_totals
     end
-
-    team_totals
   end
 
   def raw_player_summaries(players)
