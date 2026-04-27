@@ -1,7 +1,7 @@
 class PoolsController < ApplicationController
   def index
     @pools = Pool.
-      where(id: current_user.pool_teams.pluck(:pool_id)).
+      where(id: current_user.pool_teams.select(:pool_id)).
       or(Pool.where(admin_id: current_user.id))
     render json: @pools
   end
