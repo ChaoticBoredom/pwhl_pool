@@ -46,6 +46,7 @@ function PoolDetails() {
   }
 
   const toOrdinal = (i) => {
+    if (isNaN(i)) return;
     const j = i % 10, k = i % 100;
     if (j === 1 && k !== 11) return i + "st";
     if (j === 2 && k !== 12) return i + "nd";
@@ -74,7 +75,7 @@ function PoolDetails() {
           <div className="text-right">Score</div>
         </DataRow>
 
-        {pool.pool_teams?.sort((a, b) => b.total_score - a.total_score)?.map(team => (
+        {pool.pool_teams?.sort((a, b) => a.rank - b.rank)?.map(team => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
             <div className="font-mono text-xs text-gray-500 tabular-nums">{toOrdinal(team.rank)}</div>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
