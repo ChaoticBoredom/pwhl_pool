@@ -45,7 +45,7 @@ class PoolsController < ApplicationController
     team_scores.sort_by { |t, v| -v }.each.with_index(1) do |(tid, s), i|
       current_rank = i unless s == last_score
 
-      rankings[tid] = current_rank.ordinalize
+      rankings[tid] = current_rank
 
       last_score = s
     end

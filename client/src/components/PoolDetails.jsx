@@ -45,6 +45,14 @@ function PoolDetails() {
     return await response.json()
   }
 
+  const toOrdinal = (i) => {
+    const j = i % 10, k = i % 100;
+    if (j === 1 && k !== 11) return i + "st";
+    if (j === 2 && k !== 12) return i + "nd";
+    if (j === 3 && k !== 13) return i + "rd";
+    return i + "th";
+  };
+
   if (!pool) return <div>Loading pool details...</div>
 
   const isAdmin = currentUser && pool.admin.id === currentUser;
@@ -68,7 +76,7 @@ function PoolDetails() {
 
         {pool.pool_teams?.sort((a, b) => b.total_score - a.total_score)?.map(team => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
-            <div className="font-mono text-xs text-gray-500 tabular-nums">{team.rank}</div>
+            <div className="font-mono text-xs text-gray-500 tabular-nums">{toOrdinal(team.rank)}</div>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
             <div className="text-right text-gray-600">{team.user?.name}</div>
             <div className="text-right font-mono font-bold">{team.total_score.toFixed(2)}</div>
