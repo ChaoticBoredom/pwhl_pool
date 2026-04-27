@@ -14,21 +14,6 @@ class PoolTeamsController < ApplicationController
     render :show
   end
 
-  def simple_show
-    id = params[:pool_team_id]
-    @pool_team = Pool::Team.
-      includes(pool_team_players: { league_player: :current_team }).
-      find(id)
-    @pool = @pool_team.pool
-    @pss = PlayerScoringService.new(@pool.scoring, @pool)
-    @current_team = @pool_team.current_team.to_a
-    @previous_team = @pool_team.previous_team.to_a
-
-    @player_summaries = @pss.player_summaries(@pool_team.pool_team_players.to_a)
-
-    render :simple_show
-  end
-
   def create
     @team = Current.user.pool_teams.new(team_params)
 

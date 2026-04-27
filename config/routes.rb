@@ -27,8 +27,6 @@ Rails.application.routes.draw do
         post :update_roster
       end
     end
-
-    get "/pool_teams/:pool_team_id/simple_show", to: "pool_teams#simple_show"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
