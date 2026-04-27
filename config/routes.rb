@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     resources :passwords, param: :token
     # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
     #
+    resources :league_games, path: "games", only: [:show]
     resources :pools do
       resources :pool_boxes, only: [:index]
       resources :pool_scoring, only: [:index]
