@@ -50,9 +50,9 @@ function PoolTeamDetails() {
 
       <div className="selection-header">
         <div>
-          <h1 style={{ margin: 0 }}>
+          <h1>
             {isOwner ? 
-            (<EditableField initialValue={poolTeam.team_name} onSave={changeTeamName} />) :
+            (<EditableField value={poolTeam.team_name} onSave={changeTeamName} />) :
             (poolTeam.team_name)
             }
           </h1>

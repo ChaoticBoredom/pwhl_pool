@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
+import { EditableField } from './EditableField';
 import { DataRow } from './DataRow'
 
 function PoolDetails() {
@@ -27,12 +28,21 @@ function PoolDetails() {
     }
   }, [pool]);
 
+  const changePoolName = async (newValue) => {
+  }
+
   if (!pool) return <div>Loading pool details...</div>
+
+  const isAdmin = currentUser && pool.admin.id === currentUser;
 
   return (
     <div>
       <Link to="/" className="back-to-dashboard">← Back to Dashboard</Link>
-      <h1 className="text-2xl font-bold my-4">{pool.name}</h1>
+      <h1 className="text-2xl font-bold my-4">
+        {isAdmin ?
+          (<EditableField value={pool.name} onSave={changePoolName} />) :
+          pool.name}
+      </h1>
       <Link to={`/pools/${poolId}/scoring`} className="text-xl">Scoring</Link>
       <div className="mt-6">
         <DataRow isHeader gridClass={poolGrid}>
