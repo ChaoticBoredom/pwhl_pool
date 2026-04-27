@@ -4,6 +4,7 @@ json.boxes do
   json.array! @boxes do |box|
     json.id box.id
     json.name box.name
+    json.order box.position
 
     json.players do
       json.array! box.players do |player|

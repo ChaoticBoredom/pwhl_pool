@@ -21,7 +21,7 @@ const PlayerSelection = () => {
       }
     })
     .then(res => res.json()).then(data => {
-      setBoxes(data.boxes);
+      setBoxes([...data.boxes].sort((a, b) => a.order - b.order));
       const initial = {};
       data.boxes.forEach(b => {
         const selected = b.players.find(p => p.selected);
