@@ -61,6 +61,15 @@ function InProgressGame({ data }) {
   );
 }
 
+function FinishedGame({ data }) {
+  return (
+    <div className="game-data">
+      <Matchup away={data.away_team} home={data.home_team} showScore />
+      <span className="game-meta">Final</span>
+    </div>
+  );
+} 
+
 export function GameData({ gameId }) {
   const { authHeaders } = useAuth();
 
@@ -74,5 +83,6 @@ export function GameData({ gameId }) {
   if (isLoading || !data) return <div className="game-data game-data--empty" />;
 
   if (data.status == "in_progress") return <InProgressGame data={data} />;
+  if (data.status == "final") return <FinishedGame data={data} />;
   return <ScheduledGame data={data} />
 }
