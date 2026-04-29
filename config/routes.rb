@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     resources :passwords, param: :token
     # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
     #
+    resources :league_games, path: "games", only: [:show]
     resources :pools do
       resources :pool_boxes, only: [:index]
       resources :pool_scoring, only: [:index]
@@ -27,8 +28,6 @@ Rails.application.routes.draw do
         post :update_roster
       end
     end
-
-    get "/pool_teams/:pool_team_id/simple_show", to: "pool_teams#simple_show"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

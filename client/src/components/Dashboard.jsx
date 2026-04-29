@@ -3,17 +3,12 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export function Dashboard() {
-  const { token, logout } = useAuth();
+  const { token, authHeaders, logout } = useAuth();
   const [pools, setPools] = useState([]);
 
 
   useEffect(() => {
-    fetch(`/api/pools`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }
-    })
+    fetch(`/api/pools`, { headers: authHeaders })
     .then(res => res.json())
     .then(data => setPools(data))
     .catch(err => console.log("Fetch error:", err));

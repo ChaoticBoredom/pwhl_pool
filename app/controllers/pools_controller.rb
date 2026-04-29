@@ -45,13 +45,13 @@ class PoolsController < ApplicationController
     team_scores.sort_by { |t, v| -v }.each.with_index(1) do |(tid, s), i|
       current_rank = i unless s == last_score
 
-      rankings[tid] = current_rank.ordinalize
+      rankings[tid] = current_rank
 
       last_score = s
     end
 
     # No score? Make sure we put them all as last
-    rankings.default = (current_rank + 1).ordinalize
+    rankings.default = current_rank + 1
     rankings
   end
 end

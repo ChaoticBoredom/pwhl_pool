@@ -7,20 +7,15 @@ import { ScoringSection } from'./ScoringSection';
 export default function PoolScoring() {
   const { poolId } = useParams()
   const [scorings, setScorings] = useState(null)
-  const { token, currentUser } = useAuth();
+  const { authHeaders, currentUser } = useAuth();
   const poolGrid = "grid-cols-[minmax(240px,1fr)_80px]"
 
   useEffect(() => {
-    fetch(`/api/pools/${poolId}/pool_scoring`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(`/api/pools/${poolId}/pool_scoring`, { headers: authHeaders })
     .then(res => res.json())
     .then(data => setScorings(data))
     .catch(err => console.error("Error fetching pool scoring:", err))
-  }, [poolId, token])
+  }, [poolId, authHeaders])
 
   if (!scorings) return <div>Loading pool scorings...</div>
 

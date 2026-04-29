@@ -1,4 +1,5 @@
 import React from 'react'
+import TeamBadge from "./TeamBadge";
 import { PWHL_TEAMS } from '../constants/teams';
 
 const Player = ({ player, children }) => {
@@ -10,12 +11,7 @@ const Player = ({ player, children }) => {
 
       <div className="player-identity-vertical">
         <span className="player-name">{player.name}</span>
-        <span 
-          className="team-badge-small" 
-          style={{ color: teamInfo.color }}
-        >
-          {player.current_team_short_code}
-        </span>
+        <TeamBadge short_code={player.current_team_short_code} />
       </div>
     </div>
   )

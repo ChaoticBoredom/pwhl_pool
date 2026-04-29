@@ -370,17 +370,9 @@ RSpec.describe PlayerScoringService do
     let(:pool_team_a) { create(:pool_team) }
     let(:pool_team_b) { create(:pool_team) }
 
-    def create_team_player(player, pool_team:, added_at: season_start, dropped_at: nil)
-      create(:pool_team_player,
-        league_player: player,
-        pool_team: pool_team,
-        added_at: added_at,
-        dropped_at: dropped_at)
-    end
-
     before(:each) do
-      create_team_player(skater, pool_team: pool_team_a)
-      create_team_player(goalie, pool_team: pool_team_b)
+      create_team_player(skater, pool_team_a, added_at: season_start)
+      create_team_player(goalie, pool_team_b, added_at: season_start)
 
       create(:pwhl_skater_stat,
         league_player: skater,
@@ -425,7 +417,7 @@ RSpec.describe PlayerScoringService do
 
       it "excludes stats outside the player's active window" do
         create_team_player(skater,
-          pool_team: dropped_team,
+          dropped_team,
           added_at: season_start,
           dropped_at: 4.days.ago)
         result = service.bulk_team_scores([dropped_team])
@@ -444,7 +436,7 @@ RSpec.describe PlayerScoringService do
       end
 
       it "sums scores across all players on the team" do
-        create_team_player(skater2, pool_team: pool_team_a)
+        create_team_player(skater2, pool_team_a, added_at: season_start)
         result = service.bulk_team_scores([pool_team_a])
         expect(result[pool_team_a.id]).to eq(11.0)
       end
