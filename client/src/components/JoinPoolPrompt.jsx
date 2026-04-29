@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export default function JoinPoolPrompt() {
   const { poolId } = useParams();
   const navigate = useNavigate();
-  const { token, currentUser, authHeaders } = useAuth();
+  const { currentUser, authHeaders } = useAuth();
   const [poolName, setPoolName] = useState('Loading...');
   const [teamName, setTeamName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,9 +14,7 @@ export default function JoinPoolPrompt() {
   useEffect(() => {
     const fetchPoolData = async () => {
       try {
-        const response = await fetch(`/api/pools/${poolId}`, {
-          headers: authHeaders
-        });
+        const response = await fetch(`/api/pools/${poolId}`, { headers: authHeaders });
 
         if (response.ok) {
           const result = await response.json();
