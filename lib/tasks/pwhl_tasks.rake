@@ -115,7 +115,7 @@ namespace :pwhl do
     teams = League::Team.all.to_h { |team| [team.short_code, team] }
     game_data_service = Pwhl::GameData.new
     games.each do |g|
-      game_data_service.update_game_data(nil, g)
+      game_data_service.update_game_data(g, nil)
     end
   end
 

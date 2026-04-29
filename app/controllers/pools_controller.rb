@@ -40,12 +40,12 @@ class PoolsController < ApplicationController
   def rank_teams(team_scores)
     ordered_scores = team_scores.values.sort.reverse
     rankings = team_scores.to_a.inject({}) do |h, (tid, score)|
-      h[tid] = (ordered_scores.index(score) + 1).ordinalize
+      h[tid] = ordered_scores.index(score) + 1
       h
     end
 
     # No score? Make sure we put them all as last
-    rankings.default = (team_scores.size + 1).ordinalize
+    rankings.default = team_scores.size + 1
     rankings
   end
 end

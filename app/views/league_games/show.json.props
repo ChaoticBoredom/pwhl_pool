@@ -1,0 +1,20 @@
+json.id @game.id
+json.start_time @game.start_time
+json.status @game.status
+json.current_description @game.current_description
+
+json.home_team do
+  json.id @home_team.id
+  json.short_code @home_team.short_code
+  json.name @home_team.name
+
+  json.score @game.home_team_score
+end
+
+json.away_team do
+  json.id @away_team.id
+  json.short_code @away_team.short_code
+  json.name @away_team.name
+
+  json.score @game.away_team_score
+end

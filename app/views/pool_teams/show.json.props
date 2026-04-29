@@ -22,6 +22,19 @@ json.current_team do
     json.scores do
       json.partial! partial: 'players/scores', locals: { summary: summary }
     end
+
+    json.games do
+      upcoming = @player_games[tp.id][:upcoming]
+      today = @player_games[tp.id][:today]
+
+      json.upcoming do
+        json.id upcoming.id unless upcoming.nil?
+      end
+
+      json.today do
+        json.id today.id unless today.nil?
+      end
+    end
   end
 end
 

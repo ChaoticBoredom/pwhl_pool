@@ -19,10 +19,9 @@ class Pwhl::GameData
 
     data = JSON.parse(res.body).dig("GC", "Gamesummary")
 
-    # TODO: Add game status to Game and update here
-    # game.status = data.fetch("status")
-
-    update_game_data(game_id, data.fetch("meta"))
+    # This is not present in the 'meta', nor on the scheduled games from the rake
+    game.current_description = data.fetch("status_value")
+    update_game_data(data.fetch("meta"), game_id)
 
     ["home_team_lineup", "visitor_team_lineup"].each do |t|
       current_team = @teams[data.dig(t.split("_").first, "id")]
@@ -56,10 +55,7 @@ class Pwhl::GameData
     end
   end
 
-  def update_game_data(game_id, game_data = nil)
-    # 0 information, how're we supposed to do anything?!?
-    return if game_id.nil? && game_data.nil?
-
+  def update_game_data(game_data, game_id = nil)
     if game_id.nil?
       game = League::Game.find_or_initialize_by(
         league: @pwhl,
@@ -68,21 +64,6 @@ class Pwhl::GameData
       )
     else
       game = League::Game.find(game_id)
-    end
-
-    if game_data.nil?
-      res = Connections::ConnectionHelper.pwhl_connection.get(nil,
-        {
-          feed: "gc",
-          tab: "gamesummary",
-          game_id: game.api_id,
-          site_id: 0,
-          lang: "eng",
-        }
-      )
-      start_time = JSON.parse(res.body).dig("GC", "Gamesummary").fetch("game_date_iso_8601")
-
-      game_data = JSON.parse(res.body).dig("GC", "Gamesummary", "meta")
     end
 
     status_codes = [
@@ -104,7 +85,7 @@ class Pwhl::GameData
     end
 
     # ISO start time is slightly different, try this to grab it
-    start_time ||= game_data.fetch("GameDateISO8601", nil)
+    start_time = game_data.fetch("GameDateISO8601", nil)
     start_time ||= DateTime.parse("#{game_data.fetch("date_played", nil)} #{game_data.fetch("schedule_time", nil)} #{game_data.fetch("timezone_short", nil)}")
 
     game.league = @pwhl
@@ -173,7 +154,7 @@ class Pwhl::GameData
     rec.goals_against = data.fetch("goals_against", 0)
     rec.shots_against = data.fetch("shots_against", 0)
     rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
-    rec.time_on_ice = parse_time(data.fetch("minutes"))
+    rec.time_on_ice = parse_time(data.fetch("minutes", "0:0"))
 
     rec
   end
@@ -185,7 +166,7 @@ class Pwhl::GameData
     rec.penalty_minutes = data.fetch("penalty_minutes", 0).to_i.minutes
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
-    rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds"))
+    rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds", "0:0"))
     rec.plus_minus = data.fetch("plusminus", 0).to_i
     rec.power_play_goals = data.fetch("power_play_goals", 0)
     rec.short_handed_goals = data.fetch("short_handed_goals", 0)

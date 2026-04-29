@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -24,8 +24,13 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  const authHeaders = useMemo( () => ({
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json",
+  }), [token]);
+
   return (
-    <AuthContext.Provider value={{ currentUser, token, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, token, login, logout, authHeaders }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,20 +7,15 @@ import { DataRow } from './DataRow'
 function PoolDetails() {
   const { poolId } = useParams()
   const [pool, setPool] = useState(null)
-  const { token, currentUser } = useAuth();
+  const { authHeaders, currentUser } = useAuth();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
   useEffect(() => {
-    fetch(`/api/pools/${poolId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(`/api/pools/${poolId}`, { headers: authHeaders })
     .then(res => res.json())
     .then(data => setPool(data))
     .catch(err => console.error("Error fetching pool details:", err))
-  }, [poolId, token])
+  }, [poolId, authHeaders])
 
   useEffect(() => {
     if (pool?.name) {
@@ -31,10 +26,7 @@ function PoolDetails() {
   const changePoolName = async (newValue) => {
     const response = await fetch(`/api/pools/${pool.id}`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
+      headers: authHeaders,
       body: JSON.stringify({ name: newValue })
     });
 
@@ -44,6 +36,15 @@ function PoolDetails() {
 
     return await response.json()
   }
+
+  const toOrdinal = (i) => {
+    if (isNaN(i)) return;
+    const j = i % 10, k = i % 100;
+    if (j === 1 && k !== 11) return i + "st";
+    if (j === 2 && k !== 12) return i + "nd";
+    if (j === 3 && k !== 13) return i + "rd";
+    return i + "th";
+  };
 
   if (!pool) return <div>Loading pool details...</div>
 
@@ -66,9 +67,9 @@ function PoolDetails() {
           <div className="text-right">Score</div>
         </DataRow>
 
-        {pool.pool_teams?.sort((a, b) => b.total_score - a.total_score)?.map(team => (
+        {pool.pool_teams?.sort((a, b) => a.rank - b.rank)?.map(team => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
-            <div className="font-mono text-xs text-gray-500 tabular-nums">{team.rank}</div>
+            <div className="font-mono text-xs text-gray-500 tabular-nums">{toOrdinal(team.rank)}</div>
             <div className="font-semibold text-blue-600 truncate">{team.team_name}</div>
             <div className="text-right text-gray-600">{team.user?.name}</div>
             <div className="text-right font-mono font-bold">{team.total_score.toFixed(2)}</div>

@@ -6,7 +6,7 @@ import BoxSelection from './BoxSelection'
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
   const [boxes, setBoxes] = useState([]);
-  const { token } = useAuth();
+  const { authHeaders } = useAuth();
   const navigate = useNavigate();
   const [selections, setSelections] = useState({});
   const [isCurrentSeason, setIsCurrentSeason] = useState(false);
@@ -14,12 +14,7 @@ const PlayerSelection = () => {
 
   useEffect(() => {
     if (!poolId) return;
-    fetch(`/api/pools/${poolId}/pool_boxes`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(`/api/pools/${poolId}/pool_boxes`, { headers: authHeaders })
     .then(res => res.json()).then(data => {
       setBoxes([...data.boxes].sort((a, b) => a.order - b.order));
       const initial = {};
@@ -43,11 +38,7 @@ const PlayerSelection = () => {
     try {
       const response = await fetch(`/api/pool_teams/${teamId}/update_roster`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: { ...authHeaders, 'Accept': 'application/json' },
         body: JSON.stringify(payload)
       });
 
