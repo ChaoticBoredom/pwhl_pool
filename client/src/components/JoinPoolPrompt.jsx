@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export default function JoinPoolPrompt() {
   const { poolId } = useParams();
   const navigate = useNavigate();
-  const { token, currentUser } = useAuth();
+  const { token, currentUser, authHeaders } = useAuth();
   const [poolName, setPoolName] = useState('Loading...');
   const [teamName, setTeamName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,10 +15,7 @@ export default function JoinPoolPrompt() {
     const fetchPoolData = async () => {
       try {
         const response = await fetch(`/api/pools/${poolId}`, {
-          headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-          }
+          headers: authHeaders
         });
 
         if (response.ok) {
@@ -44,7 +41,7 @@ export default function JoinPoolPrompt() {
     if (poolId && currentUser) {
       fetchPoolData();
     }
-  }, [poolId, currentUser, navigate, token]);
+  }, [poolId, currentUser, navigate, authHeaders]);
 
   const handleJoin = async (e) => {
     e.preventDefault();
@@ -53,10 +50,7 @@ export default function JoinPoolPrompt() {
     try {
       const response = await fetch(`/api/pool_teams`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: authHeaders,
         body: JSON.stringify({
           team: {
             team_name: teamName,

@@ -7,20 +7,15 @@ import { DataRow } from './DataRow'
 function PoolDetails() {
   const { poolId } = useParams()
   const [pool, setPool] = useState(null)
-  const { token, currentUser } = useAuth();
+  const { authHeaders, currentUser } = useAuth();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
   useEffect(() => {
-    fetch(`/api/pools/${poolId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(`/api/pools/${poolId}`, { headers: authHeaders })
     .then(res => res.json())
     .then(data => setPool(data))
     .catch(err => console.error("Error fetching pool details:", err))
-  }, [poolId, token])
+  }, [poolId, authHeaders])
 
   useEffect(() => {
     if (pool?.name) {
@@ -31,10 +26,7 @@ function PoolDetails() {
   const changePoolName = async (newValue) => {
     const response = await fetch(`/api/pools/${pool.id}`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
+      headers: authHeaders,
       body: JSON.stringify({ name: newValue })
     });
 
