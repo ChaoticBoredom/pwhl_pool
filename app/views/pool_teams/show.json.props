@@ -28,11 +28,11 @@ json.current_team do
       today = @player_games[tp.id][:today]
 
       json.upcoming do
-        json.partial! partial: 'players/game_details', locals: { game: upcoming } unless upcoming.nil?
+        json.id upcoming.id unless upcoming.nil?
       end
 
       json.today do
-        json.partial! partial: 'players/game_details', locals: { game: today } unless today.nil?
+        json.id today.id unless today.nil?
       end
     end
   end

@@ -7,7 +7,7 @@ import { GameData } from "./GameData";
 import Player from "./Player";
 
 const GRID_MOBILE = "grid-cols-[1fr_80px]";
-const GRID_MD = "md:grid-cols-[1fr_80px_100px_80px_100px_80px]"
+const GRID_MD = "md:grid-cols-[1fr_100px_100px_80px_100px_80px]"
 const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
 
 
@@ -71,7 +71,7 @@ function PoolTeamDetails() {
           <div className="hidden md:block score-cell">
             <span className="wrap-header">Month-to-Date</span>
           </div>
-          <div className="hidden md:blockscore-cell">
+          <div className="hidden md:block score-cell">
             <span className="wrap-header">Season</span>
           </div>
         </DataRow>
