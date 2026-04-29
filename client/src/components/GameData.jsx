@@ -1,6 +1,65 @@
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "../context/AuthContext";
+import TeamBadge from "./TeamBadge";
 import { PWHL_TEAMS } from '../constants/teams';
+
+function Matchup({ away, home, showScore = false })
+{
+  return (
+    <div className="game-matchup">
+      <TeamBadge short_code={away.short_code} />
+      {showScore && (
+        <span className="game-score">{away.score}</span>
+      )}
+      <span className="game_at">@</span>
+      {showScore && (
+        <span className="game-score">{home.score}</span>
+      )}
+      <TeamBadge short_code={home.short_code} />
+    </div>
+  );
+}
+
+function ActivityBar() {
+  return (
+    <div className="game-activity-track" aria-label="Game in progress">
+      <div className="game-activity-bar" />
+    </div>
+  );
+}
+
+function ScheduledGame({ data }) {
+  const date = new Date(data.start_time);
+
+  const datePart = new Intl.DateTimeFormat("en-us", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+
+  const timePart = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+
+  return (
+    <div className="game-data">
+      <Matchup away={data.away_team} home={data.home_team} />
+      <span className="game-meta">{datePart}</span>
+      <span className="game-meta">{timePart}</span>
+    </div>
+  );
+}
+
+function InProgressGame({ data }) {
+  return (
+    <div className="game-data">
+      <Matchup away={data.away_team} home={data.home_team} showScore />
+      <span className="game-meta game-meta--progress">{data.current_description}</span>
+      <ActivityBar />
+    </div>
+  );
+}
 
 export function GameData({ gameId }) {
   const { authHeaders } = useAuth();
@@ -12,52 +71,8 @@ export function GameData({ gameId }) {
     enabled: !!gameId,
   });
 
-  const home_team = PWHL_TEAMS[data?.home_team?.short_code] || PWHL_TEAMS['default'];
-  const away_team = PWHL_TEAMS[data?.away_team?.short_code] || PWHL_TEAMS['default'];
+  if (isLoading || !data) return <div className="game-data game-data--empty" />;
 
-  const formatGameDate = (timestamp) => {
-    if (!timestamp) return "";
-    const date = new Date(timestamp);
-
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric"
-    });
-
-    const parts = formatter.formatToParts(date);
-
-    const weekday = parts.find(p => p.type === 'weekday').value.toUpperCase();
-    const month = parts.find(p => p.type === 'month').value;
-    const day = parts.find(p => p.type === 'day').value;
-    const hour = parts.find(p => p.type === 'hour').value;
-    const minute = parts.find(p => p.type === 'minute').value;
-
-    return `${weekday}\n${month} ${day}\n${hour}:${minute}`;
-  }
-
-  if (isLoading || !data) return <div />;
-
-  return (
-    <div className="player-identity-vertical">
-      <span>{formatGameDate(data?.start_time)}</span>
-      <div>
-        <span 
-          className="team-badge-small" 
-          style={{ color: away_team.color }}
-        >
-          {away_team.short}
-        </span>
-        @
-        <span 
-          className="team-badge-small" 
-          style={{ color: home_team.color }}
-        >
-          {home_team.short}
-        </span>
-      </div>
-    </div>
-  );
+  if (data.status == "in_progress") return <InProgressGame data={data} />;
+  return <ScheduledGame data={data} />
 }

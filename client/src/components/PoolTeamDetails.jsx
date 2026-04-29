@@ -6,8 +6,8 @@ import { EditableField } from './EditableField';
 import { GameData } from "./GameData";
 import Player from "./Player";
 
-const GRID_MOBILE = "grid-cols[1fr_80px]";
-const GRID_MD = "md:grid-cols-[1fr_80px_100px_80px_80px_100px_80px]"
+const GRID_MOBILE = "grid-cols-[1fr_80px]";
+const GRID_MD = "md:grid-cols-[1fr_80px_100px_80px_100px_80px]"
 const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
 
 
@@ -24,9 +24,9 @@ function PoolTeamDetails() {
   });
 
   const { mutateAsync: saveTeamName } = useMutation({
-    mutationFn: (newName) => fetch(`api/pool_tems/${teamId}`, {
+    mutationFn: (newName) => fetch(`/api/pool_teams/${teamId}`, {
       method: "PATCH",
-      authHeaders,
+      headers: authHeaders,
       body: JSON.stringify({ team_name: newName }),
     }).then((r) => r.json()),
     onSuccess: (updated) => {
@@ -66,7 +66,6 @@ function PoolTeamDetails() {
         <DataRow isHeader gridClass={`${poolGrid} grid-header`}>
           <div>Player</div>
           <div />
-          <div />
           <div className="score-cell">Today</div>
           <div className="hidden md:block score-cell">Yesterday</div>
           <div className="hidden md:block score-cell">
@@ -81,7 +80,6 @@ function PoolTeamDetails() {
           <DataRow key={player.league_player_id} gridClass={`${poolGrid} grid-row`}>
             <Player player={player} />
             <GameData gameId={player.games.today?.id} />
-            <GameData gameId={player.games.upcoming?.id} />
             <div className="score-cell">{player.scores.scores.today.toFixed(2)}</div>
             <div className="hidden md:block score-cell">{player.scores.scores.yesterday.toFixed(2)}</div>
             <div className="hidden md:block score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
@@ -89,11 +87,12 @@ function PoolTeamDetails() {
           </DataRow>
         ))}
         <DataRow gridClass={`${poolGrid}`}>
-          <div>Total</div>
+          <div className="font-semibold">Total</div>
+          <div className="hidden md:block"/>
           <div />
-          <div />
-          <div />
-          <div className="score-cell">{poolTeam.total_score.toFixed(2)}</div>
+          <div className="hidden md:block"/>
+          <div className="hidden md:block"/>
+          <div className="score-cell font-bold">{poolTeam.total_score.toFixed(2)}</div>
         </DataRow>
       </div>
     </div>
