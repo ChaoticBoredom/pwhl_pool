@@ -5,6 +5,7 @@ class Pool < ApplicationRecord
     message: "must differ from season_id",
     allow_nil: true,
   }
+  validates :trades_allowed, :trades_require_approval, inclusion: { in: [true, false] }
 
   belongs_to :league
   belongs_to :admin, class_name: "User"

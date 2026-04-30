@@ -4,6 +4,14 @@ RSpec.describe Pool, type: :model do
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:pool_type) }
 
+  it { should allow_value(true).for(:trades_allowed) }
+  it { should allow_value(false).for(:trades_allowed) }
+  it { should_not allow_value(nil).for(:trades_allowed) }
+
+  it { should allow_value(true).for(:trades_require_approval) }
+  it { should allow_value(false).for(:trades_require_approval) }
+  it { should_not allow_value(nil).for(:trades_require_approval) }
+
   let(:season_id) { "current" }
   let(:reference_season_id) { "previous" }
   let(:league) { create(:league) }
@@ -63,9 +71,9 @@ RSpec.describe Pool, type: :model do
         expect(subject.start_end_range).to eq(expected_range)
       end
 
-      it "calls the cache with a 20 day TTL" do
+      it "calls the cache with a 3 day TTL" do
         expect(Rails.cache).to receive(:fetch).
-          with(anything, hash_including(expires_in: 20.days)).
+          with(anything, hash_including(expires_in: 3.days)).
           and_call_original
         subject.start_end_range
       end
@@ -101,6 +109,64 @@ RSpec.describe Pool, type: :model do
           with(anything, hash_including(expires_in: 1.hour)).
           and_call_original
         subject.start_end_range
+      end
+    end
+  end
+
+  describe "#trading_allowed_now?" do
+    context "when trades_allowed is false" do
+      before(:each) { subject.update(trades_allowed: false) }
+
+      it "returns false" do
+        expect(subject.trading_allowed_now?).to eq(false)
+      end
+    end
+
+    context "when trades_allowed is true" do
+      before(:each) { subject.update(trades_allowed: true) }
+
+      context "when a game in the league has started" do
+        before(:each) { allow(league).to receive(:games_started?).and_return(true) }
+
+        it "should return false" do
+          expect(subject.trading_allowed_now?).to eq(false)
+        end
+      end
+
+      context "when no league games have started yet" do
+        before(:each) { allow(league).to receive(:games_started?).and_return(false) }
+
+        context "when pool has no trade windows" do
+          it "returns true" do
+            expect(subject.trading_allowed_now?).to eq(true)
+          end
+        end
+
+        context "when pool has a trade window" do
+          context "when trade window is in the future" do
+            let!(:future_window) { create(:pool_trade_window, :future, pool: subject) }
+
+            it "returns false" do
+              expect(subject.trading_allowed_now?).to eq(false)
+            end
+          end
+
+          context "when trade window is in the past" do
+            let!(:past_window) { create(:pool_trade_window, :past, pool: subject) }
+
+            it "returns false" do
+              expect(subject.trading_allowed_now?).to eq(false)
+            end
+          end
+
+          context "when trade window is current" do
+            let!(:past_window) { create(:pool_trade_window, pool: subject, open_window: 2.hours.ago..2.hours.from_now) }
+
+            it "returns true" do
+              expect(subject.trading_allowed_now?).to eq(true)
+            end
+          end
+        end
       end
     end
   end
