@@ -1,6 +1,7 @@
 json.name @pool.name
 json.id @pool.id
 json.pool_type @pool.pool_type
+json.trades_allowed @pool.trading_allowed_now?
 
 json.league do
   json.id @pool.league.id

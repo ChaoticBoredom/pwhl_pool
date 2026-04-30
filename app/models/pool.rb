@@ -5,6 +5,7 @@ class Pool < ApplicationRecord
     message: "must differ from season_id",
     allow_nil: true,
   }
+  validates :trades_allowed, :trades_require_approval, inclusion: { in: [true, false] }
 
   belongs_to :league
   belongs_to :admin, class_name: "User"
@@ -12,6 +13,7 @@ class Pool < ApplicationRecord
   has_many :scoring, class_name: "Pool::Scoring"
   has_many :pool_teams, class_name: "Pool::Team"
   has_many :pool_boxes, class_name: "Pool::Box"
+  has_many :pool_trade_windows, class_name: "Pool::TradeWindow"
 
   enum :pool_type, {
     box_select: 100,
@@ -40,9 +42,16 @@ class Pool < ApplicationRecord
     end
   end
 
+  def trading_allowed_now?
+    return false unless trades_allowed?
+    return false if league.games_started?
+
+    pool_trade_windows.none? || pool_trade_windows.current.exists?
+  end
+
   private
 
   def pool_cache_ttl
-    League::Game.exists?(league_id: league_id, season_id: season_id) ? 20.days : 1.hour
+    League::Game.exists?(league_id: league_id, season_id: season_id) ? 3.days : 1.hour
   end
 end

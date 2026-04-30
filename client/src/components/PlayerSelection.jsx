@@ -30,33 +30,34 @@ const PlayerSelection = () => {
 
   const handleSubmit = async () => {
     setIsSaving(true);
-    const payload = {
-      pool_id: poolId,
-      new_player_ids: Object.values(selections)
-    };
-
     try {
       const response = await fetch(`/api/pool_teams/${teamId}/update_roster`, {
-        method: 'POST',
-        headers: { ...authHeaders, 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        method: "POST",
+        headers: { ...authHeaders, "Accept": "application/json" },
+        body: JSON.stringify({ pool_id: poolId, new_player_ids: Object.values(selections) }),
       });
 
-
       if (response.ok) {
-        const data = await response.json();
-        const added = data.added_players.join(', ');
-        const dropped = data.dropped_players.join(', ');
-        alert(`Sucessfully added: ${added}\n\nSuccessfully dropped: ${dropped}`);
+        const { added_players, dropped_players } = await response.json();
+        alert(`Added: ${added_players.join(", ")}\n\nDropped: ${dropped_players.join(", ")}`);
         navigate(`/pools/${poolId}/teams/${teamId}`);
-      } else if (response.status === 403) {
-        alert("You do not have permission to edit this team");
-      } else {
-        const err = await response.json();
-        alert(`Error: ${err.errors?.join(', ') || 'Failed to update'}`);
+        return;
       }
-    } catch (error) {
-      console.error("Save failed", error);
+
+      if (response.status == 403) {
+        const body = await response.json().catch(() => ({}));
+        if (!body.reason || body.reason !== "trades_closed") {
+          navigate(`/pools/${poolId}`);
+          return;
+        }
+        alert(body.error);
+        return;
+      }
+
+      const { errors } = await response.json().catch(() => ({}));
+      alert(errors?.join(", ") || "Failed to update roster. Please try again.");
+    } catch {
+      alert("Something went wrong. Please check your connection and try again.");
     } finally {
       setIsSaving(false);
     }

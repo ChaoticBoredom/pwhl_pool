@@ -41,6 +41,10 @@ class PoolTeamsController < ApplicationController
     return head :forbidden unless current_user == @pool_team.owner
 
     @pool = @pool_team.pool
+    unless @pool.trading_allowed_now?
+      render json: { error: "Trades are currently locked for this pool", reason: "trades_closed" }, status: :forbidden
+      return
+    end
 
     original_team = @pool_team.current_team.pluck(:league_player_id)
     new_team = params[:new_player_ids]
