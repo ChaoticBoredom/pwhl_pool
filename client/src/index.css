@@ -19,6 +19,10 @@
   --input-focus: #007bff;
   --placeholder: #888;
 
+  --card-bg: #ffffff;g
+  --radius: 8px;
+  --text-muted: #9ca3af;
+
   /* Typography */
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -50,6 +54,7 @@
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --code-bg: #1f2028;
+    --card-bg: #1e1f27;
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
@@ -263,13 +268,27 @@ input::placeholder {
 }
 
 .btn-primary {
+  display: inline-block;
   padding: 12px;
-  background: var(--primary);
+  background: var(--accent);
   color: white;
   font-weight: bold;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--text);
+  opacity: 1;
+  cursor: not-allowed;
 }
 
 .btn-link {
@@ -279,12 +298,6 @@ input::placeholder {
   color: #0066cc;
   text-decoration: underline;
   cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.7;
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 .selection-container {
