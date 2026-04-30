@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext';
 import { DataRow } from './DataRow';
@@ -15,6 +15,7 @@ function PoolTeamDetails() {
   const { poolId, teamId } = useParams()
   const { currentUser, authHeaders } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: poolTeam, isLoading } = useQuery({
     queryKey: ["pool-team", teamId],
@@ -56,9 +57,13 @@ function PoolTeamDetails() {
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
         </div>
         {isOwner && (
-          <Link to={`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`} className="btn-primary btn-top">
-            Trade Players
-          </Link>
+          <button
+            className="btn-primary btn-top"
+            disabled={!poolTeam.trades_allowed}
+            onClick={() => navigate(`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`)}
+          >
+            {poolTeam.trades_allowed ? "Trade Players" : "Trades Closed"}
+          </button>
         )}
       </div>
 
