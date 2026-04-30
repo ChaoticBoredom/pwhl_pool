@@ -130,7 +130,7 @@ class PlayerScoringService
     season_end = @pool.start_end_range.end
     effective_end = [season_end, team_player.dropped_at].compact.min
 
-    team_player.added_at.beginning_of_day..effective_end.end_of_day
+    team_player.added_at..effective_end
   end
 
   def records_in_range(records, range)
