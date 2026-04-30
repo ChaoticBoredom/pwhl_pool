@@ -7,7 +7,7 @@ class AddTradeWindows < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_column :pools, :trades_allowed, :boolean, default: false
-    add_column :pools, :trades_require_approval, :boolean, default: false
+    add_column :pools, :trades_allowed, :boolean, default: false, null: false
+    add_column :pools, :trades_require_approval, :boolean, default: false, null: false
   end
 end

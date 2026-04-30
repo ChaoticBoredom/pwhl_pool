@@ -133,8 +133,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_043011) do
     t.integer "pool_type", null: false
     t.string "reference_season_id"
     t.string "season_id", null: false
-    t.boolean "trades_allowed", default: false
-    t.boolean "trades_require_approval", default: false
+    t.boolean "trades_allowed", default: false, null: false
+    t.boolean "trades_require_approval", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"
