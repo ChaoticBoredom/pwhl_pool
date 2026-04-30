@@ -163,7 +163,7 @@ class Pwhl::GameData
     rec.goals = data.fetch("goals", 0)
     rec.assists = data.fetch("assists", 0)
 
-    rec.penalty_minutes = data.fetch("penalty_minutes", 0).to_i.minutes
+    rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
     rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds", "0:0"))
