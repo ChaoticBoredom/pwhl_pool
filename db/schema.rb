@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_100549) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_043011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -116,6 +116,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_100549) do
     t.index ["user_id"], name: "index_pool_teams_on_user_id"
   end
 
+  create_table "pool_trade_windows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.tstzrange "open_window", null: false
+    t.uuid "pool_id"
+    t.datetime "updated_at", null: false
+    t.index ["open_window"], name: "index_pool_trade_windows_on_open_window", using: :gist
+    t.index ["pool_id"], name: "index_pool_trade_windows_on_pool_id"
+  end
+
   create_table "pools", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "admin_id", null: false
     t.datetime "created_at", null: false
@@ -124,6 +133,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_100549) do
     t.integer "pool_type", null: false
     t.string "reference_season_id"
     t.string "season_id", null: false
+    t.boolean "trades_allowed", default: false
+    t.boolean "trades_require_approval", default: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"
@@ -209,6 +220,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_100549) do
   add_foreign_key "pool_team_players", "pool_teams"
   add_foreign_key "pool_teams", "pools"
   add_foreign_key "pool_teams", "users"
+  add_foreign_key "pool_trade_windows", "pools"
   add_foreign_key "pools", "leagues"
   add_foreign_key "pools", "users", column: "admin_id"
   add_foreign_key "pwhl_goalie_stats", "league_games"
