@@ -9,7 +9,7 @@ class PoolsController < ApplicationController
   def show
     id = params[:id]
     @pool = Pool.
-      includes(:admin, :scoring, pool_teams: :pool_team_players).
+      includes(:league, :admin, :scoring, pool_teams: :pool_team_players).
       find(id)
 
     pss = PlayerScoringService.new(@pool.scoring, @pool)

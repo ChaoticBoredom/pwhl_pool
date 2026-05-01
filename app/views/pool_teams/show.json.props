@@ -3,6 +3,7 @@ json.team_name @pool_team.team_name
 json.total_score @pool_team.total_score
 json.pool_id @pool.id
 json.trades_allowed @pool.trading_allowed_now?
+json.games_active @pool.league.games_active?
 
 json.owner do
 	json.id @pool_team.owner.id

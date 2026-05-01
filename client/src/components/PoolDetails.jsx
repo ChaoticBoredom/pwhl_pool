@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import { EditableField } from './EditableField';
@@ -6,22 +7,16 @@ import { DataRow } from './DataRow'
 
 function PoolDetails() {
   const { poolId } = useParams()
-  const [pool, setPool] = useState(null)
   const { authHeaders, currentUser } = useAuth();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
-  useEffect(() => {
-    fetch(`/api/pools/${poolId}`, { headers: authHeaders })
-    .then(res => res.json())
-    .then(data => setPool(data))
-    .catch(err => console.error("Error fetching pool details:", err))
-  }, [poolId, authHeaders])
-
-  useEffect(() => {
-    if (pool?.name) {
-      document.title = `Fantasy - ${pool.name}`;
-    }
-  }, [pool]);
+  const { data: pool, isLoading } = useQuery({
+    queryKey: ["pool", poolId],
+    queryFn: () => fetch(`/api/pools/${poolId}`, { headers: authHeaders }).then((r) => r.json()),
+    staleTime: 25_000,
+    refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
+    gcTime: 5 * 60 * 1000, // 5 minutes to store cached data
+  })
 
   const changePoolName = async (newValue) => {
     const response = await fetch(`/api/pools/${pool.id}`, {
@@ -37,6 +32,12 @@ function PoolDetails() {
     return await response.json()
   }
 
+  useEffect(() => {
+    if (pool?.name) {
+      document.title = `Fantasy - ${pool.name}`;
+    }
+  }, [pool]);
+
   const toOrdinal = (i) => {
     if (isNaN(i)) return;
     const j = i % 10, k = i % 100;
@@ -46,7 +47,7 @@ function PoolDetails() {
     return i + "th";
   };
 
-  if (!pool) return <div>Loading pool details...</div>
+  if (isLoading || !pool) return <div>Loading pool details...</div>
 
   const isAdmin = currentUser && pool.admin.id === currentUser;
 

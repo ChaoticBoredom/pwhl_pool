@@ -13,4 +13,8 @@ class League < ApplicationRecord
     first_time = first_game_today
     first_time.present? && Time.current >= first_time
   end
+
+  def games_active?
+    games.where(start_time: Time.current.all_day).in_progress.exists?
+  end
 end

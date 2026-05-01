@@ -20,8 +20,9 @@ function PoolTeamDetails() {
   const { data: poolTeam, isLoading } = useQuery({
     queryKey: ["pool-team", teamId],
     queryFn: () => fetch(`/api/pool_teams/${teamId}`, { headers: authHeaders }).then((r) => r.json()),
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 25_000,
+    refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
+    gcTime: 5 * 60 * 1000, // 5 minutes to store data in the 'cache'
   });
 
   const { mutateAsync: saveTeamName } = useMutation({
