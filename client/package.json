@@ -30,5 +30,9 @@
     "postcss": "^8.5.9",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.4"
+  },
+  "scripts": {
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix"
   }
 }
