@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams, Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useQuery } from "@tanstack/react-query";
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import { EditableField } from './EditableField';
 import { DataRow } from './DataRow'
@@ -8,9 +8,10 @@ import { DataRow } from './DataRow'
 function PoolDetails() {
   const { poolId } = useParams()
   const { authHeaders, currentUser } = useAuth();
+  const navigate = useNavigate();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
-  const { data: pool, isLoading } = useQuery({
+  const { data: pool, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["pool", poolId],
     queryFn: () => fetch(`/api/pools/${poolId}`, { headers: authHeaders }).then((r) => r.json()),
     staleTime: 25_000,
@@ -50,6 +51,7 @@ function PoolDetails() {
   if (isLoading || !pool) return <div>Loading pool details...</div>
 
   const isAdmin = currentUser && pool.admin.id === currentUser;
+  const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
 
   return (
     <div>
@@ -59,7 +61,13 @@ function PoolDetails() {
           (<EditableField value={pool.name} onSave={changePoolName} />) :
           pool.name}
       </h1>
-      <Link to={`/pools/${poolId}/scoring`} className="text-xl">Scoring</Link>
+      <button
+        className="btn-primary btn-top"
+        onClick={() => navigate(`/pools/${poolId}/scoring`)}
+      >
+        Scoring Rules
+      </button>
+      <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
       <div className="mt-6">
         <DataRow isHeader gridClass={poolGrid}>
           <div />
