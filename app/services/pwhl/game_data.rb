@@ -140,7 +140,7 @@ class Pwhl::GameData
     when /(\d+\w+|ot|os) intermission/i, /in progress \(0:00 remaining in (\d+\w+|ot)\)/i
       period = $1
       "#{period} INT"
-    when /in progress \((\d+:\d+) remaining in (\d+\w+|ot)\)/i
+    when /in progress \((\d+:\d+) remaining in (.+?)\)/i
       time = $1
       period = $2
       "#{period} (#{time})"
