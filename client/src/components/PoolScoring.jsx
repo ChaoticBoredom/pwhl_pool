@@ -1,35 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext';
-import { DataRow } from './DataRow';
 import { ScoringSection } from'./ScoringSection';
 
 export default function PoolScoring() {
   const { poolId } = useParams()
-  const [scorings, setScorings] = useState(null)
-  const { authHeaders, currentUser } = useAuth();
-  const poolGrid = "grid-cols-[minmax(240px,1fr)_80px]"
+  const { authHeaders } = useAuth();
 
-  useEffect(() => {
-    fetch(`/api/pools/${poolId}/pool_scoring`, { headers: authHeaders })
-    .then(res => res.json())
-    .then(data => setScorings(data))
-    .catch(err => console.error("Error fetching pool scoring:", err))
-  }, [poolId, authHeaders])
+  const { data: scorings, isLoading } = useQuery({
+    queryKey: ["pool-scoring", poolId],
+    queryFn: () => 
+      fetch(`/api/pools/${poolId}/pool_scoring`, { headers: authHeaders })
+      .then((r) => r.json()),
+    staleTime: 20 * 60 & 1000, // scoring rules rarely change, 20m staletime
+  });
 
-  if (!scorings) return <div>Loading pool scorings...</div>
+  if (isLoading || !scorings) return <div>Loading pool scorings...</div>
 
   return (
     <div className="selection-container">
-      <div className="mt-6">
-        <DataRow isHeader gridClass={poolGrid}>
-          <div>Stat</div>
-          <div className="text-right">Value</div>
-        </DataRow>
-
-        <ScoringSection title="Skaters (Forwards and Defense)" scorings={scorings?.skaters} poolGrid={poolGrid} />
-        <ScoringSection title="Goalies" scorings={scorings?.goalies} poolGrid={poolGrid} />
-      </div>
+      <Link to={`/pools/${poolId}`} className="back-to-dashboard">
+        ← Back to Pool
+      </Link>
+ 
+      <h2 className="scoring-page-title">Scoring Rules</h2>
+ 
+      <ScoringSection title="Skaters (Forwards and Defense)" scorings={scorings.skaters} />
+      <ScoringSection title="Goalies" scorings={scorings.goalies} />
     </div>
   );
 }
