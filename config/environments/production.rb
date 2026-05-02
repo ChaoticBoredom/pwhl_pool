@@ -35,7 +35,15 @@ Rails.application.configure do
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [
     :request_id,
-    ->(_) { Current&.user&.id || "guest" },
+    ->(request) do
+      auth_header = request.headers["Authorization"]
+      if auth_header && (token = auth_header.split(" ").last)
+        user_id = Session.find_by(token: token)&.user_id
+        user_id || "guest"
+      else
+        "guest"
+      end
+    end,
   ]
 
   console_logger = ActiveSupport::Logger.new(STDOUT)
