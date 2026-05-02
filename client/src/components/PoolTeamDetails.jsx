@@ -17,7 +17,7 @@ function PoolTeamDetails() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: poolTeam, isLoading } = useQuery({
+  const { data: poolTeam, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["pool-team", teamId],
     queryFn: () => fetch(`/api/pool_teams/${teamId}`, { headers: authHeaders }).then((r) => r.json()),
     staleTime: 25_000,
@@ -42,6 +42,7 @@ function PoolTeamDetails() {
   if (isLoading || !poolTeam) return <div>Loading pool team details...</div>
 
   const isOwner = currentUser && poolTeam?.owner?.id === currentUser;
+  const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
 
   return (
     <div className="selection-container">
@@ -56,6 +57,9 @@ function PoolTeamDetails() {
             }
           </h1>
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
+          <span className="helper-text">
+            Last Updated At: {lastFetchedAt}
+          </span>
         </div>
         {isOwner && (
           <button
