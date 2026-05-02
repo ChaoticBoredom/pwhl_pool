@@ -469,11 +469,15 @@ input::placeholder {
 }
 
 .scoring-card {
-  @apply flex flex-col gap-1 p-4 bg-white border border-gray-100 rounded-lg shadow-sm;
+  @apply flex flex-col gap-2 p-4 bg-white border border-gray-100 rounded-lg shadow-sm;
+}
+
+.scoring-card-header {
+  @apply flex items-center gap-2;
 }
 
 .scoring-card-icon {
-  @apply text-blue-500;
+  @apply text-blue-500 shrink-0;
 }
 
 .scoring-card-label {
@@ -481,5 +485,5 @@ input::placeholder {
 }
 
 .scoring-card-value {
-  @apply font-mono font-bold text-lg text-gray-900 mt-auto pt-2;
+  @apply font-mono font-bold text-lg text-gray-900;
 }
