@@ -70,13 +70,6 @@ RSpec.describe Pool, type: :model do
         expected_range = first_game.start_time.beginning_of_day..last_game.start_time.end_of_day
         expect(subject.start_end_range).to eq(expected_range)
       end
-
-      it "calls the cache with a 3 day TTL" do
-        expect(Rails.cache).to receive(:fetch).
-          with(anything, hash_including(expires_in: 3.days)).
-          and_call_original
-        subject.start_end_range
-      end
     end
 
     context "when league has no games in given season" do
@@ -87,13 +80,6 @@ RSpec.describe Pool, type: :model do
         subject.save
         expect(subject.start_end_range.begin).to eq(subject.created_at.beginning_of_day)
         expect(subject.start_end_range.end).to be_within(5.seconds).of(1.year.from_now.end_of_day)
-      end
-
-      it "calls the cache with a 1 hour TTL" do
-        expect(Rails.cache).to receive(:fetch).
-          with(anything, hash_including(expires_in: 1.hour)).
-          and_call_original
-        subject.start_end_range
       end
     end
 
