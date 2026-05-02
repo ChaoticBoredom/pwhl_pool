@@ -57,9 +57,7 @@ function PoolTeamDetails() {
             }
           </h1>
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
-          <span className="helper-text">
-            Last Updated At: {lastFetchedAt}
-          </span>
+          <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
         </div>
         {isOwner && (
           <button
