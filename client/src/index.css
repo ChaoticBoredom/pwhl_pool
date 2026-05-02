@@ -437,3 +437,49 @@ input::placeholder {
   from { left: 0%; }
   to   { left: 66.666%; }
 }
+
+.scoring-page-title {
+  @apply text-2xl font-semibold text-gray-700 mt-6 mb-2;
+}
+
+.scoring-section {
+  @apply mt-8;
+}
+
+.scoring-section-title {
+  @apply text-sm font-bold uppercase tracking-widest text-gray-500 px-1 mb-3;
+}
+
+/* Responsive grid: 2 cols on mobile, 3 on sm, 4 on lg */
+.scoring-card-grid {
+  @apply grid gap-3;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 640px) {
+  .scoring-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .scoring-card-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.scoring-card {
+  @apply flex flex-col gap-1 p-4 bg-white border border-gray-100 rounded-lg shadow-sm;
+}
+
+.scoring-card-icon {
+  @apply text-blue-500;
+}
+
+.scoring-card-label {
+  @apply text-sm font-semibold text-gray-700 leading-tight;
+}
+
+.scoring-card-value {
+  @apply font-mono font-bold text-lg text-gray-900 mt-auto pt-2;
+}
