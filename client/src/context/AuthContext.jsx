@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, useState, useContext, useMemo } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }) => {
   const authHeaders = useMemo( () => ({
     "Authorization": `Bearer ${token}`,
     "Content-Type": "application/json",
+    'X-Requested-With': "XMLHttpRequest",
+    "Accept": "application/json",
   }), [token]);
 
   return (
