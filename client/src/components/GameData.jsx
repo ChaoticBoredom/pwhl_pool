@@ -71,6 +71,15 @@ function FinishedGame({ data }) {
 }
 
 const formatStatus = (str) => str ? str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '';
+const statusBasedRefetchInterval = (status) => {
+  switch (status) {
+    case 'pending_final': return 120_000;
+    case 'scheduled': return 120_000;
+    case 'in_progress': return 30_000;
+    case 'final': return false;
+    default: return false;
+  }
+}
 
 export function GameData({ gameId }) {
   const { authHeaders } = useAuth();
@@ -78,7 +87,7 @@ export function GameData({ gameId }) {
   const { data, isLoading } = useQuery({
     queryKey: ["game-data", gameId],
     queryFn: () => fetch(`/api/games/${gameId}`, { headers: authHeaders }).then(r => r.json()),
-    refetchInterval: 30_000,
+    refetchInterval: (query) => { return statusBasedRefetchInterval(query.state.data?.status); },
     enabled: !!gameId,
   });
 
