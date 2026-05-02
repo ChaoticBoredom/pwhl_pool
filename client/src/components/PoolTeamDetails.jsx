@@ -12,7 +12,7 @@ const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
 
 
 function PoolTeamDetails() {
-  const { _poolId, teamId } = useParams()
+  const { poolId, teamId } = useParams()
   const { currentUser, authHeaders } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ function PoolTeamDetails() {
 
   return (
     <div className="selection-container">
-      <Link to="/" className="back-to-dashboard">← Back to Dashboard</Link>
+      <Link to={`/pools/${poolId}`} className="back-to-dashboard">← Back to Pool</Link>
 
       <div className="selection-header">
         <div>
