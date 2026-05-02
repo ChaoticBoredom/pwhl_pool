@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export function Dashboard() {
-  const { token, authHeaders, logout } = useAuth();
+  const { authHeaders, logout } = useAuth();
   const [pools, setPools] = useState([]);
 
 
@@ -12,7 +12,7 @@ export function Dashboard() {
     .then(res => res.json())
     .then(data => setPools(data))
     .catch(err => console.log("Fetch error:", err));
-  }, [token])
+  }, [authHeaders])
 
   return (
     <div>

@@ -26,7 +26,7 @@ const PlayerSelection = () => {
       setIsCurrentSeason(!data.using_reference_season);
     })
     .catch(err => console.error("Fetch Error:", err));
-  }, [poolId]);
+  }, [poolId, authHeaders]);
 
   const handleSubmit = async () => {
     setIsSaving(true);

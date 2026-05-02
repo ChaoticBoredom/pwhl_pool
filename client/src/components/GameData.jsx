@@ -75,7 +75,7 @@ const formatStatus = (str) => str ? str.replace(/_/g, ' ').replace(/\b\w/g, c =>
 export function GameData({ gameId }) {
   const { authHeaders } = useAuth();
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["game-data", gameId],
     queryFn: () => fetch(`/api/games/${gameId}`, { headers: authHeaders }).then(r => r.json()),
     refetchInterval: 30_000,
