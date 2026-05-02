@@ -20,7 +20,7 @@ class Pwhl::GameData
     data = JSON.parse(res.body).dig("GC", "Gamesummary")
 
     # This is not present in the 'meta', nor on the scheduled games from the rake
-    game.update(current_description: data.fetch("status_value"))
+    game.update(current_description: format_game_status_string(data.fetch("status_value")))
     update_game_data(data.fetch("meta"), game_id)
 
     ["home_team_lineup", "visitor_team_lineup"].each do |t|
@@ -134,6 +134,22 @@ class Pwhl::GameData
   end
 
   private
+
+  def format_game_status_string(status)
+    case status
+    when /(\d+\w+|ot|os) intermission/i, /in progress \(0:00 remaining in (\d+\w+|ot)\)/i
+      period = $1
+      "#{period} INT"
+    when /in progress \((\d+:\d+) remaining in (\d+\w+|ot)\)/i
+      time = $1
+      period = $2
+      "#{period} (#{time})"
+    when /in progress \(shootout\)/i, /shootout/i
+      "SO (In Progress)"
+    else
+      status
+    end
+  end
 
   def find_or_create_player(data, position, team)
     League::Player.find_or_create_by(api_id: data.fetch("player_id")) do |player|
