@@ -12,7 +12,7 @@ const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
 
 
 function PoolTeamDetails() {
-  const { poolId, teamId } = useParams()
+  const { _poolId, teamId } = useParams()
   const { currentUser, authHeaders } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
