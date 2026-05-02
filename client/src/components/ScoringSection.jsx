@@ -13,7 +13,7 @@ const STAT_META = {
   win:                 { icon: Medal,            label: "Win"                 },
   penalty_minutes:     { icon: Clock,            label: "Penalty Minutes"     },
   power_play_goals:    { icon: Zap,              label: "Power Play Goals"    },
-  short_handed_goals:  { icon: Gavel,           label: "Short Handed Goals"  },
+  short_handed_goals:  { icon: Gavel,            label: "Short Handed Goals"  },
   faceoffs_won:        { icon: Star,             label: "Faceoffs Won"        },
 };
 
