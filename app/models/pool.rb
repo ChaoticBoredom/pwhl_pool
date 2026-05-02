@@ -29,7 +29,7 @@ class Pool < ApplicationRecord
   end
 
   def start_end_range
-    Rails.cache.fetch("#{cache_key_with_version}/start_end_range", expires_in: pool_cache_ttl) do
+    Rails.cache.fetch("#{cache_key_with_version}/start_end_range", expires_in: 1.hour) do
       times = League::Game.
         where(league_id: league_id, season_id: season_id).
         pluck(:start_time).minmax
@@ -47,11 +47,5 @@ class Pool < ApplicationRecord
     return false if league.games_started?
 
     pool_trade_windows.none? || pool_trade_windows.current.exists?
-  end
-
-  private
-
-  def pool_cache_ttl
-    League::Game.exists?(league_id: league_id, season_id: season_id) ? 3.days : 1.hour
   end
 end
