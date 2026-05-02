@@ -20,7 +20,7 @@ class Pwhl::GameData
     data = JSON.parse(res.body).dig("GC", "Gamesummary")
 
     # This is not present in the 'meta', nor on the scheduled games from the rake
-    game.current_description = data.fetch("status_value")
+    game.update(current_description: data.fetch("status_value"))
     update_game_data(data.fetch("meta"), game_id)
 
     ["home_team_lineup", "visitor_team_lineup"].each do |t|
