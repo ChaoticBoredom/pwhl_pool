@@ -40,6 +40,7 @@ gem "rack-cors"
 
 gem "csv"
 gem "positioning"
+gem "colorize"
 
 group :development, :test do
   gem "pry"
