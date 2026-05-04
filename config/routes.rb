@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
     #
     resources :league_games, path: "games", only: [:show]
+    resources :league_players, path: "players", only: [:show]
     resources :pools do
       resources :pool_boxes, only: [:index]
       resources :pool_scoring, only: [:index]
