@@ -1,8 +1,8 @@
 module RecordCollector
   extend ActiveSupport::Concern
 
-  included do
-    attr_reader :pool
+  def pool
+    @pool || raise(ArgumentError, "Pool has not been initialized for #{self.class.name}")
   end
 
   private
@@ -12,7 +12,7 @@ module RecordCollector
   end
 
   def calculate_aggregate(records, position)
-    raise NotImplementedError, "#{self.class.name} must implement #stat_classes"
+    raise NotImplementedError, "#{self.class.name} must implement #calculate_aggregate"
   end
 
   def season_score_from_records(records, position, active_range)
@@ -29,12 +29,12 @@ module RecordCollector
   def load_player_season_records(player)
     player.
       records.
-      for_season(@pool.season_id).
+      for_season(pool.season_id).
       includes(:league_game).
       to_a
   end
 
-  def load_season_records_for(player_ids, season_id: @pool.season_id)
+  def load_season_records_for(player_ids, season_id: pool.season_id)
     records = stat_classes.flat_map do |klass|
       klass.
         includes(:league_game).
@@ -46,7 +46,7 @@ module RecordCollector
   end
 
   def player_active_range(team_player)
-    season_end = @pool.start_end_range.end
+    season_end = pool.start_end_range.end
     effective_end = [season_end, team_player.dropped_at].compact.min
 
     team_player.added_at..effective_end
@@ -62,7 +62,7 @@ module RecordCollector
     start <= stop ? start..stop : nil
   end
 
-    # *_to_date_range intentionally exclude today, so that we can cache the values
+  # *_to_date_range intentionally exclude today, so that we can cache the values
   # and add today to them.
   def week_to_date_range
     Time.current.beginning_of_week..1.day.ago.end_of_day
@@ -73,6 +73,6 @@ module RecordCollector
   end
 
   def season_to_date_range
-    @pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
+    pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
   end
 end
