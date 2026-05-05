@@ -159,7 +159,7 @@ export function PlayerDrawer({ player, isOpen, onClose }) {
         </span>
       </div>
 
-      <div className="player-drawer-body">
+      <div>
         {isLoading && (
           <div className="player-drawer-loading">Loading stats…</div>
         )}

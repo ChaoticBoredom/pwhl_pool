@@ -157,7 +157,37 @@ code {
   gap: 1rem;
 }
 
-/* 6. Specific Components (Players, Lists) */
+.pool-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1rem 0;
+    color: var(--text-h);
+}
+
+.pool-standings {
+  margin-top: 1.5rem;
+}
+
+.pool-rank {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pool-team-name {
+  font-weight: 600;
+  color: #2563eb;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pool-owner-name {
+  text-align: right;
+  color: #4b5563;
+}
+
 .player-list {
   display: flex;
   flex-direction: column;
@@ -201,13 +231,11 @@ code {
   gap: 12px;
 }
 
-.player-identity,
 .player-identity-vertical {
   display: flex;
   flex-direction: column;
 }
 
-.player-identity { flex: 1; }
 .player-identity-vertical { text-align: left; }
 
 .player-name {
@@ -217,7 +245,6 @@ code {
   color: #1e293b;
 }
 
-.team-tag,
 .team-badge-small {
   font-weight: 800;
   font-size: 0.7rem;
@@ -229,7 +256,6 @@ code {
   margin-top: 2px;
 }
 
-.player-score-container,
 .score-display-vertical {
   min-width: 60px;
   text-align: right;
@@ -372,10 +398,6 @@ input::placeholder {
   font-family: monospace;
 }
 
-.scoring-subheader {
-  @apply px-4 pt-4 pb-0.5 text-xs font-bold uppercase tracking-widest text-gray-500;
-}
-
 .back-to-dashboard {
   display: inline-block; /* Essential to allow margins to work correctly */
   margin-bottom: 30px;
@@ -449,7 +471,6 @@ input::placeholder {
   @apply text-sm font-bold uppercase tracking-widest text-gray-500 px-1 mb-3;
 }
 
-/* Responsive grid: 2 cols on mobile, 3 on sm, 4 on lg */
 .scoring-card-grid {
   @apply grid gap-3;
   grid-template-columns: repeat(2, 1fr);
@@ -553,16 +574,8 @@ input::placeholder {
   @apply flex justify-between items-baseline mb-3 pb-2 border-b border-gray-200;
 }
 
-.player-drawer-summary-label {
-  @apply text-xs text-gray-400 uppercase tracking-wide;
-}
-
 .player-drawer-summary-score {
   @apply font-mono font-bold text-gray-800 text-sm flex items-center gap-1.5;
-}
-
-.player-drawer-summary-badge {
-  @apply text-xs font-normal text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded;
 }
 
 .player-drawer-stat-grid {
