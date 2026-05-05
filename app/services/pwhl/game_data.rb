@@ -166,11 +166,14 @@ class Pwhl::GameData
 
     rec.win = data.fetch("win", 0) == "1"
     rec.shutout = data.fetch("shutout", 0) == "1"
+    # What period did the goalie start playing? If at all? Does not exist on the gamebygame
+    rec.game_started = data.fetch("period_start", nil) == "1st"
     rec.saves = data.fetch("saves", 0)
     rec.goals_against = data.fetch("goals_against", 0)
     rec.shots_against = data.fetch("shots_against", 0)
     rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
-    rec.time_on_ice = parse_time(data.fetch("minutes", "0:0"))
+    # seconds is the field in game summary, seconds_played in the player gamebygame
+    rec.time_on_ice = data.fetch("seconds", data.fetch("seconds_played", "0").to_i).seconds
 
     rec
   end
@@ -182,6 +185,7 @@ class Pwhl::GameData
     rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
+    # Game summary does not have this, only the player gamebygame
     rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds", "0:0"))
     rec.plus_minus = data.fetch("plusminus", 0).to_i
     rec.power_play_goals = data.fetch("power_play_goals", 0)
