@@ -169,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
     t.datetime "created_at", null: false
     t.integer "faceoffs_taken", null: false
     t.integer "faceoffs_won", null: false
+    t.integer "game_winning_goals", default: 0, null: false
     t.integer "goals", null: false
     t.integer "hits", null: false
     t.uuid "league_game_id", null: false
