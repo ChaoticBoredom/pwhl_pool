@@ -187,13 +187,15 @@ class Pwhl::GameData
     rec.hits = data.fetch("hits", 0)
     # Game summary does not have this, only the player gamebygame
     rec.time_on_ice = parse_time(data.fetch("ice_time_minutes_seconds", "0:0"))
-    rec.plus_minus = data.fetch("plusminus", 0).to_i
     rec.power_play_goals = data.fetch("power_play_goals", 0)
     rec.short_handed_goals = data.fetch("short_handed_goals", 0)
     rec.shots_blocked = data.fetch("shots_blocked_by_player", 0)
     # Different endpoints have different labels >:(
+    # First is from gamebygame, second is game summary
+    rec.plus_minus = data.fetch("plusminus", data.fetch("plus_minus")).to_i
     rec.faceoffs_taken = data.fetch("faceoffs_taken", data.fetch("faceoff_attempts", 0))
     rec.faceoffs_won = data.fetch("faceoffs_won", data.fetch("faceoff_wins", 0))
+    rec.game_winning_goals = data.fetch("game_winning_goals", data.fetch("game_winning_goal", 0))
 
     rec
   end
