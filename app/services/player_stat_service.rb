@@ -55,7 +55,7 @@ class PlayerStatService
     return STATS[position].to_h { |k| [k, 0] } if records.empty?
 
     STATS[position].each_with_object({}) do |s, r_hash|
-      r_hash[s] = records.sum { |r| parse_field(r[s]) }
+      r_hash[s] = records.sum { |r| parse_field(s, r[s]) }
     end
   end
 
@@ -79,11 +79,16 @@ class PlayerStatService
     }
   end
 
-  def parse_field(val)
+  def parse_field(field, val)
     case val
     when true then 1
     when false then 0
-    when ActiveSupport::Duration then val.in_minutes.to_i
+    when ActiveSupport::Duration
+      if field == :penalty_minutes
+        val.in_minutes.to_i
+      else
+        val.in_seconds.to_i
+      end
     else val.to_i
     end
   end
