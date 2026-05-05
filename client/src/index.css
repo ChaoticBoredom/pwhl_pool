@@ -487,3 +487,142 @@ input::placeholder {
 .scoring-card-value {
   @apply font-mono font-bold text-lg text-gray-900;
 }
+
+.player-drawer {
+  @apply col-span-full border-t border-gray-100 bg-gray-50 px-4 pt-3 pb-4;
+  @apply text-sm;
+  @apply mb-4;
+  @apply rounded-b-lg;
+  grid-column: 1 / -1;
+}
+
+.player-drawer-controls {
+  @apply flex items-center justify-between gap-2 flex-wrap mb-2;
+}
+
+.player-drawer-tabs {
+  @apply flex gap-0.5;
+}
+
+.player-drawer-tab {
+  @apply px-3 py-1 rounded text-xs font-medium text-gray-500 transition-colors;
+}
+
+.player-drawer-tab--active {
+  @apply bg-white text-blue-600 shadow-sm font-semibold;
+}
+
+.player-drawer-tab:hover:not(.player-drawer-tab--active) {
+  @apply text-gray-700 bg-gray-100;
+}
+
+.player-drawer-actions {
+  @apply flex items-center gap-2;
+}
+
+/* Stats / Points toggle */
+.player-drawer-mode-toggle {
+  @apply flex rounded overflow-hidden border border-gray-200 text-xs;
+}
+
+.player-drawer-mode-btn {
+  @apply px-2.5 py-1 text-gray-500 transition-colors;
+}
+
+.player-drawer-mode-btn--active {
+  @apply bg-blue-600 text-white font-semibold;
+}
+
+/* Pool window / Full season toggle */
+.player-drawer-clip-btn {
+  @apply text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-500 transition-colors;
+}
+
+.player-drawer-clip-btn--on {
+  @apply border-blue-300 text-blue-600 bg-blue-50;
+}
+
+.player-drawer-close {
+  @apply text-gray-400 hover:text-gray-700 transition-colors p-1 rounded;
+}
+
+/* Summary bar */
+.player-drawer-summary {
+  @apply flex justify-between items-baseline mb-3 pb-2 border-b border-gray-200;
+}
+
+.player-drawer-summary-label {
+  @apply text-xs text-gray-400 uppercase tracking-wide;
+}
+
+.player-drawer-summary-score {
+  @apply font-mono font-bold text-gray-800 text-sm flex items-center gap-1.5;
+}
+
+.player-drawer-summary-badge {
+  @apply text-xs font-normal text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded;
+}
+
+/* Stat grid — two columns for compact display */
+.player-drawer-stat-grid {
+  @apply grid gap-x-6 gap-y-1;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 640px) {
+  .player-drawer-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .player-drawer-stat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.player-drawer-stat-row {
+  @apply flex justify-between items-baseline py-0.5 gap-2;
+}
+
+.player-drawer-stat-label {
+  @apply text-xs text-gray-500;
+}
+
+.player-drawer-stat-value {
+  @apply font-mono text-xs font-semibold text-gray-800 tabular-nums;
+}
+
+.player-drawer-stat-value--dim {
+  @apply text-gray-400 font-normal;
+}
+
+/* Empty / no-stats state */
+.player-drawer-empty {
+  @apply text-xs text-gray-400 py-2;
+}
+
+/* Clip notice footer */
+.player-drawer-clip-notice {
+  @apply text-xs text-gray-400 mt-3 pt-2 border-t border-gray-100;
+}
+
+/* Loading / error states */
+.player-drawer-loading,
+.player-drawer-error,
+.player-drawer-empty {
+  @apply text-xs text-gray-400 py-3;
+}
+
+.player-row-group .bg-white.border {
+  @apply mb-0;
+}
+
+.player-row-group:has(.player-drawer) .bg-white.border {
+  @apply rounded-b-none border-b-0;
+}
+
+.player-drawer-error {
+  @apply text-red-400;
+}
+

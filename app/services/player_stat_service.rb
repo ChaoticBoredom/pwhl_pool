@@ -41,7 +41,7 @@ class PlayerStatService
 
     {
       stats: build_stats_summary(records, player.position),
-      clipped_stats: build_stats_summary(records, player.position),
+      clipped_stats: build_stats_summary(records, player.position, clip_range: active_range),
     }
   end
 
@@ -83,7 +83,7 @@ class PlayerStatService
     case val
     when true then 1
     when false then 0
-    when ActiveSupport::Duration then val.in_seconds.to_i
+    when ActiveSupport::Duration then val.in_minutes.to_i
     else val.to_i
     end
   end

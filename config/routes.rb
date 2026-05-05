@@ -19,7 +19,7 @@ Rails.application.routes.draw do
     # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
     #
     resources :league_games, path: "games", only: [:show]
-    resources :league_players, path: "players", only: [:show] do
+    resources :league_players, path: "players", only: [] do
       member do
         get :team_player
       end
