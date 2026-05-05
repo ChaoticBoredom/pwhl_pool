@@ -15,13 +15,17 @@ module RecordCollector
     raise NotImplementedError, "#{self.class.name} must implement #calculate_aggregate"
   end
 
+  def default_return
+    raise NotImplementedError, "#{self.class.name} must implement #default_return"
+  end
+
   def season_score_from_records(records, position, active_range)
     calculate_aggregate(records_in_range(records, active_range), position)
   end
 
   def score_window(records, position, window, clip_range: nil)
     effective_range = clip_range ? intersect_ranges(window, clip_range) : window
-    return 0 unless effective_range
+    return default_return unless effective_range
 
     calculate_aggregate(records_in_range(records, effective_range), position)
   end

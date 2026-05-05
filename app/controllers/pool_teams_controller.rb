@@ -5,11 +5,11 @@ class PoolTeamsController < ApplicationController
       includes(pool_team_players: { league_player: :current_team }).
       find(id)
     @pool = @pool_team.pool
-    @pss = PlayerScoringService.new(@pool.scoring, @pool)
+    @scoring_service = PlayerScoringService.new(@pool.scoring, @pool)
     @current_team = @pool_team.current_team.to_a
     @previous_team = @pool_team.previous_team.to_a
 
-    @player_summaries = @pss.player_summaries(@pool_team.pool_team_players.to_a)
+    @player_summaries = @scoring_service.player_summaries(@pool_team.pool_team_players.to_a)
     @player_games = UpcomingGamesService.new.player_schedule(@current_team)
 
     render :show

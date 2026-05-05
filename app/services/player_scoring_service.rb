@@ -3,6 +3,7 @@ class PlayerScoringService
 
   def initialize(scorings, pool)
     @scorings = format_scorings(scorings)
+    @scoring_lookup = get_scoring_lookup.with_indifferent_access
     @pool = pool
   end
 
@@ -78,14 +79,32 @@ class PlayerScoringService
     end
   end
 
+  def calculate_scores_across_hash(stats, position)
+    stats.each_with_object({}) do |(key, val), r_hash|
+      r_hash[key] = if val.is_a?(Hash)
+        calculate_scores_across_hash(val, position)
+      else
+        if @scoring_lookup[position].key?(key)
+          parse_field(val) * @scoring_lookup[position][key]
+        else
+          0
+        end
+      end
+    end
+  end
+
   private
 
   def stat_classes
     [Pwhl::SkaterStat, Pwhl::GoalieStat]
   end
 
+  def default_return
+    0
+  end
+
   def calculate_aggregate(records, position)
-    return 0 if records.empty?
+    return default_return if records.empty?
 
     scoring_fields = @scorings[position]
     return 0 if scoring_fields.nil?
@@ -126,5 +145,11 @@ class PlayerScoringService
     scorings.pluck(:position, :field_name, :value).
       group_by { |row| row[0] }. # Group by position
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
+  end
+
+  def get_scoring_lookup
+    @scorings.transform_values do |position|
+      position.to_h { |s| [s[:field_name], s[:value]] }
+    end
   end
 end

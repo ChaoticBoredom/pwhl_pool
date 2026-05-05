@@ -22,7 +22,8 @@ json.current_team do
     json.added_at tp.added_at
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { summary: summary }
+      json.pool_score summary[:pool_score]
+      json.partial! partial: 'players/scores', locals: { scores: summary[:scores], clipped: summary[:clipped_scores] }
     end
 
     json.games do
@@ -53,7 +54,8 @@ json.previous_team do
     json.dropped_at tp.dropped_at
 
     json.scores do
-      json.partial! partial: 'players/scores', locals: { summary: summary }
+      json.pool_score summary[:pool_score]
+      json.partial! partial: 'players/scores', locals: { scores: summary[:scores], clipped: summary[:clipped_scores] }
     end
   end
 end

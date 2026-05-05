@@ -11,10 +11,27 @@ class PlayerStatService
       :plus_minus, :power_play_goals, :short_handed_goals, :shots_blocked,
       :faceoffs_taken, :faceoffs_won, :game_winning_goals
     ],
-  }.freeze
+  }.with_indifferent_access.freeze
 
   def initialize(pool)
     @pool = pool
+  end
+
+  def player_summaries(team_players)
+    return {} if team_players.empty?
+
+    records_map = load_season_records_for(team_players.map(&:league_player_id))
+
+    team_players.each_with_object({}) do |tp, r_hash|
+      player = tp.league_player
+      records = records_map[tp.league_player_id] || []
+      active_range = player_active_range(tp)
+
+      r_hash[tp.id] = {
+        stats: build_stats_summary(records, player.position),
+        clipped_stats: build_stats_summary(records, player.position, clip_range: active_range),
+      }
+    end
   end
 
   def player_summary(team_player)
@@ -24,7 +41,7 @@ class PlayerStatService
 
     {
       stats: build_stats_summary(records, player.position),
-      clipped_scores: build_stats_summary(records, player.position),
+      clipped_stats: build_stats_summary(records, player.position),
     }
   end
 
@@ -35,11 +52,15 @@ class PlayerStatService
   end
 
   def calculate_aggregate(records, position)
-    return STATS[position.to_sym].to_h { |k| [k, 0] } if records.empty?
+    return STATS[position].to_h { |k| [k, 0] } if records.empty?
 
-    STATS[position.to_sym].each_with_object({}) do |s, r_hash|
+    STATS[position].each_with_object({}) do |s, r_hash|
       r_hash[s] = records.sum { |r| parse_field(r[s]) }
     end
+  end
+
+  def default_return
+    {}
   end
 
   def build_stats_summary(records, position, clip_range: nil)
