@@ -61,4 +61,18 @@ module RecordCollector
     stop = [a.end, b.end].min
     start <= stop ? start..stop : nil
   end
+
+    # *_to_date_range intentionally exclude today, so that we can cache the values
+  # and add today to them.
+  def week_to_date_range
+    Time.current.beginning_of_week..1.day.ago.end_of_day
+  end
+
+  def month_to_date_range
+    Time.current.beginning_of_month..1.day.ago.end_of_day
+  end
+
+  def season_to_date_range
+    @pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
+  end
 end

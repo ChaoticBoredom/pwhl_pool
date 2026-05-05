@@ -84,6 +84,17 @@ class PlayerScoringService
     [Pwhl::SkaterStat, Pwhl::GoalieStat]
   end
 
+  def calculate_aggregate(records, position)
+    return 0 if records.empty?
+
+    scoring_fields = @scorings[position]
+    return 0 if scoring_fields.nil?
+
+    scoring_fields.sum do |s|
+      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
+    end
+  end
+
   # *_to_date intentionally exclude today, so we can add it and not recalculate
   # some values
   def build_scores_summary(records, position, clip_range: nil)
@@ -102,17 +113,6 @@ class PlayerScoringService
     }
   end
 
-  def calculate_aggregate(records, position)
-    return 0 if records.empty?
-
-    scoring_fields = @scorings[position]
-    return 0 if scoring_fields.nil?
-
-    scoring_fields.sum do |s|
-      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
-    end
-  end
-
   def parse_field(val)
     case val
     when true then 1
@@ -126,19 +126,5 @@ class PlayerScoringService
     scorings.pluck(:position, :field_name, :value).
       group_by { |row| row[0] }. # Group by position
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
-  end
-
-  # *_to_date_range intentionally exclude today, so that we can cache the values
-  # and add today to them.
-  def week_to_date_range
-    Time.current.beginning_of_week..1.day.ago.end_of_day
-  end
-
-  def month_to_date_range
-    Time.current.beginning_of_month..1.day.ago.end_of_day
-  end
-
-  def season_to_date_range
-    @pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
   end
 end
