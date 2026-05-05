@@ -347,7 +347,6 @@ input::placeholder {
   border: var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden; /* Keeps header corners sharp */
   margin-top: 1.5rem;
 }
 
@@ -370,7 +369,7 @@ input::placeholder {
 
 .score-cell {
   text-align: right;
-  font-family: monospace; /* Keeps decimals aligned */
+  font-family: monospace;
 }
 
 .scoring-subheader {
@@ -488,11 +487,24 @@ input::placeholder {
   @apply font-mono font-bold text-lg text-gray-900;
 }
 
+.player-drawer-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms ease;
+}
+
+.player-drawer-wrapper--open {
+  grid-template-rows: 1fr;
+}
+
+/* Inner div needed for grid-rows trick to work */
+.player-drawer-wrapper > div {
+  overflow: hidden;
+}
+
 .player-drawer {
-  @apply col-span-full border-t border-gray-100 bg-gray-50 px-4 pt-3 pb-4;
+  @apply border-t border-gray-100 bg-gray-50 px-4 pt-3 pb-3;
   @apply text-sm;
-  @apply mb-4;
-  @apply rounded-b-lg;
   grid-column: 1 / -1;
 }
 
@@ -533,20 +545,10 @@ input::placeholder {
   @apply bg-blue-600 text-white font-semibold;
 }
 
-/* Pool window / Full season toggle */
-.player-drawer-clip-btn {
-  @apply text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-500 transition-colors;
-}
-
-.player-drawer-clip-btn--on {
-  @apply border-blue-300 text-blue-600 bg-blue-50;
-}
-
 .player-drawer-close {
   @apply text-gray-400 hover:text-gray-700 transition-colors p-1 rounded;
 }
 
-/* Summary bar */
 .player-drawer-summary {
   @apply flex justify-between items-baseline mb-3 pb-2 border-b border-gray-200;
 }
@@ -563,7 +565,6 @@ input::placeholder {
   @apply text-xs font-normal text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded;
 }
 
-/* Stat grid — two columns for compact display */
 .player-drawer-stat-grid {
   @apply grid gap-x-6 gap-y-1;
   grid-template-columns: repeat(2, 1fr);
@@ -597,29 +598,41 @@ input::placeholder {
   @apply text-gray-400 font-normal;
 }
 
-/* Empty / no-stats state */
 .player-drawer-empty {
   @apply text-xs text-gray-400 py-2;
 }
 
-/* Clip notice footer */
 .player-drawer-clip-notice {
   @apply text-xs text-gray-400 mt-3 pt-2 border-t border-gray-100;
 }
 
-/* Loading / error states */
 .player-drawer-loading,
 .player-drawer-error,
 .player-drawer-empty {
   @apply text-xs text-gray-400 py-3;
 }
 
-.player-row-group .bg-white.border {
-  @apply mb-0;
+.player-row-group {
+  @apply rounded-lg overflow-hidden shadow-sm mb-2;
 }
 
-.player-row-group:has(.player-drawer) .bg-white.border {
-  @apply rounded-b-none border-b-0;
+.player-row-group:has(.player-drawer) {
+  @apply mb-3;
+}
+
+.player-row-group > .bg-white {
+  @apply shadow-none rounded-none mb-0;
+}
+.player-drawer-stat-row--total {
+  @apply col-span-full border-t border-gray-200 mt-1 pt-1 font-bold;
+}
+
+.player-drawer-stat-row--total .player-drawer-stat-label {
+  @apply text-gray-700 font-bold;
+}
+
+.player-drawer-stat-row--total .player-drawer-stat-value {
+  @apply text-gray-900;
 }
 
 .player-drawer-error {

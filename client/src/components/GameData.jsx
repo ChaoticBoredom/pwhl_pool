@@ -11,7 +11,7 @@ function Matchup({ away, home, showScore = false })
       {showScore && (
         <span className="game-score">{away.score}</span>
       )}
-      <span className="game_at">@</span>
+      <span className="game-at">@</span>
       {showScore && (
         <span className="game-score">{home.score}</span>
       )}

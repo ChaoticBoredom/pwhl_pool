@@ -110,7 +110,9 @@ function PoolTeamDetails() {
                 <div className="hidden md:block score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
                 <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
               </DataRow>
-              <PlayerDrawer player={player} isOpen={isOpen} onClose={() => toggleDrawer(player.id)} />
+              <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
+                <PlayerDrawer player={player} isOpen={isOpen} onClose={() => toggleDrawer(player.id)} />
+              </div>
             </div>
           );
         })}
