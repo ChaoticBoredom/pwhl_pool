@@ -1,8 +1,4 @@
-json.pool_score summary[:pool_score]
-
 json.scores do
-  scores = summary[:scores]
-
   json.today scores[:today]
   json.yesterday scores[:yesterday]
   json.week_to_date scores[:week_to_date]
@@ -11,8 +7,6 @@ json.scores do
 end
 
 json.clipped_scores do
-  clipped = summary[:clipped_scores]
-
   json.today clipped[:today]
   json.yesterday clipped[:yesterday]
   json.week_to_date clipped[:week_to_date]

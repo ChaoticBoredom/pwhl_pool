@@ -8,7 +8,7 @@ const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
 
   return (
     <div className="box-container mb-6">
-      <h3 className="font-bold text-lg border-b pb-2 mb-4">{box.name}</h3>
+      <h3>{box.name}</h3>
       <div className="player-list">
         {box.players.map(player => {
           const isSelected = selectedPlayerId === player.id;
@@ -28,8 +28,8 @@ const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
                 />
               </Player>
               <div className="score-display-vertical">
-                <span className="score-super">{isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}</span>
-                <span className="score-main">{player.scores.season_to_date.toFixed(2)}</span>
+                <span className="score-label">{isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}</span>
+                <span className="score-value">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>
           );

@@ -38,8 +38,9 @@ Rails.application.configure do
     ->(request) do
       auth_header = request.headers["Authorization"]
       if auth_header && (token = auth_header.split(" ").last)
-        user_id = Session.find_by(token: token)&.user_id
-        user_id || "guest"
+        Rails.cache.fetch("logs/token_user_#{token}", expires_in: 10.minutes) do
+          Session.find_by(token: token)&.user_id || "guest"
+        end
       else
         "guest"
       end

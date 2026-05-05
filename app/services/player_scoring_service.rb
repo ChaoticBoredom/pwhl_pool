@@ -1,6 +1,9 @@
 class PlayerScoringService
+  include RecordCollector
+
   def initialize(scorings, pool)
     @scorings = format_scorings(scorings)
+    @scoring_lookup = get_scoring_lookup.with_indifferent_access
     @pool = pool
   end
 
@@ -76,7 +79,40 @@ class PlayerScoringService
     end
   end
 
+  def calculate_scores_across_hash(stats, position)
+    stats.each_with_object({}) do |(key, val), r_hash|
+      r_hash[key] = if val.is_a?(Hash)
+        calculate_scores_across_hash(val, position)
+      else
+        if @scoring_lookup[position].key?(key)
+          parse_field(val) * @scoring_lookup[position][key]
+        else
+          0
+        end
+      end
+    end
+  end
+
   private
+
+  def stat_classes
+    [Pwhl::SkaterStat, Pwhl::GoalieStat]
+  end
+
+  def default_return
+    0
+  end
+
+  def calculate_aggregate(records, position)
+    return default_return if records.empty?
+
+    scoring_fields = @scorings[position]
+    return 0 if scoring_fields.nil?
+
+    scoring_fields.sum do |s|
+      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
+    end
+  end
 
   # *_to_date intentionally exclude today, so we can add it and not recalculate
   # some values
@@ -96,64 +132,6 @@ class PlayerScoringService
     }
   end
 
-  def season_score_from_records(records, position, active_range)
-    calculate_aggregate(records_in_range(records, active_range), position)
-  end
-
-  def score_window(records, position, window, clip_range: nil)
-    effective_range = clip_range ? intersect_ranges(window, clip_range) : window
-    return 0 unless effective_range
-
-    calculate_aggregate(records_in_range(records, effective_range), position)
-  end
-
-  def load_player_season_records(player)
-    player.
-      records.
-      for_season(@pool.season_id).
-      includes(:league_game).
-      to_a
-  end
-
-  def load_season_records_for(player_ids, season_id: @pool.season_id)
-    records = [Pwhl::SkaterStat, Pwhl::GoalieStat].flat_map do |klass|
-      klass.
-        includes(:league_game).
-        joins(:league_game).
-        where(league_player_id: player_ids).
-        where(league_games: { season_id: season_id }).
-        to_a
-    end.group_by(&:league_player_id)
-  end
-
-  def player_active_range(team_player)
-    season_end = @pool.start_end_range.end
-    effective_end = [season_end, team_player.dropped_at].compact.min
-
-    team_player.added_at..effective_end
-  end
-
-  def records_in_range(records, range)
-    records.select { |r| range.cover?(r.league_game.start_time) }
-  end
-
-  def intersect_ranges(a, b)
-    start = [a.begin, b.begin].max
-    stop = [a.end, b.end].min
-    start <= stop ? start..stop : nil
-  end
-
-  def calculate_aggregate(records, position)
-    return 0 if records.empty?
-
-    scoring_fields = @scorings[position]
-    return 0 if scoring_fields.nil?
-
-    scoring_fields.sum do |s|
-      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
-    end
-  end
-
   def parse_field(val)
     case val
     when true then 1
@@ -169,17 +147,9 @@ class PlayerScoringService
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
   end
 
-  # *_to_date_range intentionally exclude today, so that we can cache the values
-  # and add today to them.
-  def week_to_date_range
-    Time.current.beginning_of_week..1.day.ago.end_of_day
-  end
-
-  def month_to_date_range
-    Time.current.beginning_of_month..1.day.ago.end_of_day
-  end
-
-  def season_to_date_range
-    @pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
+  def get_scoring_lookup
+    @scorings.transform_values do |position|
+      position.to_h { |s| [s[:field_name], s[:value]] }
+    end
   end
 end

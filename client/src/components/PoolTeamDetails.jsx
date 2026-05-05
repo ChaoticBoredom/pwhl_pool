@@ -1,9 +1,12 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext';
 import { DataRow } from './DataRow';
 import { EditableField } from './EditableField';
 import { GameData } from "./GameData";
+import { PlayerDrawer } from "./PlayerDrawer";
+
 import Player from "./Player";
 
 const GRID_MOBILE = "grid-cols-[1fr_80px]";
@@ -16,6 +19,16 @@ function PoolTeamDetails() {
   const { currentUser, authHeaders } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const [openDrawers, setOpenDrawers] = useState(new Set());
+
+  const toggleDrawer = (id) => {
+    setOpenDrawers(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   const { data: poolTeam, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["pool-team", teamId],
@@ -84,16 +97,25 @@ function PoolTeamDetails() {
           </div>
         </DataRow>
 
-        {poolTeam.current_team?.map(player => (
-          <DataRow key={player.league_player_id} gridClass={`${poolGrid} grid-row`}>
-            <Player player={player} />
-            <GameData gameId={player.games.today?.id} />
-            <div className="score-cell">{player.scores.scores.today.toFixed(2)}</div>
-            <div className="hidden md:block score-cell">{player.scores.scores.yesterday.toFixed(2)}</div>
-            <div className="hidden md:block score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
-            <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
-          </DataRow>
-        ))}
+        {poolTeam.current_team?.map((player) => {
+          const isOpen = openDrawers.has(player.id);
+          
+          return (
+            <div key={player.id} className="player-row-group">
+              <DataRow gridClass={poolGrid} onClick={() => toggleDrawer(player.id)}>
+                <Player player={player} />
+                <GameData gameId={player.games.today?.id} />
+                <div className="score-cell">{player.scores.scores.today.toFixed(2)}</div>
+                <div className="hidden md:block score-cell">{player.scores.scores.yesterday.toFixed(2)}</div>
+                <div className="hidden md:block score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
+                <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
+              </DataRow>
+              <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
+                <PlayerDrawer player={player} isOpen={isOpen} onClose={() => toggleDrawer(player.id)} />
+              </div>
+            </div>
+          );
+        })}
         <DataRow gridClass={`${poolGrid}`}>
           <div className="font-semibold">Total</div>
           <div className="hidden md:block"/>

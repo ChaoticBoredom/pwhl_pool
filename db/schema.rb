@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_30_043011) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -144,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_043011) do
   create_table "pwhl_goalie_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "assists", null: false
     t.datetime "created_at", null: false
+    t.boolean "game_started", default: false, null: false
     t.integer "goals", null: false
     t.integer "goals_against", null: false
     t.uuid "league_game_id", null: false
@@ -168,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_043011) do
     t.datetime "created_at", null: false
     t.integer "faceoffs_taken", null: false
     t.integer "faceoffs_won", null: false
+    t.integer "game_winning_goals", default: 0, null: false
     t.integer "goals", null: false
     t.integer "hits", null: false
     t.uuid "league_game_id", null: false
