@@ -12,23 +12,23 @@ json.pool_scores do
 end
 
 json.labels do
-  json.goals "Goals",
-  json.assists "Assists",
-  json.shots "Shots",
-  json.hits "Hits",
-  json.saves "Saves",
-  json.shutout "Shutout",
-  json.win "Win",
-  json.penalty_minutes "PIM",
-  json.power_play_goals "PPG",
-  json.short_handed_goals "SHG",
-  json.faceoffs_won "Faceoffs Won",
-  json.faceoffs_taken "Faceoffs",
-  json.time_on_ice "TOI",
-  json.plus_minus "+/-",
-  json.shots_against "SA",
-  json.goals_against "GA",
-  json.game_started "GP",
-  json.game_winning_goals "GWG",
-  json.shots_blocked "Blocked",
+  json.goals "Goals"
+  json.assists "Assists"
+  json.shots "Shots"
+  json.hits "Hits"
+  json.saves "Saves"
+  json.shutout "Shutout"
+  json.win "Win"
+  json.penalty_minutes "PIM"
+  json.power_play_goals "PPG"
+  json.short_handed_goals "SHG"
+  json.faceoffs_won "Faceoffs Won"
+  json.faceoffs_taken "Faceoffs"
+  json.time_on_ice "TOI"
+  json.plus_minus "+/-"
+  json.shots_against "SA"
+  json.goals_against "GA"
+  json.game_started "GP"
+  json.game_winning_goals "GWG"
+  json.shots_blocked "Blocked"
 end
