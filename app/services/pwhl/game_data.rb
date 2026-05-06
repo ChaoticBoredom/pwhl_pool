@@ -192,7 +192,7 @@ class Pwhl::GameData
     rec.shots_blocked = data.fetch("shots_blocked_by_player", 0)
     # Different endpoints have different labels >:(
     # First is from gamebygame, second is game summary
-    rec.plus_minus = data.fetch("plusminus", data.fetch("plus_minus")).to_i
+    rec.plus_minus = data.fetch("plusminus", data.fetch("plus_minus", 0)).to_i
     rec.faceoffs_taken = data.fetch("faceoffs_taken", data.fetch("faceoff_attempts", 0))
     rec.faceoffs_won = data.fetch("faceoffs_won", data.fetch("faceoff_wins", 0))
     rec.game_winning_goals = data.fetch("game_winning_goals", data.fetch("game_winning_goal", 0))
