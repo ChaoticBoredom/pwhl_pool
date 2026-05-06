@@ -55,6 +55,8 @@ group :development, :test do
   gem "faker"
   gem "shoulda-matchers", "~> 7.0"
 
+  gem "vcr"
+
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
