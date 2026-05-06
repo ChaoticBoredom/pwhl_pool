@@ -137,7 +137,7 @@ class Pwhl::GameData
 
   def format_game_status_string(status)
     case status
-    when /(\d+\w+|ot|os) intermission/i, /in progress \(0:00 remaining in (\d+\w+|ot)\)/i
+    when /(\d+\w+|ot|os) intermission/i, /in progress \(0:00 remaining in (\d+\w+\sot|ot)\)/i
       period = $1
       "#{period} INT"
     when /in progress \((\d+:\d+) remaining in (.+?)\)/i
