@@ -143,6 +143,7 @@ class Pwhl::GameData
     when /in progress \((\d+:\d+) remaining in (.+?)\)/i
       time = $1
       period = $2
+      period.gsub!(/\d+\K\w+\s/, "") if period.include?("OT")
       "#{period} (#{time})"
     when /in progress \(shootout\)/i, /shootout/i
       "SO (In Progress)"
