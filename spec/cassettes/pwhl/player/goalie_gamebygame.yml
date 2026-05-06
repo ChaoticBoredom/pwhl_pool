@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://lscluster.hockeytech.com/feed/index.php?category=gamebygame&client_code=pwhl&feed=modulekit&key=446521baf8c38984&player_id=REPLACE_WITH_CASSETTE_PLAYER_ID&season_id=9&view=player
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.14.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=240
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 06 May 2026 07:48:10 GMT
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.54 () PHP/8.2.30
+      Set-Cookie:
+      - PHPSESSID=n5j1vgfmfs6od2ebstpn6tded6; path=/
+      Vary:
+      - Accept-Encoding
+      X-Cache-Status:
+      - HIT
+      X-Powered-By:
+      - PHP/8.2.30
+      Content-Length:
+      - '495'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: '{"SiteKit":{"Parameters":{"category":"gamebygame","client_code":"pwhl","feed":"modulekit","key":"446521baf8c38984","player_id":"REPLACE_WITH_CASSETTE_PLAYER_ID","season_id":9,"view":"player","league_id":"1"},"Player":{"error":"missing
+        param person_id\/player_id"},"Copyright":{"required_copyright":"Official statistics
+        provided by Professional Women''s Hockey League","required_link":"http:\/\/leaguestat.com","powered_by":"Powered
+        by HockeyTech.com","powered_by_url":"http:\/\/hockeytech.com"}}}'
+  recorded_at: Wed, 06 May 2026 07:48:10 GMT
+- request:
+    method: get
+    uri: https://lscluster.hockeytech.com/feed/index.php?category=gamebygame&client_code=pwhl&feed=modulekit&key=446521baf8c38984&player_id=6&season_id=9&view=player
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.14.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=240
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 06 May 2026 09:21:01 GMT
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.54 () PHP/8.2.30
+      Set-Cookie:
+      - PHPSESSID=fcdk9i3qodjsd60f201aakg36h; path=/
+      Vary:
+      - Accept-Encoding
+      X-Cache-Status:
+      - MISS
+      X-Powered-By:
+      - PHP/8.2.30
+      Content-Length:
+      - '2250'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: '{"SiteKit":{"Parameters":{"category":"gamebygame","client_code":"pwhl","feed":"modulekit","key":"446521baf8c38984","player_id":"6","season_id":9,"view":"player","league_id":"1"},"Player":{"seasons_played":[{"season_id":9,"season_name":"2026
+        Playoffs"},{"season_id":8,"season_name":"2025-26 Regular Season"},{"season_id":7,"season_name":"2025-26
+        Preseason"},{"season_id":5,"season_name":"2024-25 Regular Season"},{"season_id":4,"season_name":"2024-25
+        Preseason"},{"season_id":3,"season_name":"2024 Playoffs"},{"season_id":1,"season_name":"2024
+        Regular Season"},{"season_id":2,"season_name":"2024 Preseason"}],"games":[{"gMonth":"April","id":"338","home_team":"1","visiting_team":"5","date_played":"2026-04-30","home":"1","goalie":"1","home_team_code":"BOS","home_team_name":"Boston
+        Fleet","home_division":"PWHL","visiting_team_code":"OTT","visiting_team_name":"Ottawa
+        Charge","visiting_division":"PWHL","goals_against":"1","seconds_played":"3600","win":"1","tie":"0","loss":"0","total_losses":"0","shutout":"0","ot_loss":"0","shootout_loss":"0","saves":"17","shots_against":"18","shootout_saves":"0","shootout_goals_against":"0","shootout_shots":"0","goals":"0","assists":"0","pim":"","points":0,"gaa":"1.00","svpct":"0.944","shootout_shots_percentage":"0.000","penalty_minutes":"","minutes":"60:00","player_team":"1"},{"gMonth":"May","id":"339","home_team":"1","visiting_team":"5","date_played":"2026-05-02","home":"1","goalie":"1","home_team_code":"BOS","home_team_name":"Boston
+        Fleet","home_division":"PWHL","visiting_team_code":"OTT","visiting_team_name":"Ottawa
+        Charge","visiting_division":"PWHL","goals_against":"2","seconds_played":"3496","win":"0","tie":"0","loss":"1","total_losses":"1","shutout":"0","ot_loss":"0","shootout_loss":"0","saves":"18","shots_against":"20","shootout_saves":"0","shootout_goals_against":"0","shootout_shots":"0","goals":"0","assists":"0","pim":"","points":0,"gaa":"2.06","svpct":"0.900","shootout_shots_percentage":"0.000","penalty_minutes":"","minutes":"58:16","player_team":"1"}]},"Copyright":{"required_copyright":"Official
+        statistics provided by Professional Women''s Hockey League","required_link":"http:\/\/leaguestat.com","powered_by":"Powered
+        by HockeyTech.com","powered_by_url":"http:\/\/hockeytech.com"}}}'
+  recorded_at: Wed, 06 May 2026 09:21:01 GMT
+recorded_with: VCR 6.4.0
