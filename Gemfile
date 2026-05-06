@@ -55,8 +55,6 @@ group :development, :test do
   gem "faker"
   gem "shoulda-matchers", "~> 7.0"
 
-  gem "vcr"
-
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
@@ -65,6 +63,11 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+end
+
+group :test do
+  gem "vcr"
+  gem "webmock"
 end
 
 gem "sidekiq", "~> 8.1"
