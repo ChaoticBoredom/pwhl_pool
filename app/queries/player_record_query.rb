@@ -40,7 +40,7 @@ class PlayerRecordQuery
   end
 
   def cache_key
-    ["player_records", @season_id, Date.current.to_s, Digest::SHA1.hexdigest(@players.map(&:id).sort.join)]
+    ["player_records", @season_id, Date.current.to_s, Digest::SHA1.hexdigest(@player_ids.sort.join)]
   end
 
   def extract_player_ids(players)
