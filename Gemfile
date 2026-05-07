@@ -65,6 +65,11 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
+group :test do
+  gem "vcr"
+  gem "webmock"
+end
+
 gem "sidekiq", "~> 8.1"
 gem "sidekiq-cron", "~> 2.3"
 gem "redis"

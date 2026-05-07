@@ -25,7 +25,10 @@ class Pwhl::GameData
 
     ["home_team_lineup", "visitor_team_lineup"].each do |t|
       current_team = @teams[data.dig(t.split("_").first, "id")]
-      data.dig(t, "goalies").each do |goalie_data|
+      lineup = data.dig(t)
+      next unless lineup.is_a?(Hash)
+
+      lineup.dig("goalies").each do |goalie_data|
         # Goalies have extra data in a whole field of their own, and it isn't always populated at first :(
         additional_data = data.dig("goalies", t.split("_").first) || []
         additional_data = additional_data.select { |r| r.fetch("player_id", -1) == goalie_data.fetch("player_id", 0) }.first || {}
@@ -137,12 +140,11 @@ class Pwhl::GameData
 
   def format_game_status_string(status)
     case status
-    when /(\d+\w+|ot|os) intermission/i, /in progress \(0:00 remaining in (\d+\w+\sot|ot)\)/i
-      period = $1
-      "#{period} INT"
-    when /in progress \((\d+:\d+) remaining in (.+?)\)/i
-      time = $1
-      period = $2
+    when /in progress \(0:00 remaining in (?<period>\d+\w+(?:\s?ot)?|ot)\)/i
+      "#{$~[:period].gsub(/\s?Period$/i, "")} INT"
+    when /in progress \((?<time>\d+:\d+) remaining in (?<period>.+?)\)/i
+      time, period = $~[:time], $~[:period]
+      period.gsub!(/\s?Period$/i, "")
       period.gsub!(/\d+\K\w+\s/, "") if period.include?("OT")
       "#{period} (#{time})"
     when /in progress \(shootout\)/i, /shootout/i
