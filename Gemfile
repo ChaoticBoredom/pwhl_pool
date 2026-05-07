@@ -71,7 +71,7 @@ group :test do
 end
 
 gem "sidekiq", "~> 8.1"
-gem "sidekiq-cron", "~> 2.3"
+gem "sidekiq-cron", "~> 2.4"
 gem "redis"
 
 gem "props_template", "~> 1.0"
