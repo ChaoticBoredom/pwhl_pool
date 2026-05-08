@@ -9,7 +9,7 @@ FactoryBot.define do
 
     after(:build) do |stat, evaluator|
       stat.league_player = evaluator.league_player || build(:pwhl_skater, league: evaluator.league)
-      stat.league_game.league = evaluator.league
+      stat.league_game.league = evaluator.league if stat.league_game
     end
 
     goals             { 0 }
