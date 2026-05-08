@@ -1,5 +1,5 @@
 class PlayerStatService
-  include RecordCollector
+  include DateFiltering
 
   STATS = {
     goalie: [
@@ -13,35 +13,33 @@ class PlayerStatService
     ],
   }.with_indifferent_access.freeze
 
-  def initialize(pool)
-    @pool = pool
-  end
-
-  def player_summaries(team_players)
+  def player_summaries(team_players, records)
     return {} if team_players.empty?
-
-    records_map = load_season_records_for(team_players.map(&:league_player_id))
 
     team_players.each_with_object({}) do |tp, r_hash|
       player = tp.league_player
-      records = records_map[tp.league_player_id] || []
-      active_range = player_active_range(tp)
+      player_records = records[tp.league_player_id] || []
 
       r_hash[tp.id] = {
-        stats: build_stats_summary(records, player.position),
-        clipped_stats: build_stats_summary(records, player.position, clip_range: active_range),
+        stats: build_stats_summary(player_records, player.position),
+        clipped_stats: build_stats_summary(
+          player_records,
+          player.position,
+          clip_range: tp.active_range),
       }
     end
   end
 
-  def player_summary(team_player)
+  def player_summary(team_player, records)
     player = team_player.league_player
-    records = load_player_season_records(player)
-    active_range = player_active_range(team_player)
+    player_records = records[team_player.league_player_id] || []
 
     {
-      stats: build_stats_summary(records, player.position),
-      clipped_stats: build_stats_summary(records, player.position, clip_range: active_range),
+      stats: build_stats_summary(player_records, player.position),
+      clipped_stats: build_stats_summary(
+        player_records,
+        player.position,
+        clip_range: team_player.active_range),
     }
   end
 

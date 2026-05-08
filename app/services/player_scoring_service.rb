@@ -12,24 +12,23 @@ class PlayerScoringService
     team_players.each_with_object({}) do |tp, r_hash|
       player = tp.league_player
       player_records = records[tp.league_player_id] || []
-      active_range = tp.active_range
 
       r_hash[tp.id] = {
         pool_score: calculate_aggregate(records_in_range(player_records, tp.active_range), player.position),
         scores: build_scores_summary(player_records, player.position),
-        clipped_scores: build_scores_summary(player_records, player.position, clip_range: active_range),
+        clipped_scores: build_scores_summary(player_records, player.position, clip_range: tp.active_range),
       }
     end
   end
 
   def player_summary(team_player, records)
     player = team_player.league_player
-    active_range = tp.active_range
+    player_records = records[player.id]
 
     {
-      pool_score: calculate_aggregate(records_in_range(player_records, tp.active_range), player.position),
-      scores: build_scores_summary(records, player.position),
-      clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
+      pool_score: calculate_aggregate(records_in_range(player_records, team_player.active_range), player.position),
+      scores: build_scores_summary(player_records, player.position),
+      clipped_scores: build_scores_summary(player_records, player.position, clip_range: team_player.active_range),
     }
   end
 
