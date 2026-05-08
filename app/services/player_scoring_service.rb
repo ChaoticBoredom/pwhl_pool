@@ -33,7 +33,7 @@ class PlayerScoringService
     }
   end
 
-  def bulk_team_scores(pool_teams, records)
+  def team_scores(pool_teams, records)
     return {} if pool_teams.empty?
 
     all_team_players = pool_teams.flat_map(&:pool_team_players)

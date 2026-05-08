@@ -360,7 +360,7 @@ RSpec.describe PlayerScoringService do
     end
   end
 
-  describe "#bulk_team_scores" do
+  describe "#team_scores" do
     around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
 
     let(:skater) { create(:pwhl_skater, league: league) }
@@ -386,29 +386,29 @@ RSpec.describe PlayerScoringService do
     end
 
     it "returns a score for each team" do
-      result = service.bulk_team_scores([pool_team_a, pool_team_b])
+      result = service.team_scores([pool_team_a, pool_team_b])
       expect(result.keys).to contain_exactly(pool_team_a.id, pool_team_b.id)
     end
 
     it "correctly scores a skater team" do
-      result = service.bulk_team_scores([pool_team_a, pool_team_b])
+      result = service.team_scores([pool_team_a, pool_team_b])
       expect(result[pool_team_a.id]).to eq(8.0)
     end
 
     it "correctly scores a goalie team" do
-      result = service.bulk_team_scores([pool_team_a, pool_team_b])
+      result = service.team_scores([pool_team_a, pool_team_b])
       expect(result[pool_team_b.id]).to eq(13.0)
     end
 
     it "returns an empty hash on empty input" do
-      expect(service.bulk_team_scores([])).to eq({})
+      expect(service.team_scores([])).to eq({})
     end
 
     it "excludes stats from a different season" do
       old_game = create(:league_game, :final, league: league, season_id: "2024-2025", start_time: 3.days.ago)
       create(:pwhl_skater_stat, league_player: skater, league_game: old_game, goals: 5)
 
-      result = service.bulk_team_scores([pool_team_a])
+      result = service.team_scores([pool_team_a])
       expect(result[pool_team_a.id]).to eq(8.0)
     end
 
@@ -420,7 +420,7 @@ RSpec.describe PlayerScoringService do
           dropped_team,
           added_at: season_start,
           dropped_at: 4.days.ago)
-        result = service.bulk_team_scores([dropped_team])
+        result = service.team_scores([dropped_team])
         expect(result[dropped_team.id]).to eq(0)
       end
     end
@@ -437,7 +437,7 @@ RSpec.describe PlayerScoringService do
 
       it "sums scores across all players on the team" do
         create_team_player(skater2, pool_team_a, added_at: season_start)
-        result = service.bulk_team_scores([pool_team_a])
+        result = service.team_scores([pool_team_a])
         expect(result[pool_team_a.id]).to eq(11.0)
       end
     end

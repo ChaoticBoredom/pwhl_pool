@@ -16,7 +16,7 @@ class PoolsController < ApplicationController
 
     pss = PlayerScoringService.new(@pool.scoring)
 
-    @team_scores = pss.bulk_team_scores(@pool.pool_teams, records)
+    @team_scores = pss.team_scores(@pool.pool_teams, records)
     @team_ranks = rank_teams(@team_scores)
 
     render :show

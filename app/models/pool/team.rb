@@ -17,11 +17,4 @@ class Pool::Team < ApplicationRecord
   def previous_team
     pool_team_players.includes(league_player: :current_team).non_current
   end
-
-  def total_score
-    pss = PlayerScoringService.new(pool.scoring, pool)
-
-    scores = pss.bulk_team_scores([self])
-    scores[id] || 0.0
-  end
 end
