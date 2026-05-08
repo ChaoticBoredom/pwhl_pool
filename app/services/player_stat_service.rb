@@ -31,16 +31,7 @@ class PlayerStatService
   end
 
   def player_summary(team_player, records)
-    player = team_player.league_player
-    player_records = records[team_player.league_player_id] || []
-
-    {
-      stats: build_stats_summary(player_records, player.position),
-      clipped_stats: build_stats_summary(
-        player_records,
-        player.position,
-        clip_range: team_player.active_range),
-    }
+    player_summaries([team_player], records)[team_player.league_player_id]
   end
 
   private

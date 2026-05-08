@@ -22,14 +22,7 @@ class PlayerScoringService
   end
 
   def player_summary(team_player, records)
-    player = team_player.league_player
-    player_records = records[player.id]
-
-    {
-      pool_score: calculate_aggregate(records_in_range(player_records, team_player.active_range), player.position),
-      scores: build_scores_summary(player_records, player.position),
-      clipped_scores: build_scores_summary(player_records, player.position, clip_range: team_player.active_range),
-    }
+    player_summaries([team_player], records)[team_player.id]
   end
 
   def team_scores(pool_teams, records)
