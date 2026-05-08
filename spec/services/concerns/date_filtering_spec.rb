@@ -155,6 +155,54 @@ RSpec.describe DateFiltering do
     end
   end
 
+  describe "#build_windowed_summary" do
+    around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
+
+    it "raises LocalJumpError without a block" do
+      expect { service.send(:build_windowed_summary, [], :skater) }.
+        to raise_error(LocalJumpError)
+    end
+
+    it "returns today correctly" do
+      stat = create_stat(start_time: 1.hour.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat], :skater) { |td, today| td + today }
+      expect(result[:today]).to eq(1)
+    end
+
+    it "returns yesterday correctly" do
+      stat = create_stat(start_time: 1.day.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat], :skater) { |td, today| td + today }
+      expect(result[:yesterday]).to eq(1)
+    end
+
+    it "excludes today from yesterday" do
+      stat = create_stat(start_time: 1.hour.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat], :skater) { |td, today| td + today }
+      expect(result[:yesterday]).to eq(0)
+    end
+
+    it "yields week_to_date and today to combine" do
+      stat_wtd = create_stat(start_time: 2.days.ago, goals: 1)
+      stat_today = create_stat(start_time: 1.hour.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat_wtd, stat_today], :skater) { |td, today| td + today }
+      expect(result[:week_to_date]).to eq(2)
+    end
+
+    it "yields month_to_date and today to combine" do
+      stat_mtd = create_stat(start_time: 5.days.ago, goals: 1)
+      stat_today = create_stat(start_time: 1.hour.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat_mtd, stat_today], :skater) { |td, today| td + today }
+      expect(result[:month_to_date]).to eq(2)
+    end
+
+    it "yields season_to_date and today to combine" do
+      stat_std = create_stat(start_time: 30.days.ago, goals: 1)
+      stat_today = create_stat(start_time: 1.hour.ago, goals: 1)
+      result = service.send(:build_windowed_summary, [stat_std, stat_today], :skater) { |td, today| td + today }
+      expect(result[:season_to_date]).to eq(2)
+    end
+  end
+
   describe "#week_to_date_range" do
     around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
 
