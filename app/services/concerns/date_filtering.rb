@@ -23,8 +23,8 @@ module DateFiltering
   end
 
   def intersect_ranges(a, b)
-    start = [a.begin, b.begin].max
-    stop = [a.end, b.end].min
+    start = [a.begin, b.begin].compact.max
+    stop = [a.end, b.end].compact.min
     start <= stop ? start..stop : nil
   end
 

@@ -5,7 +5,7 @@ FactoryBot.define do
     final
 
     transient do
-      league { association(:league) }
+      league { raise ArgumentError, "Must pass league: explicitly to :league_game factory" }
     end
 
     association :home_team, factory: :league_team

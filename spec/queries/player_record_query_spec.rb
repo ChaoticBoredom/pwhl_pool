@@ -24,6 +24,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "returns records keyed by league_player_id" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -32,12 +33,13 @@ RSpec.describe PlayerRecordQuery do
       end
 
       it "uses the player id directly" do
-        stat =create(:pwhl_skater_stat,
+        skater_stat = create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
         result = build_query([skater]).records
-        expect(result[skater.id]).to include(stat)
+        expect(result[skater.id]).to include(skater_stat)
       end
     end
 
@@ -55,6 +57,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "returns records keyed by league_player_id" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -69,6 +72,7 @@ RSpec.describe PlayerRecordQuery do
           added_at: 1.day.ago)
 
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -95,6 +99,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "includes records from the given season" do
         stat = create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -104,6 +109,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "excludes records from a different season" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago, season_id: "2024-2025"))
 
@@ -116,7 +122,10 @@ RSpec.describe PlayerRecordQuery do
           league: league,
           season_id: "2023-2024",
           start_time: Time.zone.parse("2024-01-01 12:00:00"))
-        stat = create(:pwhl_skater_stat, league_player: skater, league_game: ref_game)
+        stat = create(:pwhl_skater_stat,
+          league: league,
+          league_player: skater,
+          league_game: ref_game)
 
         result = build_query([skater], season_id: "2023-2024").records
         expect(result[skater.id]).to include(stat)
@@ -129,6 +138,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "returns skater stats under the skater's league_player_id" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -138,6 +148,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "returns goalie stats under the goalie's league_player_id" do
         create(:pwhl_goalie_stat,
+          league: league,
           league_player: goalie,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -147,9 +158,11 @@ RSpec.describe PlayerRecordQuery do
 
       it "returns both stat types in the same call" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
         create(:pwhl_goalie_stat,
+          league: league,
           league_player: goalie,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -163,6 +176,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "eager loads league_game on returned records" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -176,6 +190,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "includes a game from yesterday" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 
@@ -185,6 +200,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "includes a game from today" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.hour.ago))
 
@@ -194,9 +210,11 @@ RSpec.describe PlayerRecordQuery do
 
       it "includes games from both today and yesterday" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.hour.ago))
 
@@ -210,6 +228,7 @@ RSpec.describe PlayerRecordQuery do
 
       it "passes historical record ids through Rails.cache.fetch" do
         create(:pwhl_skater_stat,
+          league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
 

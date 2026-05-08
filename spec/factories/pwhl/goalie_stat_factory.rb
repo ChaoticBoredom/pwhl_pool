@@ -1,16 +1,15 @@
 FactoryBot.define do
   factory :pwhl_goalie_stat, class: "Pwhl::GoalieStat" do
-        transient do
-      league { nil }
+    transient do
+      league { raise ArgumentError, "Must pass league: explicitly to :pwhl_goalie_stat factory" }
     end
 
     association :league_game, factory: %i[league_game final]
     association :league_team
 
     after(:build) do |stat, evaluator|
-      resolved_league = evaluator.league || create(:league, :pwhl)
-      stat.league_player = build(:pwhl_goalie, league: resolved_league)
-      stat.league_game.league_id = resolved_league.id
+      stat.league_player = evaluator.league_player || build(:pwhl_goalie, league: evaluator.league)
+      stat.league_game.league_id = evaluator.league
     end
 
     goals         { 0 }

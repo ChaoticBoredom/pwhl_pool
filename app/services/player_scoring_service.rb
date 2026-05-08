@@ -15,7 +15,7 @@ class PlayerScoringService
       active_range = tp.active_range
 
       r_hash[tp.id] = {
-        pool_score: season_score_from_records(player_records, player.position, active_range),
+        pool_score: calculate_aggregate(records_in_range(player_records, tp.active_range), player.position),
         scores: build_scores_summary(player_records, player.position),
         clipped_scores: build_scores_summary(player_records, player.position, clip_range: active_range),
       }
@@ -27,7 +27,7 @@ class PlayerScoringService
     active_range = tp.active_range
 
     {
-      pool_score: season_score_from_records(records, player.position, active_range),
+      pool_score: calculate_aggregate(records_in_range(player_records, tp.active_range), player.position),
       scores: build_scores_summary(records, player.position),
       clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
     }
