@@ -84,19 +84,7 @@ class PlayerScoringService
   # *_to_date intentionally exclude today, so we can add it and not recalculate
   # some values
   def build_scores_summary(records, position, clip_range: nil)
-    today = score_window(records, position, Time.current.all_day, clip_range:)
-    yesterday = score_window(records, position, 1.day.ago.all_day, clip_range:)
-    week_to_date = score_window(records, position, week_to_date_range, clip_range:)
-    month_to_date = score_window(records, position, month_to_date_range, clip_range:)
-    season_to_date = score_window(records, position, season_to_date_range, clip_range:)
-
-    {
-      today: today,
-      yesterday: yesterday,
-      week_to_date: week_to_date + today,
-      month_to_date: month_to_date + today,
-      season_to_date: season_to_date + today,
-    }
+    build_windowed_summary(records, position, clip_range:) { |td, today| td + today }
   end
 
   def parse_field(val)

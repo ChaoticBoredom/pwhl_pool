@@ -31,14 +31,10 @@ class PlayerStatService
   end
 
   def player_summary(team_player, records)
-    player_summaries([team_player], records)[team_player.league_player_id]
+    player_summaries([team_player], records)[team_player.id]
   end
 
   private
-
-  def stat_classes
-    [Pwhl::SkaterStat, Pwhl::GoalieStat]
-  end
 
   def calculate_aggregate(records, position)
     return STATS[position].to_h { |k| [k, 0] } if records.empty?
@@ -53,19 +49,7 @@ class PlayerStatService
   end
 
   def build_stats_summary(records, position, clip_range: nil)
-    today = score_window(records, position, Time.current.all_day, clip_range:)
-    yesterday = score_window(records, position, 1.day.ago.all_day, clip_range:)
-    week_to_date = score_window(records, position, week_to_date_range, clip_range:)
-    month_to_date = score_window(records, position, month_to_date_range, clip_range:)
-    season_to_date = score_window(records, position, season_to_date_range, clip_range:)
-
-    {
-      today: today,
-      yesterday: yesterday,
-      week_to_date: week_to_date.merge(today) { |_, td, t| td + t },
-      month_to_date: month_to_date.merge(today) { |_, td, t| td + t },
-      season_to_date: season_to_date.merge(today) { |_, td, t| td + t },
-    }
+    build_windowed_summary(records, position, clip_range:) { |td, today| td.merge(today) { |_, a, b| a + b } }
   end
 
   def parse_field(field, val)
