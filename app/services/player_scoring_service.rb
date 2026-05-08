@@ -48,26 +48,12 @@ class PlayerScoringService
     team_totals
   end
 
-  def raw_player_summaries(players)
+  def raw_player_summaries(players, records)
     return {} if players.empty?
 
-    records_map = load_season_records_for(players.map(&:id))
-
     players.each_with_object({}) do |player, r_hash|
-      records = records_map[player.id] || []
-      r_hash[player.id] = build_scores_summary(records, player.position)
-    end
-  end
-
-  def raw_player_season_totals(players, season_id: nil)
-    return {} if players.empty?
-
-    effective_season = season_id || @pool.display_season_id
-    records_map = load_season_records_for(players.map(&:id), season_id: effective_season)
-
-    players.each_with_object({}) do |player, r_hash|
-      records = records_map[player.id] || []
-      r_hash[player.id] = calculate_aggregate(records, player.position)
+      player_records = records[player.id] || []
+      r_hash[player.id] = build_scores_summary(player_records, player.position)
     end
   end
 
