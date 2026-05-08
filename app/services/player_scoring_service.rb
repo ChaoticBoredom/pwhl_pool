@@ -1,34 +1,30 @@
 class PlayerScoringService
-  include RecordCollector
+  include DateFiltering
 
-  def initialize(scorings, pool)
+  def initialize(scorings)
     @scorings = format_scorings(scorings)
     @scoring_lookup = get_scoring_lookup.with_indifferent_access
-    @pool = pool
   end
 
-  def player_summaries(team_players)
+  def player_summaries(team_players, records)
     return {} if team_players.empty?
-
-    records_map = load_season_records_for(team_players.map(&:league_player_id))
 
     team_players.each_with_object({}) do |tp, r_hash|
       player = tp.league_player
-      records = records_map[tp.league_player_id] || []
-      active_range = player_active_range(tp)
+      player_records = records[tp.league_player_id] || []
+      active_range = tp.active_range
 
       r_hash[tp.id] = {
-        pool_score: season_score_from_records(records, player.position, active_range),
-        scores: build_scores_summary(records, player.position),
-        clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
+        pool_score: season_score_from_records(player_records, player.position, active_range),
+        scores: build_scores_summary(player_records, player.position),
+        clipped_scores: build_scores_summary(player_records, player.position, clip_range: active_range),
       }
     end
   end
 
-  def player_summary(team_player)
+  def player_summary(team_player, records)
     player = team_player.league_player
-    records = load_player_season_records(player)
-    active_range = player_active_range(team_player)
+    active_range = tp.active_range
 
     {
       pool_score: season_score_from_records(records, player.position, active_range),
@@ -37,19 +33,16 @@ class PlayerScoringService
     }
   end
 
-  def bulk_team_scores(pool_teams)
+  def bulk_team_scores(pool_teams, records)
     return {} if pool_teams.empty?
 
     all_team_players = pool_teams.flat_map(&:pool_team_players)
     return {} if all_team_players.empty?
 
-    records_map = load_season_records_for(all_team_players.map(&:league_player_id))
-
     team_totals = Hash.new(0.0)
     all_team_players.each do |tp|
-      records = records_map[tp.league_player_id] || []
-      active_range = player_active_range(tp)
-      clipped = records_in_range(records, active_range)
+      player_records = records[tp.league_player_id] || []
+      clipped = records_in_range(player_records, tp.active_range)
       team_totals[tp.pool_team_id] += calculate_aggregate(clipped, tp.position)
     end
 
@@ -94,10 +87,6 @@ class PlayerScoringService
   end
 
   private
-
-  def stat_classes
-    [Pwhl::SkaterStat, Pwhl::GoalieStat]
-  end
 
   def default_return
     0

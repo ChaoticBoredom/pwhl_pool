@@ -12,9 +12,11 @@ class PoolsController < ApplicationController
       includes(:league, :admin, :scoring, pool_teams: :pool_team_players).
       find(id)
 
-    pss = PlayerScoringService.new(@pool.scoring, @pool)
+    records = PlayerRecordQuery.new(League::Player.where(league: @pool.league), season_id: @pool.season_id).records
 
-    @team_scores = pss.bulk_team_scores(@pool.pool_teams)
+    pss = PlayerScoringService.new(@pool.scoring)
+
+    @team_scores = pss.bulk_team_scores(@pool.pool_teams, records)
     @team_ranks = rank_teams(@team_scores)
 
     render :show
