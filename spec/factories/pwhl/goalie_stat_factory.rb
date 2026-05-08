@@ -1,8 +1,17 @@
 FactoryBot.define do
   factory :pwhl_goalie_stat, class: "Pwhl::GoalieStat" do
+        transient do
+      league { nil }
+    end
+
     association :league_game, factory: %i[league_game final]
-    association :league_player
     association :league_team
+
+    after(:build) do |stat, evaluator|
+      resolved_league = evaluator.league || create(:league, :pwhl)
+      stat.league_player = build(:pwhl_goalie, league: resolved_league)
+      stat.league_game.league_id = resolved_league.id
+    end
 
     goals         { 0 }
     assists       { 0 }

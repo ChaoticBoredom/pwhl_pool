@@ -1,4 +1,3 @@
-# spec/factories/league_games.rb
 FactoryBot.define do
   factory :league_game, class: "League::Game", traits: [:scheduled] do
     sequence(:api_id) { |n| "api_key_#{n}" }

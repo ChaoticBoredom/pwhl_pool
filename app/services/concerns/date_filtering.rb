@@ -39,6 +39,6 @@ module DateFiltering
   end
 
   def season_to_date_range
-    pool.start_end_range.begin.beginning_of_day..1.day.ago.end_of_day
+    ..1.day.ago.end_of_day
   end
 end
