@@ -49,20 +49,6 @@ class PlayerScoringService
     end
   end
 
-  def calculate_scores_across_hash(stats, position)
-    stats.each_with_object({}) do |(key, val), r_hash|
-      r_hash[key] = if val.is_a?(Hash)
-        calculate_scores_across_hash(val, position)
-      else
-        if @scoring_lookup[position].key?(key)
-          parse_field(val) * @scoring_lookup[position][key]
-        else
-          0
-        end
-      end
-    end
-  end
-
   private
 
   def default_return

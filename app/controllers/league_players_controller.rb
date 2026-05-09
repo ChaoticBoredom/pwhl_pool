@@ -8,10 +8,14 @@ class LeaguePlayersController < ApplicationController
 
     @stat_service = PlayerStatService.new
     @scoring_service = PlayerScoringService.new(@pool.scoring)
+    @calculator = ScoringCalculator.new(@pool.scoring)
 
     @stats = @stat_service.player_summary(@team_player, records)
     @scores = @scoring_service.player_summary(@team_player, records)
-    @expanded_scores = @scoring_service.calculate_scores_across_hash(@stats, @player.position)
+
+    @expanded_scores = @stats.transform_values do |windowed_summary|
+      windowed_summary.transform_values { |window| @calculator.calculate([window], @player.position) }
+    end
 
     render :show
   end
