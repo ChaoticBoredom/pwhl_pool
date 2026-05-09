@@ -17,11 +17,7 @@ json.boxes do
         scores = @player_scores[player.id]
 
         json.scores do
-          if @pool.using_reference_season?
-            json.season_to_date scores || 0.0
-          else
-            json.partial! partial: 'players/scores_raw', locals: { summary: scores }
-          end
+          json.partial! partial: 'players/scores_raw', locals: { summary: scores }
         end
       end
     end

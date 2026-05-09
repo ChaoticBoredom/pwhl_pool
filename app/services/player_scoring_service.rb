@@ -1,135 +1,68 @@
 class PlayerScoringService
-  include RecordCollector
+  include DateFiltering
 
-  def initialize(scorings, pool)
-    @scorings = format_scorings(scorings)
-    @scoring_lookup = get_scoring_lookup.with_indifferent_access
-    @pool = pool
+  def initialize(scorings)
+    @calculator = ScoringCalculator.new(scorings)
   end
 
-  def player_summaries(team_players)
+  def player_summaries(team_players, records)
     return {} if team_players.empty?
-
-    records_map = load_season_records_for(team_players.map(&:league_player_id))
 
     team_players.each_with_object({}) do |tp, r_hash|
       player = tp.league_player
-      records = records_map[tp.league_player_id] || []
-      active_range = player_active_range(tp)
+      player_records = records[tp.league_player_id] || []
 
       r_hash[tp.id] = {
-        pool_score: season_score_from_records(records, player.position, active_range),
-        scores: build_scores_summary(records, player.position),
-        clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
+        pool_score: calculate_aggregate(records_in_range(player_records, tp.active_range), player.position),
+        scores: build_scores_summary(player_records, player.position),
+        clipped_scores: build_scores_summary(player_records, player.position, clip_range: tp.active_range),
       }
     end
   end
 
-  def player_summary(team_player)
-    player = team_player.league_player
-    records = load_player_season_records(player)
-    active_range = player_active_range(team_player)
-
-    {
-      pool_score: season_score_from_records(records, player.position, active_range),
-      scores: build_scores_summary(records, player.position),
-      clipped_scores: build_scores_summary(records, player.position, clip_range: active_range),
-    }
+  def player_summary(team_player, records)
+    player_summaries([team_player], records)[team_player.id]
   end
 
-  def bulk_team_scores(pool_teams)
+  def team_scores(pool_teams, records)
     return {} if pool_teams.empty?
 
     all_team_players = pool_teams.flat_map(&:pool_team_players)
     return {} if all_team_players.empty?
 
-    records_map = load_season_records_for(all_team_players.map(&:league_player_id))
-
     team_totals = Hash.new(0.0)
     all_team_players.each do |tp|
-      records = records_map[tp.league_player_id] || []
-      active_range = player_active_range(tp)
-      clipped = records_in_range(records, active_range)
+      player_records = records[tp.league_player_id] || []
+      clipped = records_in_range(player_records, tp.active_range)
       team_totals[tp.pool_team_id] += calculate_aggregate(clipped, tp.position)
     end
 
     team_totals
   end
 
-  def raw_player_summaries(players)
+  def raw_player_summaries(players, records)
     return {} if players.empty?
 
-    records_map = load_season_records_for(players.map(&:id))
-
     players.each_with_object({}) do |player, r_hash|
-      records = records_map[player.id] || []
-      r_hash[player.id] = build_scores_summary(records, player.position)
-    end
-  end
-
-  def raw_player_season_totals(players, season_id: nil)
-    return {} if players.empty?
-
-    effective_season = season_id || @pool.display_season_id
-    records_map = load_season_records_for(players.map(&:id), season_id: effective_season)
-
-    players.each_with_object({}) do |player, r_hash|
-      records = records_map[player.id] || []
-      r_hash[player.id] = calculate_aggregate(records, player.position)
-    end
-  end
-
-  def calculate_scores_across_hash(stats, position)
-    stats.each_with_object({}) do |(key, val), r_hash|
-      r_hash[key] = if val.is_a?(Hash)
-        calculate_scores_across_hash(val, position)
-      else
-        if @scoring_lookup[position].key?(key)
-          parse_field(val) * @scoring_lookup[position][key]
-        else
-          0
-        end
-      end
+      player_records = records[player.id] || []
+      r_hash[player.id] = build_scores_summary(player_records, player.position)
     end
   end
 
   private
-
-  def stat_classes
-    [Pwhl::SkaterStat, Pwhl::GoalieStat]
-  end
 
   def default_return
     0
   end
 
   def calculate_aggregate(records, position)
-    return default_return if records.empty?
-
-    scoring_fields = @scorings[position]
-    return 0 if scoring_fields.nil?
-
-    scoring_fields.sum do |s|
-      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
-    end
+    @calculator.calculate(records, position)
   end
 
   # *_to_date intentionally exclude today, so we can add it and not recalculate
   # some values
   def build_scores_summary(records, position, clip_range: nil)
-    today = score_window(records, position, Time.current.all_day, clip_range:)
-    yesterday = score_window(records, position, 1.day.ago.all_day, clip_range:)
-    week_to_date = score_window(records, position, week_to_date_range, clip_range:)
-    month_to_date = score_window(records, position, month_to_date_range, clip_range:)
-    season_to_date = score_window(records, position, season_to_date_range, clip_range:)
-
-    {
-      today: today,
-      yesterday: yesterday,
-      week_to_date: week_to_date + today,
-      month_to_date: month_to_date + today,
-      season_to_date: season_to_date + today,
-    }
+    build_windowed_summary(records, position, clip_range:) { |td, today| td + today }
   end
 
   def parse_field(val)

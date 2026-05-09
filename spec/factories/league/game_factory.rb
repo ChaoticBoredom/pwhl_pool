@@ -1,4 +1,3 @@
-# spec/factories/league_games.rb
 FactoryBot.define do
   factory :league_game, class: "League::Game", traits: [:scheduled] do
     sequence(:api_id) { |n| "api_key_#{n}" }
@@ -6,7 +5,7 @@ FactoryBot.define do
     final
 
     transient do
-      league { association(:league) }
+      league { raise ArgumentError, "Must pass league: explicitly to :league_game factory" }
     end
 
     association :home_team, factory: :league_team

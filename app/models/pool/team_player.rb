@@ -19,6 +19,10 @@ class Pool::TeamPlayer < ApplicationRecord
     dropped_at.nil?
   end
 
+  def active_range
+    added_at..dropped_at
+  end
+
   private
 
   def denormalize_fields
