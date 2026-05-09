@@ -96,7 +96,7 @@ RSpec.describe ScoringCalculator do
 
       def build_goalie_stat(saves: 0, win: false, shutout: false)
         game = instance_double(League::Game, start_time: 1.day.ago)
-        build(:pwhl_goalie_stat, league: league, saves: saves, win: win, shutout: shutout).tap do |stat|
+        build(:pwhl_goalie_stat, league: league, league_game: nil, saves: saves, win: win, shutout: shutout).tap do |stat|
           allow(stat).to receive(:league_game).and_return(game)
         end
       end
