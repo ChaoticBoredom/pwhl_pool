@@ -2,8 +2,7 @@ class PlayerScoringService
   include DateFiltering
 
   def initialize(scorings)
-    @scorings = format_scorings(scorings)
-    @scoring_lookup = get_scoring_lookup.with_indifferent_access
+    @calculator = ScoringCalculator.new(scorings)
   end
 
   def player_summaries(team_players, records)
@@ -71,14 +70,7 @@ class PlayerScoringService
   end
 
   def calculate_aggregate(records, position)
-    return default_return if records.empty?
-
-    scoring_fields = @scorings[position]
-    return 0 if scoring_fields.nil?
-
-    scoring_fields.sum do |s|
-      records.sum { |r| parse_field(r[s[:field_name]]) } * s[:value]
-    end
+    @calculator.calculate(records, position)
   end
 
   # *_to_date intentionally exclude today, so we can add it and not recalculate
