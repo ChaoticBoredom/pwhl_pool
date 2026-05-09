@@ -65,24 +65,16 @@ RSpec.describe PlayerScoringService do
       let(:stat) { build_stat(start_time: 2.hours.ago, goals: 1, assists: 1) }
       let(:records) { { skater.id => [stat] } }
 
-      it "scores today correctly" do
-        expect(summary_for(skater, records)[:scores][:today]).to eq(5.0)
-      end
-
-      it "scores yesterday correctly" do
-        expect(summary_for(skater, records)[:scores][:yesterday]).to eq(0)
-      end
-
-      it "scores week_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:week_to_date]).to eq(5.0)
-      end
-
-      it "scores month_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:month_to_date]).to eq(5.0)
-      end
-
-      it "scores season_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:season_to_date]).to eq(5.0)
+      [
+        [:scores, :today, 5.0],
+        [:scores, :yesterday, 0],
+        [:scores, :week_to_date, 5.0],
+        [:scores, :month_to_date, 5.0],
+        [:scores, :season_to_date, 5.0],
+      ].each do |summary_key, timeframe, expected|
+        it "returns #{expected} for #{summary_key} #{timeframe}" do
+          expect(summary_for(skater, records)[summary_key][timeframe]).to eq(expected)
+        end
       end
     end
 
@@ -90,24 +82,16 @@ RSpec.describe PlayerScoringService do
       let(:stat) { build_stat(start_time: 1.day.ago, goals: 2) }
       let(:records) { { skater.id => [stat] } }
 
-      it "scores today correctly" do
-        expect(summary_for(skater, records)[:scores][:today]).to eq(0.0)
-      end
-
-      it "scores yesterday correctly" do
-        expect(summary_for(skater, records)[:scores][:yesterday]).to eq(6.0)
-      end
-
-      it "scores week_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:week_to_date]).to eq(6.0)
-      end
-
-      it "scores month_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:month_to_date]).to eq(6.0)
-      end
-
-      it "scores season_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:season_to_date]).to eq(6.0)
+      [
+        [:scores, :today, 0.0],
+        [:scores, :yesterday, 6.0],
+        [:scores, :week_to_date, 6.0],
+        [:scores, :month_to_date, 6.0],
+        [:scores, :season_to_date, 6.0],
+      ].each do |summary_key, timeframe, expected|
+        it "returns #{expected} for #{summary_key} #{timeframe}" do
+          expect(summary_for(skater, records)[summary_key][timeframe]).to eq(expected)
+        end
       end
     end
 
@@ -123,24 +107,16 @@ RSpec.describe PlayerScoringService do
         }
       end
 
-      it "scores today correctly" do
-        expect(summary_for(skater, records)[:scores][:today]).to eq(3.0)
-      end
-
-      it "scores yesterday correctly" do
-        expect(summary_for(skater, records)[:scores][:yesterday]).to eq(0)
-      end
-
-      it "scores week_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:week_to_date]).to eq(6.0)
-      end
-
-      it "scores month_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:month_to_date]).to eq(10.0)
-      end
-
-      it "scores season_to_date correctly" do
-        expect(summary_for(skater, records)[:scores][:season_to_date]).to eq(16.0)
+      [
+        [:scores, :today, 3.0],
+        [:scores, :yesterday, 0],
+        [:scores, :week_to_date, 6.0],
+        [:scores, :month_to_date, 10.0],
+        [:scores, :season_to_date, 16.0],
+      ].each do |summary_key, timeframe, expected|
+        it "returns #{expected} for #{summary_key} #{timeframe}" do
+          expect(summary_for(skater, records)[summary_key][timeframe]).to eq(expected)
+        end
       end
     end
 
@@ -156,20 +132,15 @@ RSpec.describe PlayerScoringService do
           }
         end
 
-        it "includes the 13th in unclipped week_to_date" do
-          expect(summary_for(skater, records, added_at: added_at)[:scores][:week_to_date]).to eq(6.0)
-        end
-
-        it "includes today in unclipped data" do
-          expect(summary_for(skater, records, added_at: added_at)[:scores][:today]).to eq(3.0)
-        end
-
-        it "excludes the 13th in clipped week_to_date" do
-          expect(summary_for(skater, records, added_at: added_at)[:clipped_scores][:week_to_date]).to eq(3.0)
-        end
-
-        it "includes today in clipped data" do
-          expect(summary_for(skater, records, added_at: added_at)[:clipped_scores][:today]).to eq(3.0)
+        [
+          [:scores, :week_to_date, 6.0],
+          [:scores, :today, 3.0],
+          [:clipped_scores, :week_to_date, 3.0],
+          [:clipped_scores, :today, 3.0],
+        ].each do |summary_key, timeframe, expected|
+          it "returns #{expected} for #{summary_key} #{timeframe}" do
+            expect(summary_for(skater, records, added_at: added_at)[summary_key][timeframe]).to eq(expected)
+          end
         end
       end
 
@@ -184,12 +155,13 @@ RSpec.describe PlayerScoringService do
           }
         end
 
-        it "includes post-drop game in unclipped season_to_date" do
-          expect(summary_for(skater, records, added_at: season_start, dropped_at: dropped_at)[:scores][:season_to_date]).to eq(9.0)
-        end
-
-        it "excludes post-drop game from clipped season_to_date" do
-          expect(summary_for(skater, records, added_at: season_start, dropped_at: dropped_at)[:clipped_scores][:season_to_date]).to eq(6.0)
+        [
+          [:scores, :season_to_date, 9.0],
+          [:clipped_scores, :season_to_date, 6.0],
+        ].each do |summary_key, timeframe, expected|
+          it "returns #{expected} for #{summary_key} #{timeframe}" do
+            expect(summary_for(skater, records, added_at: season_start, dropped_at: dropped_at)[summary_key][timeframe]).to eq(expected)
+          end
         end
       end
 
@@ -214,12 +186,13 @@ RSpec.describe PlayerScoringService do
           { skater.id => [build_stat(start_time: Time.zone.parse("2026-01-10 19:00:00"), goals: 1)] }
         end
 
-        it "excludes a game played after the backdated drop time" do
-          expect(summary_for(skater, records, added_at: season_start, dropped_at: backdated_drop)[:clipped_scores][:season_to_date]).to eq(0)
-        end
-
-        it "includes a game played after the backdated drop in unclipped" do
-          expect(summary_for(skater, records, added_at: season_start, dropped_at: backdated_drop)[:scores][:season_to_date]).to eq(3.0)
+        [
+          [:clipped_scores, :season_to_date, 0],
+          [:scores, :season_to_date, 3.0],
+        ].each do |summary_key, timeframe, expected|
+          it "returns #{expected} for #{summary_key} #{timeframe}" do
+            expect(summary_for(skater, records, added_at: season_start, dropped_at: backdated_drop)[summary_key][timeframe]).to eq(expected)
+          end
         end
       end
 
@@ -239,7 +212,6 @@ RSpec.describe PlayerScoringService do
       it "equals the clipped season total" do
         records = { skater.id => [build_stat(start_time: 3.days.ago, goals: 2)] }
         summary = summary_for(skater, records, added_at: 1.day.ago)
-
         expect(summary[:pool_score]).to eq(0)
       end
     end
@@ -314,7 +286,7 @@ RSpec.describe PlayerScoringService do
 
     context "with a dropped player" do
       it "excludes stats outside the player's active window" do
-        tp = setup_team_player(skater, pool_team_a, added_at: season_start, dropped_at: 4.days.ago)
+        setup_team_player(skater, pool_team_a, added_at: season_start, dropped_at: 4.days.ago)
         records = { skater.id => [build_stat(start_time: 3.days.ago, goals: 2, assists: 1)] }
 
         result = service.team_scores([pool_team_a], records)
