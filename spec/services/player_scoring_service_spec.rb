@@ -103,7 +103,7 @@ RSpec.describe PlayerScoringService do
             build_stat(start_time: Time.zone.parse("2026-01-13 19:00:00"), goals: 1),
             build_stat(start_time: Time.zone.parse("2026-01-05 19:00:00"), assists: 2),
             build_stat(start_time: Time.zone.parse("2025-12-20 19:00:00"), goals: 2),
-          ]
+          ],
         }
       end
 
