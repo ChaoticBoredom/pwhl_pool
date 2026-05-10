@@ -498,6 +498,18 @@ RSpec.describe Pwhl::GameData do
   describe "#update_skater_data" do
     let(:rec) { Pwhl::SkaterStat.new }
 
+    context "penalty_minutes field name inconsistency" do
+      it "prefers 'pim' (game summary) over 'penalty_minutes' (gamebygame)" do
+        data = { "pim" => "3", "penalty_minutes" => "1" }
+        expect(service.send(:update_skater_data, rec, data).penalty_minutes).to eq(3.minutes)
+      end
+
+      it "falls back to 'penalty_minutes' when 'pim' is absent" do
+        data = { "penalty_minutes" => 2 }
+        expect(service.send(:update_skater_data, rec, data).penalty_minutes).to eq(2.minutes)
+      end
+    end
+
     context "plus_minus field name inconsistency" do
       it "prefers 'plusminus' (game summary) over 'plus_minus' (gamebygame)" do
         data = { "plusminus" => "3", "plus_minus" => "1" }
@@ -521,35 +533,35 @@ RSpec.describe Pwhl::GameData do
     end
 
     context "faceoff field name inconsistency" do
-      it "prefers 'faceoffs_taken' over 'faceoff_attempts'" do
+      it "prefers 'faceoff_attempts' over 'faceoffs_taken'" do
         data = { "faceoffs_taken" => "10", "faceoff_attempts" => "5" }
-        expect(service.send(:update_skater_data, rec, data).faceoffs_taken).to eq(10)
+        expect(service.send(:update_skater_data, rec, data).faceoffs_taken).to eq(5)
       end
 
-      it "falls back to 'faceoff_attempts'" do
-        data = { "faceoff_attempts" => "8" }
+      it "falls back to 'faceoffs_taken'" do
+        data = { "faceoffs_taken" => "8" }
         expect(service.send(:update_skater_data, rec, data).faceoffs_taken).to eq(8)
       end
 
-      it "prefers 'faceoffs_won' over 'faceoff_wins'" do
+      it "prefers 'faceoff_wins' over 'faceoffs_won'" do
         data = { "faceoffs_won" => "6", "faceoff_wins" => "3" }
-        expect(service.send(:update_skater_data, rec, data).faceoffs_won).to eq(6)
+        expect(service.send(:update_skater_data, rec, data).faceoffs_won).to eq(3)
       end
 
-      it "falls back to 'faceoff_wins'" do
-        data = { "faceoff_wins" => "4" }
+      it "falls back to 'faceoffs_won'" do
+        data = { "faceoffs_won" => "4" }
         expect(service.send(:update_skater_data, rec, data).faceoffs_won).to eq(4)
       end
     end
 
     context "game_winning_goal field name inconsistency" do
-      it "prefers 'game_winning_goals' (gamebygame) over 'game_winning_goal' (game summary)" do
+      it "prefers 'game_winning_goal' (game summary) over 'game_winning_goals' (gamebygame)" do
         data = { "game_winning_goals" => "1", "game_winning_goal" => "0" }
-        expect(service.send(:update_skater_data, rec, data).game_winning_goals).to eq(1)
+        expect(service.send(:update_skater_data, rec, data).game_winning_goals).to eq(0)
       end
 
-      it "falls back to 'game_winning_goal'" do
-        data = { "game_winning_goal" => "1" }
+      it "falls back to 'game_winning_goals'" do
+        data = { "game_winning_goals" => "1" }
         expect(service.send(:update_skater_data, rec, data).game_winning_goals).to eq(1)
       end
     end
