@@ -82,9 +82,13 @@ namespace :pwhl do
         pl = League::Player.find_or_create_by(
           league: league,
           api_id: p.dig("row", "player_id"),
-          position: args.position,
+          roster_type: args.position,
         )
         pl.name = p.dig("row", "name")
+        pl.rookie = p.dig("row", "rookie") == "1"
+        pl.active = p.dig("row", "active") == "1"
+        pl.position = p.dig("row", "position")
+        pl.position = "G" if pl.position.nil? && args.position == "goalie"
         pl.current_team = teams.select { |t| t.short_code == p.dig("row", "team_code") }.first
         pl.save!
       rescue => e

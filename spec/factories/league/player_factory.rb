@@ -14,11 +14,11 @@ FactoryBot.define do
     current_team { association(:league_team, league: league) }
 
     factory :pwhl_skater, class: "Pwhl::Skater" do
-      position { :skater }
+      roster_type { :skater }
     end
 
     factory :pwhl_goalie, class: "Pwhl::Goalie" do
-      position { :goalie }
+      roster_type { :goalie }
     end
   end
 end

@@ -10,9 +10,11 @@ RSpec.describe "PoolTeams", type: :request do
   let(:skater2) { create(:league_player, :skater, league: league) }
   let(:skater3) { create(:league_player, :skater, league: league) }
   let(:skater4) { create(:league_player, :skater, league: league) }
+  let(:box1) { create(:pool_box, pool: pool, league_player_ids: [skater1.id, skater3.id]) }
+  let(:box2) { create(:pool_box, pool: pool, league_player_ids: [skater2.id, skater4.id]) }
 
-  let!(:current_team1) { create(:pool_team_player, pool_team: pool_team, league_player: skater1) }
-  let!(:current_team2) { create(:pool_team_player, pool_team: pool_team, league_player: skater2) }
+  let!(:current_team1) { create(:pool_team_player, pool_team: pool_team, league_player: skater1, pool_box: box1) }
+  let!(:current_team2) { create(:pool_team_player, pool_team: pool_team, league_player: skater2, pool_box: box2) }
 
   describe "POST /update_roster" do
     before(:each) { allow_any_instance_of(Pool).to receive(:trading_allowed_now?).and_return(true) }
@@ -100,6 +102,15 @@ RSpec.describe "PoolTeams", type: :request do
           headers: auth_headers_for(user)
 
           expect(pool_team.current_team.pluck(:league_player_id)).to match_array([skater1.id, skater4.id])
+      end
+
+      it "assigns the correct box to newly added players" do
+        post "/api/pool_teams/#{pool_team.id}/update_roster",
+          params: { new_player_ids: [skater1.id, skater4.id] }.to_json,
+          headers: auth_headers_for(user)
+
+        new_team_player = pool_team.pool_team_players.find_by(league_player_id: skater4.id)
+        expect(new_team_player.pool_box).to eq(box2)
       end
     end
   end

@@ -97,7 +97,9 @@ function PoolTeamDetails() {
           </div>
         </DataRow>
 
-        {poolTeam.current_team?.map((player) => {
+        {poolTeam.current_team?.
+          sort((a, b) => a.pool_box_position - b.pool_box_position)?.
+          map((player) => {
           const isOpen = openDrawers.has(player.id);
           
           return (
@@ -122,7 +124,7 @@ function PoolTeamDetails() {
           <div />
           <div className="hidden md:block"/>
           <div className="hidden md:block"/>
-          <div className="score-cell font-bold">{poolTeam.total_score.toFixed(2)}</div>
+          <div className="score-cell font-bold">{poolTeam.total_score?.toFixed(2)}</div>
         </DataRow>
       </div>
     </div>

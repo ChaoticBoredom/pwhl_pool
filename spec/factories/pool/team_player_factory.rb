@@ -3,5 +3,9 @@ FactoryBot.define do
     association :pool_team
     association :league_player
     added_at { Time.current }
+
+    after(:build) do |tp|
+      tp.pool_box ||= create(:pool_box, pool: tp.pool_team.pool)
+    end
   end
 end

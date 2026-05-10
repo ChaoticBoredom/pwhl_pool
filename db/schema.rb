@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -36,12 +36,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
   end
 
   create_table "league_players", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.string "api_id", null: false
     t.datetime "created_at", null: false
     t.uuid "current_team_id"
     t.uuid "league_id", null: false
     t.string "name", null: false
-    t.integer "position", null: false
+    t.string "position"
+    t.boolean "rookie", default: false, null: false
+    t.integer "roster_type", null: false
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.index ["api_id", "league_id"], name: "index_league_players_on_api_id_and_league_id", unique: true
@@ -76,18 +79,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
     t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.index ["league_player_ids"], name: "index_pool_boxes_on_league_player_ids", using: :gin
-    t.index ["pool_id", "position"], name: "index_pool_boxes_on_pool_id_and_position", unique: true
     t.index ["pool_id"], name: "index_pool_boxes_on_pool_id"
+    t.unique_constraint ["pool_id", "position"], deferrable: :deferred, name: "pool_boxes_pool_id_position_unique"
   end
 
   create_table "pool_scorings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "field_name", null: false
     t.uuid "pool_id", null: false
-    t.integer "position", null: false
+    t.integer "roster_type", null: false
     t.datetime "updated_at", null: false
     t.float "value", null: false
-    t.index ["pool_id", "field_name", "position"], name: "index_pool_scorings_on_pool_id_and_field_name_and_position", unique: true
+    t.index ["pool_id", "field_name", "roster_type"], name: "index_pool_scorings_on_pool_id_and_field_name_and_roster_type", unique: true
     t.index ["pool_id"], name: "index_pool_scorings_on_pool_id"
   end
 
@@ -96,11 +99,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
     t.datetime "created_at", null: false
     t.datetime "dropped_at", precision: nil
     t.uuid "league_player_id", null: false
+    t.uuid "pool_box_id", null: false
     t.uuid "pool_id", null: false
     t.uuid "pool_team_id", null: false
-    t.integer "position", null: false
+    t.integer "roster_type", null: false
     t.datetime "updated_at", null: false
     t.index ["league_player_id"], name: "index_pool_team_players_on_league_player_id"
+    t.index ["pool_box_id"], name: "index_pool_team_players_on_pool_box_id"
     t.index ["pool_team_id", "league_player_id"], name: "index_unique_active_player_per_team", unique: true, where: "(dropped_at IS NULL)"
     t.index ["pool_team_id"], name: "index_pool_team_players_on_pool_team_id"
   end
@@ -219,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_051640) do
   add_foreign_key "pool_boxes", "pools"
   add_foreign_key "pool_scorings", "pools"
   add_foreign_key "pool_team_players", "league_players"
+  add_foreign_key "pool_team_players", "pool_boxes"
   add_foreign_key "pool_team_players", "pool_teams"
   add_foreign_key "pool_teams", "pools"
   add_foreign_key "pool_teams", "users"

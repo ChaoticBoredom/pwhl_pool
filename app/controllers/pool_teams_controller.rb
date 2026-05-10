@@ -2,7 +2,7 @@ class PoolTeamsController < ApplicationController
   def show
     id = params[:id]
     @pool_team = Pool::Team.
-      includes(pool_team_players: { league_player: :current_team }).
+      includes(pool_team_players: [:pool_box, { league_player: :current_team }]).
       find(id)
     @pool = @pool_team.pool
     records = PlayerRecordQuery.new(@pool_team.pool_team_players, season_id: @pool.season_id).records
@@ -48,6 +48,10 @@ class PoolTeamsController < ApplicationController
       return
     end
 
+    box_by_player_id = @pool.pool_boxes.each_with_object({}) do |pb, hash|
+      pb.league_player_ids.each { |pid| hash[pid] = pb }
+    end
+
     original_team = @pool_team.current_team.pluck(:league_player_id)
     new_team = params[:new_player_ids]
 
@@ -55,8 +59,12 @@ class PoolTeamsController < ApplicationController
     @pool_team.current_team.where(league_player_id: dropping).update(dropped_at: Time.current)
 
     adding = new_team - original_team
-    (new_team - original_team).each do |pid|
-      @pool_team.pool_team_players.create(league_player_id: pid, added_at: Time.current)
+    adding.each do |pid|
+      @pool_team.pool_team_players.create(
+        league_player_id: pid,
+        added_at: Time.current,
+        pool_box: box_by_player_id[pid]
+      )
     end
 
     dropped_names = League::Player.where(id: dropping).pluck(:name)

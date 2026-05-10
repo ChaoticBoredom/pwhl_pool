@@ -20,6 +20,7 @@ json.current_team do
     json.name player.name
     json.current_team_short_code player.current_team_short_code
     json.added_at tp.added_at
+    json.pool_box_position tp.pool_box.position
 
     json.scores do
       json.pool_score summary[:pool_score]

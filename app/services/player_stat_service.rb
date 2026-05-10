@@ -21,10 +21,10 @@ class PlayerStatService
       player_records = records[tp.league_player_id] || []
 
       r_hash[tp.id] = {
-        stats: build_stats_summary(player_records, player.position),
+        stats: build_stats_summary(player_records, player.roster_type),
         clipped_stats: build_stats_summary(
           player_records,
-          player.position,
+          player.roster_type,
           clip_range: tp.active_range),
       }
     end
@@ -36,10 +36,10 @@ class PlayerStatService
 
   private
 
-  def calculate_aggregate(records, position)
-    return STATS[position].to_h { |k| [k, 0] } if records.empty?
+  def calculate_aggregate(records, roster_type)
+    return STATS[roster_type].to_h { |k| [k, 0] } if records.empty?
 
-    STATS[position].each_with_object({}) do |s, r_hash|
+    STATS[roster_type].each_with_object({}) do |s, r_hash|
       r_hash[s] = records.sum { |r| parse_field(s, r[s]) }
     end
   end
@@ -48,8 +48,8 @@ class PlayerStatService
     {}
   end
 
-  def build_stats_summary(records, position, clip_range: nil)
-    build_windowed_summary(records, position, clip_range:) { |td, today| td.merge(today) { |_, a, b| a + b } }
+  def build_stats_summary(records, roster_type, clip_range: nil)
+    build_windowed_summary(records, roster_type, clip_range:) { |td, today| td.merge(today) { |_, a, b| a + b } }
   end
 
   def parse_field(field, val)
