@@ -154,10 +154,10 @@ class Pwhl::GameData
     end
   end
 
-  def find_or_create_player(data, position, team)
+  def find_or_create_player(data, roster_type, team)
     League::Player.find_or_create_by(api_id: data.fetch("player_id")) do |player|
       player.name = data.values_at("first_name", "last_name").join(" ")
-      player.position = position
+      player.roster_type = roster_type
       player.league = @pwhl
       player.current_team = team
     end

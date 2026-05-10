@@ -639,9 +639,9 @@ RSpec.describe Pwhl::GameData do
       expect(player.name).to eq("Jane Doe")
     end
 
-    it "assigns the correct position" do
+    it "assigns the correct roster_type" do
       player = service.send(:find_or_create_player, player_data, "goalie", boston)
-      expect(player.position).to eq("goalie")
+      expect(player.roster_type).to eq("goalie")
     end
 
     it "assigns the league" do

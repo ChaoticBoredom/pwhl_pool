@@ -15,17 +15,17 @@ RSpec.describe League::Player, type: :model do
       let(:league) { create(:league, :pwhl) }
 
       [
-        { position: "skater", result: "Pwhl::Skater" },
-        { position: "goalie", result: "Pwhl::Goalie" },
+        { roster_type: "skater", result: "Pwhl::Skater" },
+        { roster_type: "goalie", result: "Pwhl::Goalie" },
       ].each do |h|
-        it "should set type to #{h[:result]} when position is #{h[:position]}" do
+        it "should set type to #{h[:result]} when roster_type is #{h[:roster_type]}" do
           current_team = create(:league_team, league: league)
           player = League::Player.create(
             name: "Jane Doe",
             api_id: "api_key",
             current_team: current_team,
             league: league,
-            position: h[:position],
+            roster_type: h[:roster_type],
           )
           expect(player.type).to eq(h[:result])
         end
