@@ -2,13 +2,15 @@ class AddBoxReferenceToTeamPlayer < ActiveRecord::Migration[8.1]
     def up
     add_column :pool_team_players, :pool_box_id, :uuid
 
-    Pool::TeamPlayer.find_each do |tp|
-      box = Pool::Box.where(pool_id: tp.pool_id)
-                     .find { |b| b.league_player_ids.include?(tp.league_player_id) }
-      tp.update_columns(pool_box_id: box&.id)
-    end
+    execute <<-SQL
+      UPDATE pool_team_players ptp
+      SET pool_box_id = pb.id
+      FROM pool_boxes pb
+      WHERE pb.pool_id = ptp.pool_id
+      AND ptp.league_player_id = ANY(pb.league_player_ids)
+    SQL
 
-    unmatched = Pool::TeamPlayer.where(pool_box_id: nil).count
+    unmatched = execute("SELECT COUNT(*) FROM pool_team_players WHERE pool_box_id IS NULL").first["count"].to_i
     raise "Backfill incomplete: #{unmatched} team players without a box" if unmatched > 0
 
     change_column_null :pool_team_players, :pool_box_id, false
