@@ -185,7 +185,6 @@ class Pwhl::GameData
     rec.goals = data.fetch("goals", 0)
     rec.assists = data.fetch("assists", 0)
 
-    rec.penalty_minutes = data.fetch("pim", 0).to_i.minutes
     rec.shots = data.fetch("shots", 0)
     rec.hits = data.fetch("hits", 0)
     # Game summary does not have this, only the player gamebygame
@@ -194,11 +193,12 @@ class Pwhl::GameData
     rec.short_handed_goals = data.fetch("short_handed_goals", 0)
     rec.shots_blocked = data.fetch("shots_blocked_by_player", 0)
     # Different endpoints have different labels >:(
-    # First is from gamebygame, second is game summary
+    # First is from game summary, second is gamebygame
+    rec.penalty_minutes = data.fetch("pim", data.fetch("penalty_minutes", 0)).to_i.minutes
     rec.plus_minus = data.fetch("plusminus", data.fetch("plus_minus", 0)).to_i
-    rec.faceoffs_taken = data.fetch("faceoffs_taken", data.fetch("faceoff_attempts", 0))
-    rec.faceoffs_won = data.fetch("faceoffs_won", data.fetch("faceoff_wins", 0))
-    rec.game_winning_goals = data.fetch("game_winning_goals", data.fetch("game_winning_goal", 0))
+    rec.faceoffs_taken = data.fetch("faceoff_attempts", data.fetch("faceoffs_taken", 0))
+    rec.faceoffs_won = data.fetch("faceoff_wins", data.fetch("faceoffs_won", 0))
+    rec.game_winning_goals = data.fetch("game_winning_goal", data.fetch("game_winning_goals", 0))
 
     rec
   end
