@@ -3,10 +3,10 @@ class ScoringCalculator
     @scorings = format_scorings(scorings).with_indifferent_access
   end
 
-  def calculate(inputs, position)
+  def calculate(inputs, roster_type)
     return 0 if inputs.empty?
 
-    scoring_fields = @scorings[position]
+    scoring_fields = @scorings[roster_type]
     return 0 if scoring_fields.nil?
 
     scoring_fields.sum do |s|
@@ -26,7 +26,7 @@ class ScoringCalculator
   end
 
   def format_scorings(scorings)
-    scorings.pluck(:position, :field_name, :value).
+    scorings.pluck(:roster_type, :field_name, :value).
       group_by { |row| row[0] }.
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
   end

@@ -1,5 +1,5 @@
 class Pool::TeamPlayer < ApplicationRecord
-  include PlayerPositions
+  include PlayerRosterTypes
   belongs_to :pool
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
@@ -27,6 +27,6 @@ class Pool::TeamPlayer < ApplicationRecord
 
   def denormalize_fields
     self.pool_id ||= pool_team.pool_id
-    self.position ||= league_player.position
+    self.roster_type ||= league_player.roster_type
   end
 end

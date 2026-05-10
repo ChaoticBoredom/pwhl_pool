@@ -1,8 +1,8 @@
-module PlayerPositions
+module PlayerRosterTypes
   extend ActiveSupport::Concern
 
   included do
-    enum :position, {
+    enum :roster_type, {
       skater: 100,
       goalie: 200,
     }, validate: true
