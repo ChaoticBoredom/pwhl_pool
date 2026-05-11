@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe BoxGeneration::Service, type: :service do
+RSpec.describe BoxGenerationService, type: :service do
   include_context "pwhl teams"
 
   let(:pool) { create(:pool, league: pwhl, season_id: "9", reference_season_id: "8") }
