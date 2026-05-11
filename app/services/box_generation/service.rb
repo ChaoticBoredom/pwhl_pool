@@ -32,7 +32,7 @@ module BoxGeneration
     end
 
     def score_players(players)
-      records = PlayerRecordQuery.new(players, season_id: @config.season_id).records
+      records = PlayerRecordQuery.new(players, season_id: @pool.display_season_id).records
       calculator = ScoringCalculator.new(@pool.scoring)
 
       players.each_with_object({}) do |player, r_hash|

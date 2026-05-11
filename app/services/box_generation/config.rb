@@ -16,13 +16,13 @@ module BoxGeneration
     BoxDefinition.new(name: "Rookie Defense Box 1", position: "D", rookie: true, rank_range: 0..0),
   ].freeze
 
-  Config = Data.define(:season_id, :teams, :max_players_per_team, :boxes, :excluded_player_ids) do
+  Config = Data.define(:teams, :max_players_per_team, :boxes, :excluded_player_ids) do
     def initialize(
-      season_id:,
       teams: nil,
       max_players_per_team: 1,
       boxes: DEFAULT_BOXES,
-      excluded_player_ids: [])
+      excluded_player_ids: []
+    )
       super
     end
   end
