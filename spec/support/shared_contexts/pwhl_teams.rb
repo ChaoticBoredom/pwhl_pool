@@ -5,7 +5,7 @@
 # scheduled playoff games with unresolved opponents.
 
 RSpec.shared_context "pwhl teams" do
-  let!(:pwhl) { create(:league, short_name: "PWHL", name: "Professional Women's Hockey League") }
+  let!(:pwhl) { create(:league, :pwhl) }
 
   let!(:teams) do
     [
