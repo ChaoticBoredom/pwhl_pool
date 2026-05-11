@@ -79,7 +79,9 @@ module BoxGeneration
     def players_for_box(sorted, box_def)
       if @config.max_players_per_team
         sorted.flat_map do |_, team_groups|
-          candidates_for(team_groups, box_def)[box_def.rank_range]
+          candidates_for(team_groups, box_def)[box_def.rank_range].
+            to_a.
+            first(@config.max_players_per_team)
         end
       else
         sorted.flat_map { |_, team_groups| candidates_for(team_groups, box_def) }.
