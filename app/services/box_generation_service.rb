@@ -41,7 +41,10 @@ class BoxGenerationService
   end
 
   def sort_and_group(scores)
-    player_lookup = League::Player.where(id: scores.keys).index_by(&:id)
+    player_lookup = League::Player.
+      where(id: scores.keys).
+      includes(:current_team).
+      index_by(&:id)
 
     details = scores.each_with_object({}) do |(id, score), r_hash|
       player = player_lookup[id]
@@ -50,6 +53,7 @@ class BoxGenerationService
         name: player.name,
         position: normalized_position(player.position),
         team_id: player.current_team_id,
+        team_short_code: player.current_team.short_code,
         rookie: player.rookie?,
         score: score,
       }
@@ -68,10 +72,9 @@ class BoxGenerationService
   def generate_boxes(sorted)
     @config.boxes.each_with_object({}) do |box_def, result|
       players = players_for_box(sorted, box_def)
-      result[box_def.name] = {
-        ids: players.map { |p| p[:id] },
-        names: players.map { |p| p[:name] },
-      }
+      result[box_def.name] = players.map do |p|
+        { id: p[:id], name: p[:name], score: p[:score], team_id: p[:team_id], team_short_code: p[:team_short_code] }
+      end
     end
   end
 
@@ -103,7 +106,7 @@ class BoxGenerationService
   end
 
   def validate_no_duplicates!(box_players)
-    all_ids = box_players.values.flat_map { |v| v[:ids] }
+    all_ids = box_players.values.flat_map { |v| v.map { |p| p[:id] } }
     duplicates = all_ids.select { |id| all_ids.count(id) > 1 }.uniq
 
     if duplicates.any?
