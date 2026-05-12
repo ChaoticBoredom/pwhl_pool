@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-export function EditableField({ value: initialValue, onSave, className = "", inputClassName = "" }) {
+export function EditableField({ value: initialValue, onSave, inputClassName = "" }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [pending, setPending] = useState(false);
