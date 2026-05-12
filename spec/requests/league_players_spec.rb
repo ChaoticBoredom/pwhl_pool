@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe "Players", type: :request do
   include_context "pwhl teams"
 

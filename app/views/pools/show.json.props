@@ -23,8 +23,8 @@ json.pool_teams do
     json.total_score @team_scores[team.id] || 0.0
 
     json.user do
-      json.id team.user.id
-      json.name team.user.name
+      json.id team.owner.id
+      json.name team.owner.name
     end
   end
 end
