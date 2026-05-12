@@ -48,8 +48,9 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   # Ensure that integration specs run last, they're slow
-  config.define_derived_metadata(file_path: %r{spec/integration}) do |metadata|
-    metadata[:order] = :last
+  config.register_ordering(:global) do |examples|
+    integration, others = examples.partition { |e| e.metadata[:file_path].include?("spec/integration") }
+    others + integration
   end
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
