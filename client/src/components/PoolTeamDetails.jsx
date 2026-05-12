@@ -63,12 +63,12 @@ function PoolTeamDetails() {
 
       <div className="selection-header">
         <div>
-          <h1>
+          <h2 className="page-title">
             {isOwner ? 
             (<EditableField value={poolTeam.team_name} onSave={saveTeamName} />) :
             (poolTeam.team_name)
             }
-          </h1>
+          </h2>
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
           <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
         </div>
