@@ -439,7 +439,7 @@ RSpec.describe "PWHL Pool Integration", type: :request do
         ),
         params: {
           teams: ["BOS"],
-          max_players_per_team: 1,
+          scope: :per_team,
           excluded_player_ids: [],
           boxes: [
             { name: "Forwards Box 1", position: "F", rookie: false, rank: 1, count: 1 },
