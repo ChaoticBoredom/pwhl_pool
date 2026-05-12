@@ -23,6 +23,11 @@ const DEFAULT_BOXES = [
   { name: "Rookie Defence Box 1", position: "D", rookie: true, rank_range: { start: 0, end: 0 } },
 ];
 
+const SEASONS = [
+  { label: "Regular Season", value: "8" },
+  { label: "Playoffs", value: "9" },
+];
+
 function nextRankForPosition(boxes, position, rookie) {
   const matching = boxes.filter(b => b.position === position && b.rookie === rookie);
   if (matching.length === 0) return { start: 0, end: 0 };
@@ -127,6 +132,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
 
   const [teams, setTeams] = useState(new Set(TEAMS));
   const [maxPerTeam, setMaxPerTeam] = useState(1);
+  const [seasonId, setSeasonId] = useState(null);
   const [boxes, setBoxes] = useState(DEFAULT_BOXES.map(b => ({ ...b, rank_range: { ...b.rank_range } })));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -172,6 +178,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
           max_players_per_team: maxPerTeam || null,
           excluded_player_ids: [],
           boxes,
+          season_id: seasonId,
         }),
       });
 
@@ -208,6 +215,26 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
 
       <section className="generator-section">
         <h2>Config</h2>
+        <div className="generator-config-row">
+          <label className="generator-config-label">Season</label>
+          <div className="player-drawer-mode-toggle">
+            <button
+              className={`player-drawer-mode-btn ${seasonId === null ? "player-drawer-mode-btn--active" : ""}`}
+              onClick={() => setSeasonId(null)}
+            >
+              Pool default
+            </button>
+            {SEASONS.map(s => (
+              <button
+                key={s.value}
+                className={`player-drawer-mode-btn ${seasonId === s.value ? "player-drawer-mode-btn--active" : ""}`}
+                onClick={() => setSeasonId(s.value)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="generator-config-row">
           <label className="generator-config-label">Max players per team</label>
           <input

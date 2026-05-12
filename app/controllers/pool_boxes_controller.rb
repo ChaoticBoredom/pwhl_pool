@@ -22,7 +22,7 @@ class PoolBoxesController < ApplicationController
     @pool = Pool.includes(:scoring, :league).find(params[:pool_id])
 
     config = build_config
-    @result = BoxGenerationService.new(@pool, config).call
+    @result = BoxGenerationService.new(@pool, config, season_id: params[:season_id].presence).call
     render :generate
   rescue BoxGenerationService::BoxGenerationError => e
     render json: { error: e.message }, status: :unprocessable_entity

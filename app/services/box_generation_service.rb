@@ -7,9 +7,10 @@ class BoxGenerationService
     "G" => ["G"],
   }.freeze
 
-  def initialize(pool, config = BoxGeneration::Config.new)
+  def initialize(pool, config = BoxGeneration::Config.new, season_id: nil)
     @pool = pool
     @config = config
+    @season_id = season_id || pool.display_season_id
   end
 
   def call
@@ -31,7 +32,7 @@ class BoxGenerationService
   end
 
   def score_players(players)
-    records = PlayerRecordQuery.new(players, season_id: @pool.display_season_id).records
+    records = PlayerRecordQuery.new(players, season_id: @season_id).records
     calculator = ScoringCalculator.new(@pool.scoring)
 
     players.each_with_object({}) do |player, r_hash|
