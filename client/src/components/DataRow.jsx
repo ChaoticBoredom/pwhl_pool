@@ -5,7 +5,7 @@ export function DataRow({ to, children, gridClass = "", isHeader = false, compac
 
   if (isHeader) {
     return (
-      <div className={`${baseClasses} text-gray-500 font-bold border-b bg-gray-50 uppercase text-xs tracking-wider`}>
+      <div className={`${baseClasses} data-row--header`}>
         {children}
       </div>
     );
@@ -14,7 +14,7 @@ export function DataRow({ to, children, gridClass = "", isHeader = false, compac
   const Content = (
     <div
       onClick={onClick}
-      className={`${baseClasses} bg-white border border-gray-100 rounded hover:bg-blue-50 transition-all shadow-sm group mb-2 cursor-pointer`}>
+      className={`${baseClasses} data-row--content`}>
       {children}
     </div>
   );

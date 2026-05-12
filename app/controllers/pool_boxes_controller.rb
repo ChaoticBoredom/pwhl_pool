@@ -17,4 +17,43 @@ class PoolBoxesController < ApplicationController
 
     render :index
   end
+
+  def generate
+    @pool = Pool.includes(:scoring, :league).find(params[:pool_id])
+
+    config = build_config
+    @result = BoxGenerationService.new(@pool, config, season_id: params[:season_id].presence).call
+    render :generate
+  rescue BoxGenerationService::BoxGenerationError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  private
+
+  def build_config
+    BoxGeneration::Config.new(
+      teams: params[:teams]&.split(","),
+      max_players_per_team: params[:max_players_per_team],
+      boxes: build_boxes,
+      excluded_player_ids: params[:excluded_player_ids] || []
+    )
+  end
+
+  def build_boxes
+    return BoxGeneration::DEFAULT_BOXES unless params[:boxes].present?
+
+    params[:boxes].map do |b|
+      BoxGeneration::BoxDefinition.new(
+        name: b[:name],
+        position: b[:position],
+        rookie: b[:rookie],
+        rank_range: parse_rank_range(b[:rank_range])
+      )
+    end
+  end
+
+  def parse_rank_range(range)
+    return nil unless range.present?
+    range[:start]..range[:end]
+  end
 end

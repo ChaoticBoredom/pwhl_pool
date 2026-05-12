@@ -5,7 +5,13 @@ const TeamBadge = ({ short_code }) => {
   const teamInfo = PWHL_TEAMS[short_code] || PWHL_TEAMS['default'];
 
   return (
-    <span className="team-badge-small" style={{ color: teamInfo.color }}>
+    <span
+      className="team-badge"
+      style={{
+        backgroundColor: teamInfo.bg,
+        color: teamInfo.text,
+      }}
+    >
       {short_code}
     </span>
   );

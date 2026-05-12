@@ -10,7 +10,7 @@ class ScoringCalculator
     return 0 if scoring_fields.nil?
 
     scoring_fields.sum do |s|
-      (inputs.sum { |input| parse_field(input[s[:field_name]] || parse_field(input[s[:field_name].to_sym])) }) * s[:value]
+      (inputs.sum { |input| parse_field(input[s[:field_name]] || input[s[:field_name].to_sym]) }) * s[:value]
     end
   end
 

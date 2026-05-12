@@ -25,7 +25,11 @@ Rails.application.routes.draw do
       end
     end
     resources :pools do
-      resources :pool_boxes, only: [:index]
+      resources :pool_boxes, only: [:index] do
+        collection do
+          post :generate
+        end
+      end
       resources :pool_scoring, only: [:index]
     end
     resources :pool_teams, only: [:show, :create, :update] do

@@ -13,6 +13,10 @@ FactoryBot.define do
 
     current_team { association(:league_team, league: league) }
 
+    trait :rookie do
+      rookie { true }
+    end
+
     factory :pwhl_skater, class: "Pwhl::Skater" do
       roster_type { :skater }
     end

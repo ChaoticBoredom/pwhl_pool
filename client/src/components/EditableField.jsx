@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-export function EditableField({ value: initialValue, onSave, className = "", inputClassName = "" }) {
+export function EditableField({ value: initialValue, onSave, inputClassName = "" }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [pending, setPending] = useState(false);
@@ -57,9 +57,9 @@ export function EditableField({ value: initialValue, onSave, className = "", inp
   }
 
   return (
-    <button onClick={() => setEditing(true)} className={`group flex items-center gap-2 text-left ${className}`}>
+    <span className="editable-field" onClick={() => setEditing(true)}>
       <span ref={textRef}>{value}</span>
-      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-sm">✎</span>
-    </button>
+      <span className="editable-field-icon">✎</span>
+    </span>
   );
 }

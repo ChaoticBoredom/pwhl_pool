@@ -107,8 +107,8 @@ RSpec.describe Pwhl::GameData do
         service.update_live_game(game.id)
         # Claire Dalton (api_id 26) has plusminus "+2" in the cassette
         player  = League::Player.find_by(api_id: "26")
-        tor     = team("6")
-        stat    = Pwhl::SkaterStat.find_by(league_player: player, league_team: tor)
+        tor = team("6")
+        stat = Pwhl::SkaterStat.find_by(league_player: player, league_team: tor)
         expect(stat.plus_minus).to eq(2)
       end
 
@@ -116,8 +116,8 @@ RSpec.describe Pwhl::GameData do
         service.update_live_game(game.id)
         # Madison Samoskevich (api_id 310) has plusminus -1
         player = League::Player.find_by(api_id: "310")
-        van    = team("9")
-        stat   = Pwhl::SkaterStat.find_by(league_player: player, league_team: van)
+        van = team("9")
+        stat = Pwhl::SkaterStat.find_by(league_player: player, league_team: van)
         expect(stat.plus_minus).to eq(-1)
       end
     end

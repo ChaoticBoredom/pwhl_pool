@@ -1,0 +1,15 @@
+json.boxes do
+  json.array! @result.keys do |box_name|
+    players = @result[box_name]
+    json.name box_name
+
+    json.players do
+      json.array! players do |player|
+        json.id player[:id]
+        json.name player[:name]
+        json.score player[:score]
+        json.team_short_code player[:team_short_code]
+      end
+    end
+  end
+end
