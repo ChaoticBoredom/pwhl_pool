@@ -8,41 +8,51 @@ const ROOKIE_OPTIONS = [
   { label: "Yes", value: true },
   { label: "Any", value: null },
 ];
-
-const DEFAULT_BOXES = [
-  { name: "Forwards Box 1", position: "F", rookie: false, rank_range: { start: 0, end: 0 } },
-  { name: "Forwards Box 2", position: "F", rookie: false, rank_range: { start: 1, end: 1 } },
-  { name: "Forwards Box 3", position: "F", rookie: false, rank_range: { start: 2, end: 2 } },
-  { name: "Forwards Box 4", position: "F", rookie: false, rank_range: { start: 3, end: 3 } },
-  { name: "Forwards Box 5", position: "F", rookie: false, rank_range: { start: 4, end: 4 } },
-  { name: "Defence Box 1", position: "D", rookie: false, rank_range: { start: 0, end: 0 } },
-  { name: "Defence Box 2", position: "D", rookie: false, rank_range: { start: 1, end: 1 } },
-  { name: "Defence Box 3", position: "D", rookie: false, rank_range: { start: 2, end: 2 } },
-  { name: "Goalies Box 1", position: "G", rookie: null, rank_range: { start: 0, end: 0 } },
-  { name: "Rookie Forwards Box 1", position: "F", rookie: true, rank_range: { start: 0, end: 0 } },
-  { name: "Rookie Defence Box 1", position: "D", rookie: true, rank_range: { start: 0, end: 0 } },
-];
-
 const SEASONS = [
+  { label: "Pool default", value: null },
   { label: "Regular Season", value: "8" },
   { label: "Playoffs", value: "9" },
 ];
 
-function nextRankForPosition(boxes, position, rookie) {
-  const matching = boxes.filter(b => b.position === position && b.rookie === rookie);
-  if (matching.length === 0) return { start: 0, end: 0 };
-  const maxEnd = Math.max(...matching.map(b => b.rank_range.end));
-  return { start: maxEnd + 1, end: maxEnd + 1 };
+const DEFAULT_BOXES = [
+  { name: "Forwards Box 1", position: "F", rookie: false, count: 1 },
+  { name: "Forwards Box 2", position: "F", rookie: false, count: 1 },
+  { name: "Forwards Box 3", position: "F", rookie: false, count: 1 },
+  { name: "Forwards Box 4", position: "F", rookie: false, count: 1 },
+  { name: "Forwards Box 5", position: "F", rookie: false, count: 1 },
+  { name: "Defence Box 1", position: "D", rookie: false, count: 1 },
+  { name: "Defence Box 2", position: "D", rookie: false, count: 1 },
+  { name: "Defence Box 3", position: "D", rookie: false, count: 1 },
+  { name: "Goalies Box 1", position: "G", rookie: null, count: 1 },
+  { name: "Rookie Forwards Box 1", position: "F", rookie: true, count: 1 },
+  { name: "Rookie Defence Box 1", position: "D", rookie: true, count: 1 },
+];
+
+function deriveRank(boxes, currentIndex) {
+  const current = boxes[currentIndex];
+  return boxes
+    .slice(0, currentIndex)
+    .filter(b => b.position === current.position && b.rookie === current.rookie)
+    .reduce((sum, b) => sum + b.count, 1);
+}
+
+function buildPayloadBoxes(boxes) {
+  return boxes.map((box, i) => ({
+    name: box.name,
+    position: box.position,
+    rookie: box.rookie,
+    rank: deriveRank(boxes, i),
+    count: box.count,
+  }));
 }
 
 function positionBadgeClass(position, rookie) {
-  if (rookie === true) return "box-badge box-badge--rookie";
-  if (position === "F") return "box-badge box-badge--forward";
-  if (position === "D") return "box-badge box-badge--defense";
-  return "box-badge box-badge--goalie";
+  const rookiePrefix = rookie === true ? "rookie-" : "";
+  const positionKey = { "F": "forward", "D": "defense", "G": "goalie" }[position] ?? "forward";
+  return `box-badge box-badge--${rookiePrefix}${positionKey}`;
 }
 
-function BoxConfigRow({ box, index, onChange, onRemove }) {
+function BoxConfigRow({ box, index, onChange, onRemove, derivedRank }) {
   return (
     <div className="box-config-row">
       <span className={positionBadgeClass(box.position, box.rookie)}>
@@ -77,28 +87,15 @@ function BoxConfigRow({ box, index, onChange, onRemove }) {
       </select>
 
       <div className="box-rank-range">
+        <span className="box-rank-label">rank {derivedRank}</span>
+        <span className="box-rank-label">+</span>
         <input
           className="box-rank-input"
           type="number"
           min={1}
-          value={box.rank_range.start + 1}
+          value={box.count}
           onFocus={e => e.target.select()}
-          onChange={e => {
-            const val = Math.max(1, +e.target.value) - 1;
-            onChange(index, "rank_range", { ...box.rank_range, start: val });
-          }}
-        />
-        <span className="box-rank-label">–</span>
-        <input
-          className="box-rank-input"
-          type="number"
-          min={box.rank_range.start + 1}
-          value={box.rank_range.end + 1}
-          onFocus={e => e.target.select()}
-          onChange={e => {
-            const val = Math.max(box.rank_range.start + 1, +e.target.value) - 1;
-            onChange(index, "rank_range", { ...box.rank_range, end: val });
-          }}
+          onChange={e => onChange(index, "count", Math.max(1, +e.target.value))}
         />
       </div>
 
@@ -115,12 +112,19 @@ function BoxConfigTable({ boxes, onChange, onRemove }) {
         <span>Name</span>
         <span>Position</span>
         <span>Rookie</span>
-        <span>Rank</span>
+        <span>Rank × Count</span>
         <span></span>
       </div>
       <div className="box-config-list">
         {boxes.map((box, i) => (
-          <BoxConfigRow key={i} box={box} index={i} onChange={onChange} onRemove={onRemove} />
+          <BoxConfigRow
+            key={i}
+            box={box}
+            index={i}
+            onChange={onChange}
+            onRemove={onRemove}
+            derivedRank={deriveRank(boxes, i)}
+          />
         ))}
       </div>
     </div>
@@ -131,9 +135,9 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   const { authHeaders } = useAuth();
 
   const [teams, setTeams] = useState(new Set(TEAMS));
-  const [maxPerTeam, setMaxPerTeam] = useState(1);
+  const [scope, setScope] = useState("per_team");
   const [seasonId, setSeasonId] = useState(null);
-  const [boxes, setBoxes] = useState(DEFAULT_BOXES.map(b => ({ ...b, rank_range: { ...b.rank_range } })));
+  const [boxes, setBoxes] = useState(DEFAULT_BOXES.map(b => ({ ...b })));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -154,14 +158,11 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   }, []);
 
   const addBox = () => {
-    const position = "F";
-    const rookie = false;
-    const rank_range = nextRankForPosition(boxes, position, rookie);
     setBoxes(prev => [...prev, {
       name: `Forwards Box ${prev.filter(b => b.position === "F" && !b.rookie).length + 1}`,
-      position,
-      rookie,
-      rank_range,
+      position: "F",
+      rookie: false,
+      count: 1,
     }]);
   };
 
@@ -172,13 +173,13 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
     try {
       const res = await fetch(`/api/pools/${poolId}/pool_boxes/generate`, {
         method: "POST",
-        headers: { ...authHeaders, "Content-Type": "application/json", "Accept": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           teams: [...teams],
-          max_players_per_team: maxPerTeam || null,
-          excluded_player_ids: [],
-          boxes,
+          scope,
           season_id: seasonId,
+          excluded_player_ids: [],
+          boxes: buildPayloadBoxes(boxes),
         }),
       });
 
@@ -216,35 +217,36 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
       <section className="generator-section">
         <h2>Config</h2>
         <div className="generator-config-row">
-          <label className="generator-config-label">Season</label>
+          <label className="generator-config-label">Scope</label>
           <div className="player-drawer-mode-toggle">
-            <button
-              className={`player-drawer-mode-btn ${seasonId === null ? "player-drawer-mode-btn--active" : ""}`}
-              onClick={() => setSeasonId(null)}
-            >
-              Pool default
-            </button>
-            {SEASONS.map(s => (
+            {[
+              { label: "Per team", value: "per_team" },
+              { label: "Global", value: "global" },
+            ].map(({ label, value }) => (
               <button
-                key={s.value}
-                className={`player-drawer-mode-btn ${seasonId === s.value ? "player-drawer-mode-btn--active" : ""}`}
-                onClick={() => setSeasonId(s.value)}
+                key={value}
+                className={`player-drawer-mode-btn ${scope === value ? "player-drawer-mode-btn--active" : ""}`}
+                onClick={() => setScope(value)}
               >
-                {s.label}
+                {label}
               </button>
             ))}
           </div>
         </div>
+
         <div className="generator-config-row">
-          <label className="generator-config-label">Max players per team</label>
-          <input
-            className="generator-config-input"
-            type="number"
-            min={1}
-            value={maxPerTeam}
-            onChange={e => setMaxPerTeam(e.target.value ? +e.target.value : "")}
-          />
-          <span className="helper-text">blank = global ranking</span>
+          <label className="generator-config-label">Season</label>
+          <div className="player-drawer-mode-toggle">
+            {SEASONS.map(({ label, value }) => (
+              <button
+                key={String(value)}
+                className={`player-drawer-mode-btn ${seasonId === value ? "player-drawer-mode-btn--active" : ""}`}
+                onClick={() => setSeasonId(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
