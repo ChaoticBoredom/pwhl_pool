@@ -442,8 +442,8 @@ RSpec.describe "PWHL Pool Integration", type: :request do
           max_players_per_team: 1,
           excluded_player_ids: [],
           boxes: [
-            { name: "Forwards Box 1", position: "F", rookie: false, rank_range: { start: 0, end: 0 } },
-            { name: "Goalies Box 1", position: "G", rookie: nil, rank_range: { start: 0, end: 0 } },
+            { name: "Forwards Box 1", position: "F", rookie: false, rank: 1, count: 1 },
+            { name: "Goalies Box 1", position: "G", rookie: nil, rank: 1, count: 1 },
           ],
         }.to_json
 

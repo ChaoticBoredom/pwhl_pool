@@ -33,7 +33,7 @@ class PoolBoxesController < ApplicationController
   def build_config
     BoxGeneration::Config.new(
       teams: params[:teams]&.split(","),
-      max_players_per_team: params[:max_players_per_team],
+      scope: params[:scope],
       boxes: build_boxes,
       excluded_player_ids: params[:excluded_player_ids] || []
     )
@@ -47,13 +47,9 @@ class PoolBoxesController < ApplicationController
         name: b[:name],
         position: b[:position],
         rookie: b[:rookie],
-        rank_range: parse_rank_range(b[:rank_range])
+        rank: b.fetch(:count, 0),
+        count: b.fetch(:count, 0)
       )
     end
-  end
-
-  def parse_rank_range(range)
-    return nil unless range.present?
-    range[:start]..range[:end]
   end
 end
