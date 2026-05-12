@@ -1019,23 +1019,43 @@ select {
   color: var(--accent);
 }
 
-/* Box config rows */
-
-.box-config-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.box-config-table-wrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
-.box-config-row {
-  display: flex;
+.box-config-table-header {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 100px 32px;
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
   background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  z-index: 1;
+}
+
+.box-config-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 80px 80px 100px 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--card-bg-elevated);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: unset;
+}
+
+.box-config-row:last-child {
+  border-bottom: none;
 }
 
 .box-badge {
