@@ -1,5 +1,4 @@
 import React from 'react';
-import { PWHL_TEAMS } from '../constants/teams';
 import { DataRow } from './DataRow';
 import Player from './Player';
 

@@ -1,11 +1,11 @@
 export const PWHL_TEAMS = {
-  'TOR': { name: 'Toronto Sceptres', short: "TOR", color: '#002F6C', secondary: '#FFD700' }, // Royal Blue & Gold
-  'MTL': { name: 'Montréal Victoire', short: "MTL", color: '#800020', secondary: '#000080' }, // Burgundy & Navy
-  'BOS': { name: 'Boston Fleet', short: "BOS", color: '#004830', secondary: '#ADD8E6' },      // Dark Green & Light Blue
-  'MIN': { name: 'Minnesota Frost', short: "MIN", color: '#4B0082', secondary: '#FFFFFF' },   // Purple & White
-  'OTT': { name: 'Ottawa Charge', short: "OTT", color: '#FF0000', secondary: '#808080' },     // Red & Grey
-  'NY': { name: 'New York Sirens', short: "NYC", color: '#008080', secondary: '#000080' },    // Teal & Navy
-  'SEA': { name: 'Seattle Torrent', short: "SEA", color: '#2F4F4F', secondary: '#B0E0E6' },   // Slate Green & Glacier Blue
-  'VAN': { name: 'Vancouver Goldeneyes', short: "VAN", color: '#003366', secondary: '#CD7F32' }, // Pacific Blue & Bronze
-  'default': { name: 'Unknown Team', short: "???", color: '#ccc', secondary: '#000' }
+  'BOS': { name: 'Boston Fleet', bg: '#173F35', text: '#B5E3D8' },
+  'MIN': { name: 'Minnesota Frost', bg: '#250E62', text: '#A77BCA' },
+  'MTL': { name: 'Montréal Victoire', bg: '#862633', text: '#E4D5C4' },
+  'NY':  { name: 'New York Sirens', bg: '#00BFB3', text: '#041E42' },
+  'OTT': { name: 'Ottawa Charge', bg: '#A6192E', text: '#FFB81C' },
+  'TOR': { name: 'Toronto Sceptres', bg: '#0067B9', text: '#FFD100' },
+  'SEA': { name: 'Seattle Torrent', bg: '#0C5256', text: '#E1DBC9' },
+  'VAN': { name: 'Vancouver Goldeneyes', bg: '#0F4777', text: '#EEE9D8' },
+  'default': { name: 'Unknown Team', bg: '#444', text: '#ccc' },
 }

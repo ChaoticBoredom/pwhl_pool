@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "../context/AuthContext";
 import TeamBadge from "./TeamBadge";
-import { PWHL_TEAMS } from '../constants/teams';
 
 function Matchup({ away, home, showScore = false })
 {
