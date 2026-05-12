@@ -1,5 +1,4 @@
 class Pool::Team < ApplicationRecord
-  belongs_to :user
   # Lets us call `.owner` on the team seamlessly
   belongs_to :owner, class_name: "User", foreign_key: "user_id"
   belongs_to :pool

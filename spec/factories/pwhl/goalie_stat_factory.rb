@@ -19,6 +19,7 @@ FactoryBot.define do
     goals_against { 0 }
     shutout       { false }
     win           { false }
+    game_started  { true }
     penalty_minutes { 0.minutes }
     time_on_ice     { 60.minutes }
 
@@ -42,6 +43,14 @@ FactoryBot.define do
       shots_against { 25 }
       goals_against { 5 }
       win           { false }
+    end
+
+    trait :relief_game do
+      saves         { 10 }
+      shots_against { 12 }
+      goals_against { 2 }
+      win           { false }
+      game_started  { false }
     end
   end
 end
