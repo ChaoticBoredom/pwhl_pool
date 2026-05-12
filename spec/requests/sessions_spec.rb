@@ -1,4 +1,4 @@
-RSpec.describe "Authentication", type: :integration do
+RSpec.describe "Authentication", type: :request do
   let(:user) { create(:user, password: "password123") }
 
   describe "POST /api/session (login)" do
