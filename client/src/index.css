@@ -1027,7 +1027,7 @@ select {
 
 .box-config-table-header {
   display: grid;
-  grid-template-columns: 1fr 80px 80px 100px 32px;
+  grid-template-columns: 32px 1fr 80px 80px 100px 32px;
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
