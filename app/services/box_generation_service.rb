@@ -80,16 +80,14 @@ class BoxGenerationService
   end
 
   def players_for_box(sorted, box_def)
-    if @config.max_players_per_team
+    if @config.per_team?
       sorted.flat_map do |_, team_groups|
-        candidates_for(team_groups, box_def)[box_def.rank_range].
-          to_a.
-          first(@config.max_players_per_team)
+        candidates_for(team_groups, box_def)[box_def.rank_range]
       end
     else
       sorted.flat_map { |_, team_groups| candidates_for(team_groups, box_def) }.
         sort_by { |p| -p[:score] }.
-        then { |c| box_def.rank_range ? c[box_def.rank_range] : c }
+        then { |c| c[box_def.rank_range] }
     end
   end
 

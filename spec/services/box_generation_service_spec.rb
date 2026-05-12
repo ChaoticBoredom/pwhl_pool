@@ -133,7 +133,7 @@ RSpec.describe BoxGenerationService, type: :service do
       }
     end
 
-    let(:boxes) { [BoxGeneration::BoxDefinition.new(name: "Forwards Box 1", position: "F", rank_range: 0..0)] }
+    let(:boxes) { [BoxGeneration::BoxDefinition.new(name: "Forwards Box 1", position: "F", rank: 1, count: 1)] }
     let(:config) { BoxGeneration::Config.new(boxes: boxes) }
 
     it "keys result by box name" do
@@ -155,34 +155,52 @@ RSpec.describe BoxGenerationService, type: :service do
     let(:player3) { { id: "3", name: "Carol", position: "F", score: 5.0, team_id: boston.id } }
     let(:player4) { { id: "4", name: "Dana", position: "F", score: 12.0, team_id: toronto.id } }
 
-    context "per-team mode (max_players_per_team set)" do
-      let(:config) { BoxGeneration::Config.new(max_players_per_team: 1) }
+    context "global mode" do
+      let(:config) { BoxGeneration::Config.new(scope: :global) }
+
+      let(:sorted) do
+        {
+          boston.id => { ["F", false] => [player1, player2, player3] },
+          toronto.id => { ["F", false] => [player4] },
+        }
+      end
+
+      [
+        ["top player globally", 1, 1, ["1"]],
+        ["top 2 globally", 1, 2, ["1", "4"]],
+        ["next 2 globally", 3, 2, ["2", "3"]],
+        ["wider range across teams", 1, 4, ["1", "4", "2", "3"]],
+      ].each do |desc, rank, count, expected_ids|
+        context desc do
+          let(:box_def) { BoxGeneration::BoxDefinition.new(name: "Box", position: "F", rank: rank, count: count) }
+
+          it desc do
+            result = service.send(:players_for_box, sorted, box_def)
+            expect(result.map { |p| p[:id] }).to eq(expected_ids)
+          end
+        end
+      end
+    end
+
+    context "per-team mode" do
+      let(:config) { BoxGeneration::Config.new(scope: :per_team) }
 
       let(:sorted) do
         { boston.id => { ["F", false] => [player1, player2, player3] } }
       end
 
       [
-        ["box 1 — rank 0", 0..0, ["1"]],
-        ["box 2 — rank 1", 1..1, ["2"]],
-        ["box 3 — rank 2", 2..2, ["3"]],
-      ].each do |desc, rank_range, expected_ids|
+        ["box 1 — rank 0", 1, ["1"]],
+        ["box 2 — rank 1", 2,  ["2"]],
+        ["box 3 — rank 2", 3, ["3"]],
+      ].each do |desc, rank, expected_ids|
         context desc do
-          let(:box_def) { BoxGeneration::BoxDefinition.new(name: "Box", position: "F", rank_range: rank_range) }
+          let(:box_def) { BoxGeneration::BoxDefinition.new(name: "Box", position: "F", rank: rank) }
 
-          it "returns players at #{rank_range}" do
+          it "returns players at #{rank.ordinalize}" do
             result = service.send(:players_for_box, sorted, box_def)
             expect(result.map { |p| p[:id] }).to eq(expected_ids)
           end
-        end
-      end
-
-      context "when rank_range would exceed max_players_per_team" do
-        let(:box_def) { BoxGeneration::BoxDefinition.new(name: "Box", position: "F", rank_range: 0..1) }
-
-        it "cap takes precedence over rank_range" do
-          result = service.send(:players_for_box, sorted, box_def)
-          expect(result.map { |p| p[:id] }).to eq(["1"])
         end
       end
     end

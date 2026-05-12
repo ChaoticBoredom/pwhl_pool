@@ -1083,9 +1083,25 @@ select {
   color: var(--success-text);
 }
 
-.box-badge--rookie {
-  background: var(--danger-bg);
-  color: var(--danger-text);
+.box-badge--rookie-forward {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  opacity: 0.75;
+}
+
+.box-badge--rookie-defense {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--warning-text);
+  opacity: 0.75;
+}
+
+.box-badge--rookie-goalie {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-text);
+  opacity: 0.75;
 }
 
 .box-name-input {
