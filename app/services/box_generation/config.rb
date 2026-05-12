@@ -25,11 +25,11 @@ module BoxGeneration
     end
 
     def per_team?
-      scope == :per_team
+      scope.to_sym == :per_team
     end
 
     def global?
-      scope == :global
+      scope.to_sym == :global
     end
   end
 end

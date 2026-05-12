@@ -32,7 +32,7 @@ class PoolBoxesController < ApplicationController
 
   def build_config
     BoxGeneration::Config.new(
-      teams: params[:teams]&.split(","),
+      teams: params[:teams],
       scope: params[:scope],
       boxes: build_boxes,
       excluded_player_ids: params[:excluded_player_ids] || []
@@ -47,8 +47,8 @@ class PoolBoxesController < ApplicationController
         name: b[:name],
         position: b[:position],
         rookie: b[:rookie],
-        rank: b.fetch(:count, 0),
-        count: b.fetch(:count, 0)
+        rank: b.fetch(:rank, 1),
+        count: b.fetch(:count, 1)
       )
     end
   end
