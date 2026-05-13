@@ -64,9 +64,19 @@ class BoxGenerationService
       values.
       group_by { |d| d[:team_id] }.
       transform_values do |team_players|
-        team_players.
+        groups = team_players.
           sort_by { |d| -d[:score] }.
           group_by { |d| [d[:position], d[:rookie]] }
+
+        # Precompute nil-rookie variants so candidates_for is a plain lookup
+        groups.keys.map(&:first).uniq.each do |position|
+          groups[[position, nil]] = (
+            groups[[position, false]].to_a +
+            groups[[position, true]].to_a
+          ).sort_by { |d| -d[:score] }
+        end
+
+        groups
       end
   end
 
@@ -92,12 +102,7 @@ class BoxGenerationService
   end
 
   def candidates_for(team_groups, box_def)
-    if box_def.rookie.nil?
-      team_groups[[box_def.position, false]].to_a +
-        team_groups[[box_def.position, true]].to_a
-    else
-      team_groups[[box_def.position, box_def.rookie]].to_a
-    end
+    team_groups[[box_def.position, box_def.rookie]].to_a
   end
 
   def normalized_position(position)

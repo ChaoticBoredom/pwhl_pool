@@ -120,6 +120,29 @@ RSpec.describe BoxGenerationService, type: :service do
         expect(result[boston.id][["F", true]].first[:id]).to eq(rookie.id)
       end
     end
+
+    context "nil rookie group precomputation" do
+      let(:scores) { { skater1.id => 10.0, rookie.id => 8.0 } }
+
+      it "precomputes the [position, nil] group" do
+        result = service.send(:sort_and_group, scores)
+        expect(result[boston.id].keys).to include(["F", nil])
+      end
+
+      it "merges rookies and non-rookies sorted by score descending" do
+        result = service.send(:sort_and_group, scores)
+        expect(result[boston.id][["F", nil]].map { |p| p[:id] }).to eq([skater1.id, rookie.id])
+      end
+
+      context "when rookie outscores non-rookie" do
+        let(:scores) { { skater1.id => 5.0, rookie.id => 10.0 } }
+
+        it "orders rookie first" do
+          result = service.send(:sort_and_group, scores)
+          expect(result[boston.id][["F", nil]].map { |p| p[:id] }).to eq([rookie.id, skater1.id])
+        end
+      end
+    end
   end
 
   describe "#generate_boxes" do
@@ -209,11 +232,13 @@ RSpec.describe BoxGenerationService, type: :service do
   describe "#candidates_for" do
     let(:forward) { { id: "1", position: "F", rookie: false, score: 10.0, name: "A", team_id: boston.id } }
     let(:rookie_forward) { { id: "2", position: "F", rookie: true, score: 8.0, name: "B", team_id: boston.id } }
+    let(:high_scoring_rookie) { { id: "3", position: "F", rookie: true, score: 12.0, name: "C", team_id: boston.id } }
 
     let(:team_groups) do
       {
         ["F", false] => [forward],
         ["F", true] => [rookie_forward],
+        ["F", nil] => [forward, rookie_forward],  # precomputed, score-sorted
       }
     end
 
@@ -236,8 +261,23 @@ RSpec.describe BoxGenerationService, type: :service do
     context "when rookie is nil" do
       let(:box_def) { BoxGeneration::BoxDefinition.new(name: "Box", position: "F", rookie: nil) }
 
-      it "combines rookie and non-rookie players" do
-        expect(service.send(:candidates_for, team_groups, box_def)).to include(forward, rookie_forward)
+      it "returns all forwards sorted by score" do
+        expect(service.send(:candidates_for, team_groups, box_def)).to eq([forward, rookie_forward])
+      end
+
+      context "when rookie outscores non-rookie" do
+        let(:team_groups) do
+          {
+            ["F", false] => [forward],
+            ["F", true] => [high_scoring_rookie],
+            ["F", nil] => [high_scoring_rookie, forward],  # precomputed order matters
+          }
+        end
+
+        it "orders by score regardless of rookie status" do
+          result = service.send(:candidates_for, team_groups, box_def)
+          expect(result.map { |p| p[:id] }).to eq(["3", "1"])
+        end
       end
     end
   end
