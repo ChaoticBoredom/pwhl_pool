@@ -4,7 +4,7 @@ class League < ApplicationRecord
   has_many :games, class_name: "League::Game"
 
   def first_game_today
-    Rails.cache.fetch("#{cache_key_with_version}/first_game/#{Date.today}", expires_in: 2.hours) do
+    Rails.cache.fetch("#{cache_key_with_version}/first_game/#{Time.zone.today}", expires_in: 2.hours) do
       games.where(start_time: Time.current.all_day).minimum(:start_time)
     end
   end
