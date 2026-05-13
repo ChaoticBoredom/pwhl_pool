@@ -12,7 +12,10 @@ class PoolsController < ApplicationController
       includes(:league, :admin, :scoring, pool_teams: :pool_team_players).
       find(id)
 
-    records = PlayerRecordQuery.new(League::Player.where(league: @pool.league), season_id: @pool.season_id).records
+    records = PlayerRecordQuery.new(
+      Pool::TeamPlayer.where(pool: @pool).pluck(:league_player_id).uniq,
+      season_id: @pool.season_id
+    ).records
 
     pss = PlayerScoringService.new(@pool.scoring)
 

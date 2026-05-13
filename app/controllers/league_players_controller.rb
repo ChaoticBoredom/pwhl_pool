@@ -4,7 +4,7 @@ class LeaguePlayersController < ApplicationController
     @player = @team_player.league_player
     @pool = @team_player.pool
 
-    records = PlayerRecordQuery.new([@team_player], season_id: @pool.season_id).records
+    records = PlayerRecordQuery.new([@team_player.league_player_id], season_id: @pool.season_id).records
 
     @stat_service = PlayerStatService.new
     @scoring_service = PlayerScoringService.new(@pool.scoring)

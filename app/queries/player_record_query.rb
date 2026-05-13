@@ -1,46 +1,49 @@
 class PlayerRecordQuery
   def initialize(players, season_id:)
     @season_id = season_id
-    @player_ids = extract_player_ids(players)
+    @player_ids = case players
+    when Array then players
+    else extract_player_ids(players)
+    end
   end
 
   def records
-    ids = historical_ids + today_ids
-    materialize(ids).group_by(&:league_player_id)
+    (historical_records + today_records).group_by(&:league_player_id)
   end
 
   private
 
-  def historical_ids
-    Rails.cache.fetch(cache_key) do
-      fetch_ids_for_range(..1.day.ago.end_of_day)
+  def historical_records
+    @player_ids.flat_map do |player_id|
+      Rails.cache.fetch(player_cache_key(player_id)) do
+        fetch_records_for_range(..1.day.ago.end_of_day, player_ids: player_id).map do |r|
+          r.attributes.merge("_class" => r.class.name)
+        end
+      end.map do |attrs|
+        attrs["_class"].constantize.instantiate(attrs.except("_class"))
+      end
     end
   end
 
-  def today_ids
-    fetch_ids_for_range(Time.current.all_day)
+  def today_records
+    fetch_records_for_range(Time.current.all_day)
   end
 
-  def fetch_ids_for_range(range)
+  def stat_scope(klass, range, player_ids: @player_ids)
+    klass
+      .joins(:league_game)
+      .where(league_player_id: player_ids)
+      .where(league_games: { season_id: @season_id, start_time: range })
+  end
+
+  def fetch_records_for_range(range, player_ids: @player_ids)
     stat_classes.flat_map do |klass|
-      klass.
-        joins(:league_game).
-        where(league_player_id: @player_ids).
-        where(league_games: { season_id: @season_id, start_time: range }).
-        pluck(:id)
+      stat_scope(klass, range, player_ids: player_ids).includes(:league_game)
     end
   end
 
-  def materialize(ids)
-    return [] if ids.empty?
-
-    stat_classes.flat_map do |klass|
-      klass.includes(:league_game).where(id: ids)
-    end.to_a
-  end
-
-  def cache_key
-    ["player_records", @season_id, Date.current.to_s, Digest::SHA1.hexdigest(@player_ids.sort.join)]
+  def player_cache_key(player_id)
+    ["player_records", @season_id, Time.zone.today.to_s, player_id]
   end
 
   def extract_player_ids(players)
