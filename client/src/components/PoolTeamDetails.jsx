@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from '../context/AuthContext';
-import { DataRow } from './DataRow';
-import { EditableField } from './EditableField';
+import { useAuth } from "../context/AuthContext";
+import { DataRow } from "./DataRow";
+import { EditableField } from "./EditableField";
 import { GameData } from "./GameData";
 import { PlayerDrawer } from "./PlayerDrawer";
+import { useDrawerState } from "../hooks/useDrawerState";
 
 import Player from "./Player";
 
@@ -21,6 +22,8 @@ function PoolTeamDetails() {
   const navigate = useNavigate();
 
   const [openDrawers, setOpenDrawers] = useState(new Set());
+  // Shared state for all drawers
+  const { drawerState, updateDrawer } = useDrawerState();
 
   const toggleDrawer = (id) => {
     setOpenDrawers(prev => {
@@ -113,7 +116,13 @@ function PoolTeamDetails() {
                 <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
               </DataRow>
               <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
-                <PlayerDrawer player={player} isOpen={isOpen} onClose={() => toggleDrawer(player.id)} />
+                <PlayerDrawer
+                  player={player}
+                  isOpen={isOpen}
+                  onClose={() => toggleDrawer(player.id)}
+                  drawerState={drawerState}
+                  onDrawerChange={updateDrawer}
+                />
               </div>
             </div>
           );
