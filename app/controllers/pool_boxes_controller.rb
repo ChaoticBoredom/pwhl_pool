@@ -10,7 +10,7 @@ class PoolBoxesController < ApplicationController
     end
 
     all_players = @boxes.flat_map(&:players).uniq(&:id)
-    records = PlayerRecordQuery.new(all_players, season_id: @pool.display_season_id).records
+    records = PlayerRecordQuery.new(players: all_players, season_id: @pool.display_season_id).records
     pss = PlayerScoringService.new(@pool.scoring)
 
     @player_scores = pss.raw_player_summaries(all_players, records)
