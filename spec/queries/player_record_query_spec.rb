@@ -227,20 +227,6 @@ RSpec.describe PlayerRecordQuery do
       end
     end
 
-    context "eager loading" do
-      let(:skater) { create(:pwhl_skater, league: league) }
-
-      it "eager loads league_game on returned records" do
-        create(:pwhl_skater_stat,
-          league: league,
-          league_player: skater,
-          league_game: create_game(start_time: 1.day.ago))
-
-        records = build_query(player_ids: [skater.id]).records
-        expect(records[skater.id].first.association(:league_game)).to be_loaded
-      end
-    end
-
     context "historical vs today split" do
       let(:skater) { create(:pwhl_skater, league: league) }
 

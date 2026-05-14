@@ -34,14 +34,14 @@ class PlayerRecordQuery
 
   def stat_scope(klass, range, player_ids: @player_ids)
     klass.
-      joins(:league_game).
       where(league_player_id: player_ids).
-      where(league_games: { season_id: @season_id, start_time: range })
+      where(season_id: @season_id).
+      where(start_time: range)
   end
 
   def fetch_records_for_range(range, player_ids: @player_ids)
     stat_classes.flat_map do |klass|
-      stat_scope(klass, range, player_ids: player_ids).includes(:league_game)
+      stat_scope(klass, range, player_ids: player_ids)
     end
   end
 
