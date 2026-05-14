@@ -13,7 +13,7 @@ class PoolsController < ApplicationController
       find(id)
 
     records = PlayerRecordQuery.new(
-      Pool::TeamPlayer.where(pool: @pool).pluck(:league_player_id).uniq,
+      player_ids: Pool::TeamPlayer.where(pool: @pool).pluck(:league_player_id).uniq,
       season_id: @pool.season_id
     ).records
 
