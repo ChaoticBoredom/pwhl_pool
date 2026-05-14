@@ -2,13 +2,13 @@ class PoolTeamsController < ApplicationController
   def show
     id = params[:id]
     @pool_team = Pool::Team.
-      includes(pool_team_players: [:pool_box, { league_player: :current_team }]).
+      includes(:owner, pool: :league, pool_team_players: [:pool_box, { league_player: :current_team }]).
       find(id)
     @pool = @pool_team.pool
     records = PlayerRecordQuery.new(players: @pool_team.pool_team_players, season_id: @pool.season_id).records
     @scoring_service = PlayerScoringService.new(@pool.scoring)
-    @current_team = @pool_team.current_team.to_a
-    @previous_team = @pool_team.previous_team.to_a
+    @current_team = @pool_team.pool_team_players.select(&:current?)
+    @previous_team = @pool_team.pool_team_players.reject(&:current?)
 
     @player_summaries = @scoring_service.player_summaries(@pool_team.pool_team_players, records)
     @total_score = @scoring_service.team_scores([@pool_team], records)[@pool_team.id]
