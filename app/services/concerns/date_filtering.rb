@@ -19,7 +19,7 @@ module DateFiltering
   end
 
   def records_in_range(records, range)
-    records.select { |r| range.cover?(r.league_game.start_time) }
+    records.select { |r| range.cover?(r.start_time) }
   end
 
   def intersect_ranges(a, b)
