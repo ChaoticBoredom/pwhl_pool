@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_072901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -157,8 +157,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
     t.uuid "league_team_id", null: false
     t.interval "penalty_minutes", null: false
     t.integer "saves", null: false
+    t.string "season_id", null: false
     t.integer "shots_against", null: false
     t.boolean "shutout", null: false
+    t.timestamptz "start_time", null: false
     t.interval "time_on_ice", null: false
     t.datetime "updated_at", null: false
     t.boolean "win", null: false
@@ -167,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
     t.index ["league_player_id", "league_game_id"], name: "index_pwhl_goalie_stats_on_league_player_id_and_league_game_id", unique: true
     t.index ["league_player_id"], name: "index_pwhl_goalie_stats_on_league_player_id"
     t.index ["league_team_id"], name: "index_pwhl_goalie_stats_on_league_team_id"
+    t.index ["season_id", "start_time"], name: "index_pwhl_goalie_stats_on_season_id_and_start_time"
   end
 
   create_table "pwhl_skater_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -183,9 +186,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
     t.interval "penalty_minutes", null: false
     t.integer "plus_minus", null: false
     t.integer "power_play_goals", null: false
+    t.string "season_id", null: false
     t.integer "short_handed_goals", null: false
     t.integer "shots", null: false
     t.integer "shots_blocked", null: false
+    t.timestamptz "start_time", null: false
     t.interval "time_on_ice", null: false
     t.datetime "updated_at", null: false
     t.index ["league_game_id"], name: "index_pwhl_skater_stats_on_league_game_id"
@@ -193,6 +198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_210832) do
     t.index ["league_player_id", "league_game_id"], name: "index_skater_stats_on_player_and_game"
     t.index ["league_player_id"], name: "index_pwhl_skater_stats_on_league_player_id"
     t.index ["league_team_id"], name: "index_pwhl_skater_stats_on_league_team_id"
+    t.index ["season_id", "start_time"], name: "index_pwhl_skater_stats_on_season_id_and_start_time"
   end
 
   create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

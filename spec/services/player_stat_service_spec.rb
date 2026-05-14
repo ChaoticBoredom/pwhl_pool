@@ -10,18 +10,16 @@ RSpec.describe PlayerStatService do
   let(:service) { described_class.new }
 
   def build_stat(start_time:, goals: 0, assists: 0, shots: 0, penalty_minutes: 0.minutes, time_on_ice: 15.minutes)
-    game = instance_double(League::Game, start_time: start_time)
     build(:pwhl_skater_stat,
       league: league,
       league_game: nil,
+      start_time: start_time,
       goals: goals,
       assists: assists,
       shots: shots,
       penalty_minutes: penalty_minutes,
       time_on_ice: time_on_ice
-    ).tap do |stat|
-      allow(stat).to receive(:league_game).and_return(game)
-    end
+    )
   end
 
   def create_team_player(league_player, added_at:, dropped_at: nil)
