@@ -26,17 +26,24 @@ RSpec.describe PlayerScoringService do
   end
 
   def build_stat(start_time:, goals: 0, assists: 0)
-    game = instance_double(League::Game, league: league, start_time: start_time)
-    build(:pwhl_skater_stat, league: league, league_game: nil, goals: goals, assists: assists).tap do |stat|
-      allow(stat).to receive(:league_game).and_return(game)
-    end
+    build(:pwhl_skater_stat,
+      league: league,
+      league_game: nil,
+      start_time: start_time,
+      goals: goals,
+      assists: assists
+    )
   end
 
   def build_goalie_stat(start_time:, saves: 0, win: false, shutout: false)
-    game = instance_double(League::Game, start_time: start_time)
-    build(:pwhl_goalie_stat, league: league, league_game: nil, saves: saves, win: win, shutout: shutout).tap do |stat|
-      allow(stat).to receive(:league_game).and_return(game)
-    end
+    build(:pwhl_goalie_stat,
+      league: league,
+      league_game: nil,
+      start_time: start_time,
+      saves: saves,
+      win: win,
+      shutout: shutout
+    )
   end
 
   def create_team_player(league_player, pool_team, added_at:, dropped_at: nil)
