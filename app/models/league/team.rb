@@ -13,10 +13,14 @@ class League::Team < ApplicationRecord
   end
 
   def todays_game
-    all_games.where(start_time: Time.current.all_day).first
+    Rails.cache.fetch(["todays_game", id, Time.zone.today.to_s]) do
+      all_games.where(start_time: Time.current.all_day).first&.attributes
+    end&.then { |attrs| League::Game.instantiate(attrs) }
   end
 
   def next_game
-    all_games.where(start_time: 1.day.from_now..).first
+    Rails.cache.fetch(["next_game", id, Time.zone.today.to_s]) do
+      all_games.where(start_time: 1.day.from_now..).first&.attributes
+    end&.then { |attrs| League::Game.instantiate(attrs) }
   end
 end
