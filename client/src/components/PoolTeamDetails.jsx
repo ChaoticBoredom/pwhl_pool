@@ -21,6 +21,12 @@ function PoolTeamDetails() {
   const navigate = useNavigate();
 
   const [openDrawers, setOpenDrawers] = useState(new Set());
+  // Shared state for all drawers
+  const [drawerState, setDrawerState] = useState({
+    tab: "season_to_date",
+    mode: "raw",
+    clipped: false,
+  })
 
   const toggleDrawer = (id) => {
     setOpenDrawers(prev => {
@@ -29,6 +35,8 @@ function PoolTeamDetails() {
       return next;
     });
   };
+
+  const updateDrawer = (key, value) => setDrawerState(prev => ({ ...prev, [key]: value }));
 
   const { data: poolTeam, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["pool-team", teamId],
@@ -113,7 +121,13 @@ function PoolTeamDetails() {
                 <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
               </DataRow>
               <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
-                <PlayerDrawer player={player} isOpen={isOpen} onClose={() => toggleDrawer(player.id)} />
+                <PlayerDrawer
+                  player={player}
+                  isOpen={isOpen}
+                  onClose={() => toggleDrawer(player.id)}
+                  drawerState={drawerState}
+                  onDrawerChange={updateDrawer}
+                />
               </div>
             </div>
           );

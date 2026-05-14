@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { X } from "lucide-react";
 
 const TABS = [
-  { key: "today", label: "Today"  },
-  { key: "week_to_date", label: "Week"   },
-  { key: "month_to_date", label: "Month"  },
+  { key: "today", label: "Today" },
+  { key: "week_to_date", label: "Week" },
+  { key: "month_to_date", label: "Month" },
   { key: "season_to_date", label: "Season" },
 ];
 
@@ -99,12 +98,9 @@ function StatRow({ field, rawValue, pointValue, mode, label }) {
   );
 }
 
-export function PlayerDrawer({ player, isOpen, onClose }) {
+export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerChange }) {
   const { authHeaders } = useAuth();
-
-  const [tab,     setTab]     = useState("season_to_date");
-  const [mode,    setMode]    = useState("raw");
-  const [clipped, setClipped] = useState(false);
+  const { tab, mode, clipped } = drawerState;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["player-detail", player.id],
@@ -134,10 +130,10 @@ export function PlayerDrawer({ player, isOpen, onClose }) {
     <div className="player-drawer" role="region" aria-label={`${player.name} stats`}>
 
       <div className="player-drawer-controls">
-        <TabBar active={tab} onSelect={setTab} />
+        <TabBar active={tab} onSelect={(v) => onDrawerChange("tab", v)} />
         <div className="player-drawer-actions">
-          <ModeToggle value={mode} onChange={setMode} />
-          <ClipToggle clipped={clipped} onChange={setClipped} />
+          <ModeToggle value={mode} onChange={(v) => onDrawerChange("mode", v)} />
+          <ClipToggle clipped={clipped} onChange={(v) => onDrawerChange("clipped", v)} />
           <button
             onClick={onClose}
             className="player-drawer-close"
