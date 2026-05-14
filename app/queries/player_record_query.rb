@@ -1,9 +1,12 @@
 class PlayerRecordQuery
-  def initialize(players, season_id:)
+  def initialize(season_id:, player_ids: nil, players: nil)
     @season_id = season_id
-    @player_ids = case players
-    when Array then players
-    else extract_player_ids(players)
+    @player_ids = if player_ids
+      player_ids.uniq
+    elsif players
+      extract_player_ids(players)
+    else
+      raise ArgumentError, "Must provide either player_ids: or players:"
     end
   end
 
@@ -19,8 +22,8 @@ class PlayerRecordQuery
         fetch_records_for_range(..1.day.ago.end_of_day, player_ids: player_id).map do |r|
           r.attributes.merge("_class" => r.class.name)
         end
-      end.map do |attrs|
-        attrs["_class"].constantize.instantiate(attrs.except("_class"))
+      end.map do |cached|
+        cached["_class"].constantize.instantiate(cached.except("_class"))
       end
     end
   end
@@ -30,10 +33,10 @@ class PlayerRecordQuery
   end
 
   def stat_scope(klass, range, player_ids: @player_ids)
-    klass
-      .joins(:league_game)
-      .where(league_player_id: player_ids)
-      .where(league_games: { season_id: @season_id, start_time: range })
+    klass.
+      joins(:league_game).
+      where(league_player_id: player_ids).
+      where(league_games: { season_id: @season_id, start_time: range })
   end
 
   def fetch_records_for_range(range, player_ids: @player_ids)
