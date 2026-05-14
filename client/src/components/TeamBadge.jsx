@@ -1,8 +1,7 @@
-import React from 'react'
-import { PWHL_TEAMS } from '../constants/teams';
+import { PWHL_TEAMS } from "../constants/teams";
 
 const TeamBadge = ({ short_code }) => {
-  const teamInfo = PWHL_TEAMS[short_code] || PWHL_TEAMS['default'];
+  const teamInfo = PWHL_TEAMS[short_code] || PWHL_TEAMS["default"];
 
   return (
     <span
@@ -15,6 +14,6 @@ const TeamBadge = ({ short_code }) => {
       {short_code}
     </span>
   );
-}
+};
 
-export default TeamBadge
+export default TeamBadge;
