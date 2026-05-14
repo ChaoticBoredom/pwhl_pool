@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from '../context/AuthContext';
-import { DataRow } from './DataRow';
-import { EditableField } from './EditableField';
+import { useAuth } from "../context/AuthContext";
+import { DataRow } from "./DataRow";
+import { EditableField } from "./EditableField";
 import { GameData } from "./GameData";
 import { PlayerDrawer } from "./PlayerDrawer";
+import { useDrawerState } from "../hooks/useDrawerState";
 
 import Player from "./Player";
 
@@ -22,11 +23,7 @@ function PoolTeamDetails() {
 
   const [openDrawers, setOpenDrawers] = useState(new Set());
   // Shared state for all drawers
-  const [drawerState, setDrawerState] = useState({
-    tab: "season_to_date",
-    mode: "raw",
-    clipped: false,
-  })
+  const { drawerState, updateDrawer } = useDrawerState();
 
   const toggleDrawer = (id) => {
     setOpenDrawers(prev => {
@@ -35,8 +32,6 @@ function PoolTeamDetails() {
       return next;
     });
   };
-
-  const updateDrawer = (key, value) => setDrawerState(prev => ({ ...prev, [key]: value }));
 
   const { data: poolTeam, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["pool-team", teamId],
