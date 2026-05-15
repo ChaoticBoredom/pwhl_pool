@@ -5,7 +5,6 @@ RSpec.describe "PoolTeams", type: :request do
   let(:league) { create(:league, :pwhl) }
   let(:pool) { create(:pool, league: league) }
   let(:pool_team) { create(:pool_team, pool: pool, owner: user) }
-  let(:auth_headers) { { "Authorization" => "Bearer #{token}" } }
   let(:skater1) { create(:league_player, :skater, league: league) }
   let(:skater2) { create(:league_player, :skater, league: league) }
   let(:skater3) { create(:league_player, :skater, league: league) }

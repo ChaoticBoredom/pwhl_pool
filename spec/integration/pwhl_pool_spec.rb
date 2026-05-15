@@ -430,6 +430,68 @@ RSpec.describe "PWHL Pool Integration", type: :request do
     end
   end
 
+  describe "pool_boxes#index" do
+    let(:other_skater) { create(:pwhl_skater, league: pwhl, current_team: boston, position: "F") }
+    let(:other_goalie) { create(:pwhl_goalie, league: pwhl, current_team: ottawa, position: "G") }
+    let!(:skater_box) do
+      create(:pool_box, pool: pool, name: "Forwards Box 1", league_player_ids: [skater.id, other_skater.id])
+    end
+
+    let!(:goalie_box) do
+      create(:pool_box, pool: pool, name: "Goalies Box 1", league_player_ids: [goalie.id, other_goalie.id])
+    end
+
+    it "returns the expected response" do
+      get "/api/pools/#{pool.id}/pool_boxes", headers: auth_headers
+      body = JSON.parse(response.body)
+
+      aggregate_failures do
+        expect(response.status).to eq(200), "expected 200"
+        expect(body["using_reference_season"]).to eq(false), "using_reference_season mismatch"
+
+        box_names = body["boxes"].map { |b| b["name"] }
+        expect(box_names).to match_array(["Forwards Box 1", "Goalies Box 1"]), "box names mismatch"
+
+        skater_json = body["boxes"].find { |b| b["name"] == "Forwards Box 1" }["players"]
+          .find { |p| p["id"] == skater.id }
+        goalie_json = body["boxes"].find { |b| b["name"] == "Goalies Box 1" }["players"]
+          .find { |p| p["id"] == goalie.id }
+
+        other_skater_json = body["boxes"].find { |b| b["name"] == "Forwards Box 1" }["players"]
+          .find { |p| p["id"] == other_skater.id }
+        other_goalie_json = body["boxes"].find { |b| b["name"] == "Goalies Box 1" }["players"]
+          .find { |p| p["id"] == other_goalie.id }
+
+
+        expect(skater_json).not_to be_nil, "skater missing from Forwards Box 1"
+        expect(goalie_json).not_to be_nil, "goalie missing from Goalies Box 1"
+        expect(other_skater_json).not_to be_nil, "other_skater missing from Forwards Box 1"
+        expect(other_goalie_json).not_to be_nil, "other_goalie missing from Goalies Box 1"
+
+        expect(skater_json["selected"]).to eq(true), "skater should be selected (on pool_team)"
+        expect(goalie_json["selected"]).to eq(true), "goalie should be selected (on pool_team)"
+        expect(other_skater_json["selected"]).to eq(false), "other_skater should be not be selected (not on pool_team)"
+        expect(other_goalie_json["selected"]).to eq(false), "other_goalie should be not be selected (not on pool_team)"
+
+        expect(skater_json["scores"]["today"]).to be_within(0.01).of(4.5),
+          "skater today score mismatch"
+        expect(skater_json["scores"]["season_to_date"]).to be_within(0.01).of(4.5),
+          "skater season_to_date score mismatch"
+
+        expect(goalie_json["scores"]["today"]).to be_within(0.01).of(2.0),
+          "goalie today score mismatch"
+        expect(goalie_json["scores"]["season_to_date"]).to be_within(0.01).of(2.0),
+          "goalie season_to_date score mismatch"
+
+        expect(other_skater_json["scores"]["today"]).to eq(0), "other_skater today score mismatch"
+        expect(other_skater_json["scores"]["season_to_date"]).to eq(0), "other_skater season_to_date score mismatch"
+
+        expect(other_goalie_json["scores"]["today"]).to eq(0), "other_goalie today score mismatch"
+        expect(other_goalie_json["scores"]["season_to_date"]).to eq(0), "other_goalie season_to_date score mismatch"
+      end
+    end
+  end
+
   describe "pool_boxes#generate" do
     it "returns the expected response" do
       post "/api/pools/#{pool.id}/pool_boxes/generate",

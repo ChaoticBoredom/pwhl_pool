@@ -25,7 +25,7 @@ class PoolBoxesController < ApplicationController
     @result = BoxGenerationService.new(@pool, config, season_id: params[:season_id].presence).call
     render :generate
   rescue BoxGenerationService::BoxGenerationError => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :unprocessable_content
   end
 
   private
