@@ -16,7 +16,7 @@ RSpec.describe "PoolTeams", type: :request do
   let!(:current_team2) { create(:pool_team_player, pool_team: pool_team, league_player: skater2, pool_box: box2) }
 
   describe "POST /update_roster" do
-    before(:each) { allow_any_instance_of(Pool).to receive(:trading_allowed_now?).and_return(true) }
+    before(:each) { allow_any_instance_of(Pool).to receive(:trading_blocked?).and_return(true) }
 
     context "when user does not own the team" do
       let(:other_user) { create(:user) }
@@ -40,7 +40,7 @@ RSpec.describe "PoolTeams", type: :request do
     end
 
     context "when trades are not allowed" do
-      before(:each) { allow_any_instance_of(Pool).to receive(:trading_allowed_now?).and_return(false) }
+      before(:each) { allow_any_instance_of(Pool).to receive(:trading_blocked?).and_return(false) }
       it "returns a 403 forbidden" do
         post "/api/pool_teams/#{pool_team.id}/update_roster",
           params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
