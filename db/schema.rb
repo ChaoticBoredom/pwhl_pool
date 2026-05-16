@@ -129,8 +129,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_16_092712) do
     t.integer "pool_type", null: false
     t.string "reference_season_id"
     t.string "season_id", null: false
-    t.boolean "trades_allowed", default: false, null: false
-    t.boolean "trades_require_approval", default: false, null: false
+    t.integer "trade_policy", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"
@@ -202,6 +201,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_16_092712) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "trade_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "action", null: false
+    t.timestamptz "backdated_to"
+    t.datetime "created_at", null: false
+    t.timestamptz "decided_at"
+    t.uuid "league_player_id", null: false
+    t.uuid "pool_box_id"
+    t.uuid "pool_team_id", null: false
+    t.text "rejected_reason"
+    t.uuid "request_group_id"
+    t.timestamptz "requested_at", null: false
+    t.uuid "requested_by_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["league_player_id", "status"], name: "index_trade_requests_on_league_player_id_and_status"
+    t.index ["league_player_id"], name: "index_trade_requests_on_league_player_id"
+    t.index ["pool_box_id"], name: "index_trade_requests_on_pool_box_id"
+    t.index ["pool_team_id", "status"], name: "index_trade_requests_on_pool_team_id_and_status"
+    t.index ["pool_team_id"], name: "index_trade_requests_on_pool_team_id"
+    t.index ["request_group_id"], name: "index_trade_requests_on_request_group_id"
+    t.index ["requested_by_id"], name: "index_trade_requests_on_requested_by_id"
+    t.index ["status"], name: "index_trade_requests_on_status"
+  end
+
   create_table "trade_windows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.tstzrange "open_window", null: false
@@ -243,5 +266,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_16_092712) do
   add_foreign_key "pwhl_skater_stats", "league_players"
   add_foreign_key "pwhl_skater_stats", "league_teams"
   add_foreign_key "sessions", "users"
+  add_foreign_key "trade_requests", "league_players"
+  add_foreign_key "trade_requests", "pool_boxes"
+  add_foreign_key "trade_requests", "pool_teams"
+  add_foreign_key "trade_requests", "users", column: "requested_by_id"
   add_foreign_key "trade_windows", "pools"
 end
