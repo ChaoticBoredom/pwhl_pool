@@ -1,32 +1,43 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext'
 import BoxSelection from './BoxSelection'
 
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
-  const [boxes, setBoxes] = useState([]);
   const { authHeaders } = useAuth();
   const navigate = useNavigate();
   const [selections, setSelections] = useState({});
-  const [isCurrentSeason, setIsCurrentSeason] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const {data: boxData} = useQuery({
+    queryKey: ["pool_boxes", poolId],
+    queryFn: () =>
+      fetch(`/api/pools/${poolId}/pool_boxes`, {headers: authHeaders}).
+        then(res => res.json()),
+    enabled: !!poolId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
+  const boxes = useMemo(() => {
+    if (!boxData) return [];
+    return [...boxData.boxes].sort((a, b) => a.order - b.order);
+  }, [boxData]);
+
+  const tradingState = boxData?.trading_state ?? "blocked";
+  const isCurrentSeason = !boxData?.using_reference_season;
+
   useEffect(() => {
-    if (!poolId) return;
-    fetch(`/api/pools/${poolId}/pool_boxes`, { headers: authHeaders })
-    .then(res => res.json()).then(data => {
-      setBoxes([...data.boxes].sort((a, b) => a.order - b.order));
-      const initial = {};
-      data.boxes.forEach(b => {
-        const selected = b.players.find(p => p.selected);
-        if (selected) initial[b.id] = selected.id;
-      });
-      setSelections(initial);
-      setIsCurrentSeason(!data.using_reference_season);
-    })
-    .catch(err => console.error("Fetch Error:", err));
-  }, [poolId, authHeaders]);
+    if (!boxData) return;
+    const initial = {};
+    boxData.boxes.forEach(b => {
+      const selected = b.players.find(p => p.selected);
+      if (selected) initial[b.id] = selected.id;
+    });
+    setSelections(initial);
+  }, [boxData]);
 
   const handleSubmit = async () => {
     setIsSaving(true);
@@ -39,7 +50,11 @@ const PlayerSelection = () => {
 
       if (response.ok) {
         const { added_players, dropped_players } = await response.json();
-        alert(`Added: ${added_players.join(", ")}\n\nDropped: ${dropped_players.join(", ")}`);
+        if (pending_approval) {
+          alert("Your roster change has been submitted for approval.");
+        } else {
+          alert(`Added: ${added_players.join(", ")}\n\nDropped: ${dropped_players.join(", ")}`);
+        }
         navigate(`/pools/${poolId}/teams/${teamId}`);
         return;
       }
@@ -63,13 +78,19 @@ const PlayerSelection = () => {
     }
   };
 
+  const saveLabel = () => {
+    if (isSaving) return "Saving...";
+    if (tradingState === "pending_approval") return "Request Roster Update";
+    return "Save Roster";
+  };
+
   const saveButton = (extraClass = "") => (
     <button
       className={`btn-primary ${extraClass}`}
       onClick={handleSubmit}
       disabled={isSaving || Object.keys(selections).length != boxes.length}
     >
-      {isSaving ? 'Saving...' : 'Save Roster'}
+      {saveLabel()}
     </button>
   );
 
