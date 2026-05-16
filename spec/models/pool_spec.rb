@@ -130,7 +130,7 @@ RSpec.describe Pool, type: :model do
 
         context "when pool has a trade window" do
           context "when trade window is in the future" do
-            let!(:future_window) { create(:pool_trade_window, :future, pool: subject) }
+            let!(:future_window) { create(:trade_window, :future, pool: subject) }
 
             it "returns false" do
               expect(subject.trading_allowed_now?).to eq(false)
@@ -138,7 +138,7 @@ RSpec.describe Pool, type: :model do
           end
 
           context "when trade window is in the past" do
-            let!(:past_window) { create(:pool_trade_window, :past, pool: subject) }
+            let!(:past_window) { create(:trade_window, :past, pool: subject) }
 
             it "returns false" do
               expect(subject.trading_allowed_now?).to eq(false)
@@ -146,7 +146,7 @@ RSpec.describe Pool, type: :model do
           end
 
           context "when trade window is current" do
-            let!(:past_window) { create(:pool_trade_window, pool: subject, open_window: 2.hours.ago..2.hours.from_now) }
+            let!(:past_window) { create(:trade_window, pool: subject, open_window: 2.hours.ago..2.hours.from_now) }
 
             it "returns true" do
               expect(subject.trading_allowed_now?).to eq(true)

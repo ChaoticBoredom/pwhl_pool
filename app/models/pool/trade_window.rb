@@ -1,4 +1,4 @@
-class Pool::TradeWindow < ApplicationRecord
+class Trade::Window < ApplicationRecord
   validates :open_window, presence: true
 
   belongs_to :pool

@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :pool_trade_window, class: "Pool::TradeWindow" do
+  factory :trade_window, class: "Trade::Window" do
     association :pool
     open_window { 5.days.ago..5.days.from_now }
 
