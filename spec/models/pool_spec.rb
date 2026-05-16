@@ -4,14 +4,6 @@ RSpec.describe Pool, type: :model do
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:pool_type) }
 
-  it { should allow_value(true).for(:trades_allowed) }
-  it { should allow_value(false).for(:trades_allowed) }
-  it { should_not allow_value(nil).for(:trades_allowed) }
-
-  it { should allow_value(true).for(:trades_require_approval) }
-  it { should allow_value(false).for(:trades_require_approval) }
-  it { should_not allow_value(nil).for(:trades_require_approval) }
-
   let(:season_id) { "current" }
   let(:reference_season_id) { "previous" }
   let(:league) { create(:league) }
@@ -99,61 +91,101 @@ RSpec.describe Pool, type: :model do
     end
   end
 
-  describe "#trading_allowed_now?" do
-    context "when trades_allowed is false" do
-      before(:each) { subject.update(trades_allowed: false) }
+  describe "#trading_allowed?" do
+    it "returns true when trade_policy_result is :allowed" do
+      allow(subject).to receive(:trade_policy_result).and_return(:allowed)
+      expect(subject.trading_allowed?).to eq(true)
+    end
 
-      it "returns false" do
-        expect(subject.trading_allowed_now?).to eq(false)
+    it "returns false otherwise" do
+      allow(subject).to receive(:trade_policy_result).and_return(:pending_approval)
+      expect(subject.trading_allowed?).to eq(false)
+    end
+  end
+
+  describe "#trading_allowed_pending_approval?" do
+    it "returns true when trade_policy_result is :pending_approval" do
+      allow(subject).to receive(:trade_policy_result).and_return(:pending_approval)
+      expect(subject.trading_allowed_pending_approval?).to eq(true)
+    end
+
+    it "returns false otherwise" do
+      allow(subject).to receive(:trade_policy_result).and_return(:blocked)
+      expect(subject.trading_allowed_pending_approval?).to eq(false)
+    end
+  end
+
+  describe "#trading_blocked?" do
+    it "returns true when trade_policy_result is :blocked" do
+      allow(subject).to receive(:trade_policy_result).and_return(:blocked)
+      expect(subject.trading_blocked?).to eq(true)
+    end
+
+    it "returns false otherwise" do
+      allow(subject).to receive(:trade_policy_result).and_return(:allowed)
+      expect(subject.trading_blocked?).to eq(false)
+    end
+  end
+
+  describe "#trade_policy_result" do
+    context "when a league game has started" do
+      before { allow(league).to receive(:games_started?).and_return(true) }
+
+      [
+        :open,
+        :approval_required,
+        :windowed,
+        :windowed_overflow,
+      ].each do |policy|
+        it "returns :blocked for #{policy}" do
+          subject.update(trade_policy: policy)
+          expect(subject.trade_policy_result).to eq(:blocked)
+        end
       end
     end
 
-    context "when trades_allowed is true" do
-      before(:each) { subject.update(trades_allowed: true) }
+    context "when no league games have started" do
+      before { allow(league).to receive(:games_started?).and_return(false) }
 
-      context "when a game in the league has started" do
-        before(:each) { allow(league).to receive(:games_started?).and_return(true) }
-
-        it "should return false" do
-          expect(subject.trading_allowed_now?).to eq(false)
+      [
+        [:disabled, :blocked],
+        [:open, :allowed],
+        [:approval_required, :pending_approval],
+      ].each do |policy, expected|
+        it "returns #{expected} for #{policy}" do
+          subject.update(trade_policy: policy)
+          expect(subject.trade_policy_result).to eq(expected)
         end
       end
 
-      context "when no league games have started yet" do
-        before(:each) { allow(league).to receive(:games_started?).and_return(false) }
+      [
+        [:windowed, :allowed, :blocked],
+        [:windowed_overflow, :allowed, :pending_approval],
+      ].each do |policy, in_window_result, out_of_window_result|
+        context "with #{policy}" do
+          before { subject.update(trade_policy: policy) }
 
-        context "when pool has no trade windows" do
-          it "returns true" do
-            expect(subject.trading_allowed_now?).to eq(true)
-          end
-        end
-
-        context "when pool has a trade window" do
-          context "when trade window is in the future" do
-            let!(:future_window) { create(:trade_window, :future, pool: subject) }
-
-            it "returns false" do
-              expect(subject.trading_allowed_now?).to eq(false)
-            end
+          it "returns #{in_window_result} when inside a trade window" do
+            allow(subject.trade_windows).to receive(:current).and_return(
+              double(exists?: true)
+            )
+            expect(subject.trade_policy_result).to eq(in_window_result)
           end
 
-          context "when trade window is in the past" do
-            let!(:past_window) { create(:trade_window, :past, pool: subject) }
-
-            it "returns false" do
-              expect(subject.trading_allowed_now?).to eq(false)
-            end
-          end
-
-          context "when trade window is current" do
-            let!(:past_window) { create(:trade_window, pool: subject, open_window: 2.hours.ago..2.hours.from_now) }
-
-            it "returns true" do
-              expect(subject.trading_allowed_now?).to eq(true)
-            end
+          it "returns #{out_of_window_result} when outside a trade window" do
+            allow(subject.trade_windows).to receive(:current).and_return(
+              double(exists?: false)
+            )
+            expect(subject.trade_policy_result).to eq(out_of_window_result)
           end
         end
       end
+    end
+
+    it "returns :blocked for trade_policy_disabled regardless of games" do
+      subject.trade_policy_disabled!
+      allow(league).to receive(:games_started?).and_return(false)
+      expect(subject.trade_policy_result).to be(:blocked)
     end
   end
 end

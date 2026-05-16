@@ -13,6 +13,7 @@ class Pool < ApplicationRecord
   has_many :pool_teams, class_name: "Pool::Team"
   has_many :pool_boxes, class_name: "Pool::Box"
   has_many :trade_windows, class_name: "Trade::Window"
+  has_many :trade_requests, class_name: "Trade::Request"
 
   enum :pool_type, {
     box_select: 100,
@@ -49,10 +50,30 @@ class Pool < ApplicationRecord
     end
   end
 
-  def trading_allowed_now?
-    return false unless trades_allowed?
-    return false if league.games_started?
+  def trading_allowed?
+    trade_policy_result == :allowed
+  end
 
-    trade_windows.none? || trade_windows.current.exists?
+  def trading_allowed_pending_approval?
+    trade_policy_result == :pending_approval
+  end
+
+  def trading_blocked?
+    trade_policy_result == :blocked
+  end
+
+  def trade_policy_result
+    return :blocked if trade_policy_disabled?
+    return :blocked if league.games_started?
+
+    if trade_policy_open?
+      :allowed
+    elsif trade_policy_approval_required?
+      :pending_approval
+    elsif trade_policy_windowed?
+      trade_windows.current.exists? ? :allowed : :blocked
+    elsif trade_policy_windowed_overflow?
+      trade_windows.current.exists? ? :allowed : :pending_approval
+    end
   end
 end
