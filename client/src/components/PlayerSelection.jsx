@@ -12,8 +12,6 @@ const PlayerSelection = () => {
   const [selections, setSelections] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const { tradingIsPendingApproval } = getTradingState(boxData?.trading_state);
-
   const {data: boxData} = useQuery({
     queryKey: ["pool_boxes", poolId],
     queryFn: () =>
@@ -23,6 +21,8 @@ const PlayerSelection = () => {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
+
+  const { tradingIsPendingApproval } = getTradingState(boxData?.trade_state);
 
   const boxes = useMemo(() => {
     if (!boxData) return [];

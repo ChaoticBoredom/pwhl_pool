@@ -25,8 +25,6 @@ function PoolTeamDetails() {
   // Shared state for all drawers
   const { drawerState, updateDrawer } = useDrawerState();
 
-  const { tradingIsBlocked } = getTradingState(poolTeam?.trading_state);
-
   const toggleDrawer = (id) => {
     setOpenDrawers(prev => {
       const next = new Set(prev);
@@ -42,6 +40,8 @@ function PoolTeamDetails() {
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
     gcTime: 5 * 60 * 1000, // 5 minutes to store data in the 'cache'
   });
+
+  const { tradingIsBlocked } = getTradingState(poolTeam?.trade_state);
 
   const { mutateAsync: saveTeamName } = useMutation({
     mutationFn: (newName) => fetch(`/api/pool_teams/${teamId}`, {
