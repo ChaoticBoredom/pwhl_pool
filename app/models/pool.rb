@@ -5,7 +5,6 @@ class Pool < ApplicationRecord
     message: "must differ from season_id",
     allow_nil: true,
   }
-  validates :trades_allowed, :trades_require_approval, inclusion: { in: [true, false] }
 
   belongs_to :league
   belongs_to :admin, class_name: "User"
@@ -19,6 +18,14 @@ class Pool < ApplicationRecord
     box_select: 100,
     draft: 200,
   }
+
+  enum :trade_policy, {
+    disabled: 0,
+    open: 100,
+    approval_required: 200,
+    windowed: 300,
+    windowed_overflow: 400,
+  }, prefix: :trade_policy
 
   def display_season_id
     reference_season_id.presence || season_id
