@@ -98,7 +98,7 @@ RSpec.describe "PWHL Pool Integration", type: :request do
         expect(body["name"]).to eq("PWHL Test Pool")
         expect(body["id"]).to eq(pool.id)
         expect(body["pool_type"]).to eq("box_select")
-        expect(body["trades_allowed"]).to eq(false)
+        expect(body["trade_state"]).to eq("blocked")
         expect(body["games_active"]).to eq(false)
 
         expect(body["league"]).to eq({
@@ -143,7 +143,7 @@ RSpec.describe "PWHL Pool Integration", type: :request do
         expect(body["team_name"]).to eq("Test Team")
         expect(body["pool_id"]).to eq(pool.id)
         expect(body["total_score"]).to be_within(0.01).of(6.5)
-        expect(body["trades_allowed"]).to eq(false)
+        expect(body["trade_state"]).to eq("blocked")
         expect(body["games_active"]).to eq(false)
 
         expect(body["owner"]).to eq({

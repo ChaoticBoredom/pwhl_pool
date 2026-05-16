@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext'
 import BoxSelection from './BoxSelection'
+import getTradingState from "../utils/tradingState";
 
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
@@ -10,6 +11,8 @@ const PlayerSelection = () => {
   const navigate = useNavigate();
   const [selections, setSelections] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+
+  const { tradingIsPendingApproval } = getTradingState(boxData?.trading_state);
 
   const {data: boxData} = useQuery({
     queryKey: ["pool_boxes", poolId],
@@ -26,7 +29,6 @@ const PlayerSelection = () => {
     return [...boxData.boxes].sort((a, b) => a.order - b.order);
   }, [boxData]);
 
-  const tradingState = boxData?.trading_state ?? "blocked";
   const isCurrentSeason = !boxData?.using_reference_season;
 
   useEffect(() => {
@@ -80,7 +82,7 @@ const PlayerSelection = () => {
 
   const saveLabel = () => {
     if (isSaving) return "Saving...";
-    if (tradingState === "pending_approval") return "Request Roster Update";
+    if (tradingIsPendingApproval) return "Request Roster Update";
     return "Save Roster";
   };
 
