@@ -1,4 +1,4 @@
-class Trade::Requet < ApplicationRecord
+class Trade::Request < ApplicationRecord
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :requested_by, class_name: "User"
   belongs_to :league_player, class_name: "League::Player"
@@ -13,6 +13,7 @@ class Trade::Requet < ApplicationRecord
     pending: 0,
     approved: 100,
     rejected: 200,
+    cancelled: 300,
   }, prefix: :trade_status
 
   validates :action, :status, :requested_at, presence: true
