@@ -834,11 +834,13 @@ select {
 }
 
 .game-at {
-  @apply text-gray-500 text-xs;
+  @apply text-xs;
+  color: var(--text-muted);
 }
 
 .game-score {
-  @apply font-bold tabular-nums text-gray-800;
+  @apply font-bold tabular-nums;
+  color: var(--text-h);
 }
 
 .game-meta {

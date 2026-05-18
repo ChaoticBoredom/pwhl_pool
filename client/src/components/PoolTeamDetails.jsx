@@ -7,13 +7,13 @@ import { EditableField } from "./EditableField";
 import { GameData } from "./GameData";
 import { PlayerDrawer } from "./PlayerDrawer";
 import { useDrawerState } from "../hooks/useDrawerState";
+import getTradingState from "../utils/tradingState";
 
 import Player from "./Player";
 
 const GRID_MOBILE = "grid-cols-[1fr_80px]";
 const GRID_MD = "md:grid-cols-[1fr_100px_100px_80px_100px_80px]"
 const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
-
 
 function PoolTeamDetails() {
   const { poolId, teamId } = useParams()
@@ -40,6 +40,8 @@ function PoolTeamDetails() {
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
     gcTime: 5 * 60 * 1000, // 5 minutes to store data in the 'cache'
   });
+
+  const { tradingIsBlocked } = getTradingState(poolTeam?.trade_state);
 
   const { mutateAsync: saveTeamName } = useMutation({
     mutationFn: (newName) => fetch(`/api/pool_teams/${teamId}`, {
@@ -78,10 +80,10 @@ function PoolTeamDetails() {
         {isOwner && (
           <button
             className="btn-primary btn-top"
-            disabled={!poolTeam.trades_allowed}
+            disabled={tradingIsBlocked}
             onClick={() => navigate(`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`)}
           >
-            {poolTeam.trades_allowed ? "Trade Players" : "Trades Closed"}
+            {tradingIsBlocked ? "Trades Closed" : "Trade Players"}
           </button>
         )}
       </div>
