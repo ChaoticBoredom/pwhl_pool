@@ -12,9 +12,11 @@ class Trade::Request < ApplicationRecord
   enum :status, {
     pending: 0,
     approved: 100,
-    approved: 150,
+    auto_approved: 150,
     rejected: 200,
+    auto_rejected: 250,
     cancelled: 300,
+    auto_cancelled: 350,
   }, prefix: :trade_status
 
   validates :action, :status, :requested_at, presence: true
@@ -23,6 +25,11 @@ class Trade::Request < ApplicationRecord
     if: -> { trade_action_add? && pool_team.pool.box_select? }
   validates :rejected_reason, presence: true, if: :trade_status_rejected?
   validates :status, inclusion: { in: [0] }, on: :create
+
+  scope :any_approved, -> { where("status >= 100 AND status < 200") }
+  scope :any_rejected, -> { where("status >= 200 AND status < 300") }
+  scope :any_cancelled, -> { where("status >= 300") }
+  scope :resolved, -> { where("status >= 100") }
 
   scope :for_group, ->(group_id) { where(request_group_id: group_id) }
   scope :pending_for_player,  ->(player_id) { trade_status_pending.where(league_player_id: player_id) }
