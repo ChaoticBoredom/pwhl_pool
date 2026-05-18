@@ -43,7 +43,7 @@ class PoolTeamsController < ApplicationController
     return head :forbidden unless current_user == @pool_team.owner
 
     @pool = @pool_team.pool
-    unless @pool.trading_blocked?
+    if @pool.trading_blocked?
       render json: { error: "Trades are currently locked for this pool", reason: "trades_closed" }, status: :forbidden
       return
     end
