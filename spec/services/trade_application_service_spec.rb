@@ -53,6 +53,23 @@ RSpec.describe TradeApplicationService do
         result = call_service(dropping: [skater_a.id])
         expect(result.added_players).to be_empty
       end
+
+      context "when player is not on the team" do
+        it "does not raise" do
+          expect { call_service(dropping: [skater_b.id]) }.to_not raise_error
+        end
+
+        it "returns an empty dropped_players list" do
+          result = call_service(dropping: [skater_b.id])
+          expect(result.dropped_players).to be_empty
+        end
+
+        it "does not alter the team" do
+          expect {
+            call_service(dropping: [skater_b.id])
+          }.to_not change { pool_team.pool_team_players.count }
+        end
+      end
     end
 
     context "when adding players" do

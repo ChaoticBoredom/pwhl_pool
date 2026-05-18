@@ -18,10 +18,11 @@ class TradeApplicationService
 
     ActiveRecord::Base.transaction do
       if @dropping.any?
-        @pool_team.current_team.where(league_player_id: @dropping).each do |tp|
+        actually_dropped = @pool_team.current_team.where(league_player_id: @dropping).map do |tp|
           tp.update!(dropped_at: @at)
+          tp.league_player_id
         end
-        dropped_players = players_for(@dropping)
+        dropped_players = players_for(actually_dropped)
       end
 
       if @adding.any?
