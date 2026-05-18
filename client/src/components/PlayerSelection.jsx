@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext'
 import BoxSelection from './BoxSelection'
 import getTradingState from "../utils/tradingState";
@@ -51,7 +51,7 @@ const PlayerSelection = () => {
       });
 
       if (response.ok) {
-        const { added_players, dropped_players } = await response.json();
+        const { added_players, dropped_players, pending_approval } = await response.json();
         if (pending_approval) {
           alert("Your roster change has been submitted for approval.");
         } else {
