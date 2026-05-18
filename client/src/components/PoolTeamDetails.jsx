@@ -83,7 +83,7 @@ function PoolTeamDetails() {
             disabled={tradingIsBlocked}
             onClick={() => navigate(`/pools/${poolTeam.pool_id}/teams/${poolTeam.id}/select`)}
           >
-            {tradingIsBlocked ? "Trades Closed" : "Trade Players" }
+            {tradingIsBlocked ? "Trades Closed" : "Trade Players"}
           </button>
         )}
       </div>
