@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe BoxGeneration::BoxDefinition do
   describe "#rank_range" do
     [
