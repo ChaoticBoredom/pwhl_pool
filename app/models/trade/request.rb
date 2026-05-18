@@ -12,6 +12,7 @@ class Trade::Request < ApplicationRecord
   enum :status, {
     pending: 0,
     approved: 100,
+    approved: 150,
     rejected: 200,
     cancelled: 300,
   }, prefix: :trade_status
