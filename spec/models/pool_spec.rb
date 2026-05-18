@@ -132,6 +132,7 @@ RSpec.describe Pool, type: :model do
       before { allow(league).to receive(:games_started?).and_return(true) }
 
       [
+        :disabled,
         :open,
         :approval_required,
         :windowed,
@@ -163,20 +164,28 @@ RSpec.describe Pool, type: :model do
         [:windowed_overflow, :allowed, :pending_approval],
       ].each do |policy, in_window_result, out_of_window_result|
         context "with #{policy}" do
-          before { subject.update(trade_policy: policy) }
+          before(:each) { subject.update(trade_policy: policy) }
 
-          it "returns #{in_window_result} when inside a trade window" do
-            allow(subject.trade_windows).to receive(:current).and_return(
-              double(exists?: true)
-            )
-            expect(subject.trade_policy_result).to eq(in_window_result)
+          context "with a trade window" do
+            it "returns #{in_window_result} when inside a trade window" do
+              allow(subject.trade_windows).to receive(:current).and_return(
+                double(exists?: true)
+              )
+              expect(subject.trade_policy_result).to eq(in_window_result)
+            end
+
+            it "returns #{out_of_window_result} when outside a trade window" do
+              allow(subject.trade_windows).to receive(:current).and_return(
+                double(exists?: false)
+              )
+              expect(subject.trade_policy_result).to eq(out_of_window_result)
+            end
           end
 
-          it "returns #{out_of_window_result} when outside a trade window" do
-            allow(subject.trade_windows).to receive(:current).and_return(
-              double(exists?: false)
-            )
-            expect(subject.trade_policy_result).to eq(out_of_window_result)
+          context "with no trade window" do
+            it "returns #{out_of_window_result} when there is no trade window" do
+              expect(subject.trade_policy_result).to eq(out_of_window_result)
+            end
           end
         end
       end
