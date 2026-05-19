@@ -48,8 +48,8 @@ class PoolTeamsController < ApplicationController
       return
     end
 
-    box_by_player_id = @pool.pool_boxes.active.each_with_object({}) do |pb, hash|
-      pb.league_player_ids.each { |pid| hash[pid] = pb }
+    box_by_player_id = @pool.pool_boxes.active.each_with_object({}) do |pb, r_hash|
+      pb.league_player_ids.each { |pid| r_hash[pid] = pb }
     end
 
     original_team = @pool_team.current_team.pluck(:league_player_id)
