@@ -1,4 +1,4 @@
-namespace :one_off do
+namespace :one_offs do
   desc "Repair pool box history for round 1 to round 2 transition (2026-05-18)"
   task :repair_pool_box_history, [:pool_ids] => :environment do |_, args|
     ROUND_1_END   = Time.zone.parse("2026-05-12 23:59:59")
