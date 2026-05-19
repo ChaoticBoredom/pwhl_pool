@@ -149,6 +149,19 @@ RSpec.describe Pool, type: :model do
   end
 
   describe "#trade_policy_result" do
+    context "when the pool is not active" do
+      [
+        [:setup, :blocked],
+        [:completed, :blocked],
+      ].each do |state, expected|
+        it "returns #{expected} for pool_state #{state}" do
+          subject.update(state: state)
+          allow(league).to receive(:games_started?).and_return(false)
+          expect(subject.trade_policy_result).to eq(expected)
+        end
+      end
+    end
+
     context "when a league game has started" do
       before { allow(league).to receive(:games_started?).and_return(true) }
 
