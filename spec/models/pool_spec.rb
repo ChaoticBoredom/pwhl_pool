@@ -151,7 +151,7 @@ RSpec.describe Pool, type: :model do
   describe "#trade_policy_result" do
     context "when the pool is not active" do
       [
-        [:setup, :blocked],
+        [:draft, :blocked],
         [:completed, :blocked],
       ].each do |state, expected|
         it "returns #{expected} for pool_state #{state}" do
