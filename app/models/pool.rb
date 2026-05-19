@@ -20,6 +20,12 @@ class Pool < ApplicationRecord
     draft: 200,
   }
 
+  enum :state, {
+    draft: 0,
+    active: 100,
+    completed: 200,
+  }, prefix: :pool_state
+
   enum :trade_policy, {
     disabled: 0,
     open: 100,
@@ -70,6 +76,7 @@ class Pool < ApplicationRecord
 
   def trade_policy_result
     return :blocked if trade_policy_disabled?
+    return :blocked unless pool_state_active?
     return :blocked if league.games_started?
 
     if trade_policy_open?
