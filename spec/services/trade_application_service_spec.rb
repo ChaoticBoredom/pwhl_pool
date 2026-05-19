@@ -9,6 +9,7 @@ RSpec.describe TradeApplicationService do
   let(:skater_a) { create(:pwhl_skater, league: league) }
   let(:skater_b) { create(:pwhl_skater, league: league) }
   let(:skater_c) { create(:pwhl_skater, league: league) }
+  let(:skater_d) { create(:pwhl_skater, league: league) }
 
   let!(:box) do
     create(:pool_box, pool: pool, league_player_ids: [skater_a.id, skater_b.id, skater_c.id])
@@ -104,6 +105,24 @@ RSpec.describe TradeApplicationService do
       it "returns an empty dropped_players list" do
         result = call_service(adding: [skater_b.id])
         expect(result.dropped_players).to be_empty
+      end
+
+      context "when the player has no active box" do
+        let!(:inactive_box) do
+          create(:pool_box, pool: pool, league_player_ids: [skater_d.id], active: false)
+        end
+
+        it "raises TradeApplicationError" do
+          expect {
+            call_service(adding: [skater_d.id])
+          }.to raise_error(TradeApplicationService::TradeApplicationError, /No active box found/)
+        end
+
+        it "rolls back without creating any team players" do
+          expect {
+            call_service(adding: [skater_d.id]) rescue nil
+          }.to_not change { pool_team.pool_team_players.count }
+        end
       end
     end
 

@@ -39,6 +39,10 @@ RSpec.describe "PWHL Pool Integration", type: :request do
     create(:pool_box, pool: pool, name: "Goalies Box 1", league_player_ids: [goalie.id])
   end
 
+  let!(:inactive_box) do
+    create(:pool_box, pool: pool, name: "Inactive Box", league_player_ids: [skater.id], active: false)
+  end
+
   let!(:team_player) do
     create(:pool_team_player,
       pool_team: pool_team,
