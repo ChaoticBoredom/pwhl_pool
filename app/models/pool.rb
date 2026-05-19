@@ -21,8 +21,8 @@ class Pool < ApplicationRecord
   }
 
   enum :state, {
-    setup:     0,
-    active:    100,
+    draft: 0,
+    active: 100,
     completed: 200,
   }, prefix: :pool_state
 
