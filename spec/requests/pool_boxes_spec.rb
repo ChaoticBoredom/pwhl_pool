@@ -101,6 +101,18 @@ RSpec.describe "PoolBoxes", type: :request do
           expect(players.map { |p| p["selected"] }).to all(be(false))
         end
       end
+
+      context "with an inactive box" do
+        let!(:inactive_box) do
+          create(:pool_box, pool: pool, league_player_ids: [player_a.id], active: false)
+        end
+
+        it "does not return inactive boxes" do
+          get_index
+          box_names = response.parsed_body["boxes"].map { |b| b["name"] }
+          expect(box_names).to_not include(inactive_box.name)
+        end
+      end
     end
   end
 

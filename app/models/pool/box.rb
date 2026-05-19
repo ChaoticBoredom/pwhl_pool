@@ -5,6 +5,9 @@ class Pool::Box < ApplicationRecord
   belongs_to :pool
   positioned on: :pool
 
+  scope :active, -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+
   def players
     @players ||= League::Player.where(id: league_player_ids)
   end
