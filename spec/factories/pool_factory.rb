@@ -5,5 +5,6 @@ FactoryBot.define do
     name { "Test Pool" }
     pool_type { 100 }
     season_id { "2024-2025" }
+    state { :active }
   end
 end
