@@ -1,7 +1,7 @@
 class PoolBoxesController < ApplicationController
   def index
     @pool = Pool.includes(:scoring).find(params[:pool_id])
-    @boxes = Pool::Box.where(pool_id: @pool.id)
+    @boxes = @pool.pool_boxes.active
 
     current_pool_team = current_user&.pool_teams&.find_by(pool_id: @pool.id)
     @selected_ids = []

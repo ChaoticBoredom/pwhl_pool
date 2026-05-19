@@ -27,10 +27,13 @@ class TradeApplicationService
 
       if @adding.any?
         @adding.each do |pid|
+          box = box_by_player_id[pid]
+          raise TradeApplicationError, "No active box found for player #{pid}" unless box
+
           @pool_team.pool_team_players.create!(
             league_player_id: pid,
             added_at: @at,
-            pool_box: box_by_player_id[pid],
+            pool_box: box,
           )
         end
         added_players = players_for(@adding)
@@ -43,7 +46,7 @@ class TradeApplicationService
   private
 
   def box_by_player_id
-    @box_by_player_id ||= @pool.pool_boxes.each_with_object({}) do |pb, r_hash|
+    @box_by_player_id ||= @pool.pool_boxes.active.each_with_object({}) do |pb, r_hash|
       pb.league_player_ids.each { |pid| r_hash[pid] = pb }
     end
   end

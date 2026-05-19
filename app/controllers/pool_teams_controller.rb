@@ -48,7 +48,7 @@ class PoolTeamsController < ApplicationController
       return
     end
 
-    box_by_player_id = @pool.pool_boxes.each_with_object({}) do |pb, hash|
+    box_by_player_id = @pool.pool_boxes.active.each_with_object({}) do |pb, hash|
       pb.league_player_ids.each { |pid| hash[pid] = pb }
     end
 
