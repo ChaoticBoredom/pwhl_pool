@@ -50,6 +50,12 @@ class Pool < ApplicationRecord
     end
   end
 
+  def active_box_by_player_id
+    pool_boxes.active.each_with_object({}) do |pb, r_hash|
+      pb.league_player_ids.each { |pid| r_hash[pid] = pb }
+    end
+  end
+
   def trading_allowed?
     trade_policy_result == :allowed
   end

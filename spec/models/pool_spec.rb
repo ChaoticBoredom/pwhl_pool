@@ -91,6 +91,27 @@ RSpec.describe Pool, type: :model do
     end
   end
 
+  describe "#active_box_by_player_id" do
+    let(:player_a) { create(:pwhl_skater, league: league) }
+    let(:player_b) { create(:pwhl_skater, league: league) }
+    let(:player_c) { create(:pwhl_skater, league: league) }
+
+    let!(:active_box) { create(:pool_box, pool: subject, league_player_ids: [player_a.id, player_b.id]) }
+    let!(:inactive_box) { create(:pool_box, pool: subject, league_player_ids: [player_c.id], active: false) }
+
+    it "maps active box players to their box" do
+      expect(subject.active_box_by_player_id[player_a.id]).to eq(active_box)
+    end
+
+    it "maps all players in an active box" do
+      expect(subject.active_box_by_player_id[player_b.id]).to eq(active_box)
+    end
+
+    it "excludes players in inactive boxes" do
+      expect(subject.active_box_by_player_id[player_c.id]).to be_nil
+    end
+  end
+
   describe "#trading_allowed?" do
     it "returns true when trade_policy_result is :allowed" do
       allow(subject).to receive(:trade_policy_result).and_return(:allowed)

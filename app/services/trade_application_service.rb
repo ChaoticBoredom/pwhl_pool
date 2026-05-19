@@ -46,9 +46,7 @@ class TradeApplicationService
   private
 
   def box_by_player_id
-    @box_by_player_id ||= @pool.pool_boxes.active.each_with_object({}) do |pb, r_hash|
-      pb.league_player_ids.each { |pid| r_hash[pid] = pb }
-    end
+    @box_by_player_id ||= @pool.active_box_by_player_id
   end
 
   def players_for(ids)

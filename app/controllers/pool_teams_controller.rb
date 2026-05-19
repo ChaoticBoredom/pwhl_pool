@@ -48,9 +48,7 @@ class PoolTeamsController < ApplicationController
       return
     end
 
-    box_by_player_id = @pool.pool_boxes.active.each_with_object({}) do |pb, r_hash|
-      pb.league_player_ids.each { |pid| r_hash[pid] = pb }
-    end
+    box_by_player_id = @pool.active_box_by_player_id
 
     original_team = @pool_team.current_team.pluck(:league_player_id)
     new_team = params[:new_player_ids]
