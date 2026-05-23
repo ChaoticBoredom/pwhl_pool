@@ -7,6 +7,7 @@ class Pool::Team < ApplicationRecord
   validates :user_id, uniqueness: { scope: :pool_id, message: "only one team per owner per pool" }
 
   has_many :pool_team_players, class_name: "Pool::TeamPlayer", foreign_key: "pool_team_id", dependent: :destroy
+  has_many :trade_requests, class_name: "Trade::Request", foreign_key: "pool_team_id", dependent: :destroy
   has_many :league_players, through: :pool_team_players
 
   def current_team
