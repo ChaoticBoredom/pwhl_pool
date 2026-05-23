@@ -1,9 +1,9 @@
 class Trade::Request < ApplicationRecord
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :requested_by, class_name: "User"
-  belongs_to :decided_by, class_name: "User"
   belongs_to :league_player, class_name: "League::Player"
   belongs_to :pool_box, class_name: "Pool::Box", optional: true
+  belongs_to :decided_by, class_name: "User", optional: true
 
   enum :action, {
     add: 100,
@@ -24,11 +24,11 @@ class Trade::Request < ApplicationRecord
   SYSTEM_DECIDED_STATUSES = %w[auto_approved auto_rejected auto_cancelled].freeze
 
   validates :action, :status, :requested_at, presence: true
-  validates :pool_box,
-    presence: true,
-    if: -> { trade_action_add? && pool_team.pool.box_select? }
+  validates :pool_box, presence: true, if: -> { pool_team.pool.box_select? }
   validates :rejected_reason, presence: true, if: :trade_status_rejected?
-  validates :status, inclusion: { in: [0] }, on: :create
+  validates :status, inclusion: { in: ["pending"] }, on: :create
+
+  validates :decided_by, absence: true, if: -> { trade_status_pending? }
   validates :decided_by, presence: true, if: -> { status.in?(HUMAN_DECIDED_STATUSES) }
   validates :decided_by, absence: true, if: -> { status.in?(SYSTEM_DECIDED_STATUSES) }
 
