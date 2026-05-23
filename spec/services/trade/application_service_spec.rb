@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TradeApplicationService do
+RSpec.describe Trade::ApplicationService do
   let(:league) { create(:league, :pwhl) }
   let(:pool) { create(:pool, league: league) }
   let(:owner) { create(:user) }
@@ -115,7 +115,7 @@ RSpec.describe TradeApplicationService do
         it "raises TradeApplicationError" do
           expect {
             call_service(adding: [skater_d.id])
-          }.to raise_error(TradeApplicationService::TradeApplicationError, /No active box found/)
+          }.to raise_error(Trade::ApplicationService::ApplicationError, /No active box found/)
         end
 
         it "rolls back without creating any team players" do

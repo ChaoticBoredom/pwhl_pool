@@ -1,8 +1,8 @@
-class TradeApplicationService
+class Trade::ApplicationService
   Player = Data.define(:id, :name)
   Result = Data.define(:added_players, :dropped_players)
 
-  class TradeApplicationError < StandardError; end
+  class ApplicationError < StandardError; end
 
   def initialize(pool_team, adding:, dropping:, backdated_to: nil)
     @pool_team = pool_team
@@ -28,7 +28,7 @@ class TradeApplicationService
       if @adding.any?
         @adding.each do |pid|
           box = box_by_player_id[pid]
-          raise TradeApplicationError, "No active box found for player #{pid}" unless box
+          raise ApplicationError, "No active box found for player #{pid}" unless box
 
           @pool_team.pool_team_players.create!(
             league_player_id: pid,
