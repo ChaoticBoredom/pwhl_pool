@@ -112,7 +112,7 @@ RSpec.describe Trade::ApplicationService do
           create(:pool_box, pool: pool, league_player_ids: [skater_d.id], active: false)
         end
 
-        it "raises TradeApplicationError" do
+        it "raises Trade::ApplicationService::ApplicationError" do
           expect {
             call_service(adding: [skater_d.id])
           }.to raise_error(Trade::ApplicationService::ApplicationError, /No active box found/)
