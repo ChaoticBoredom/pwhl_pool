@@ -12,6 +12,20 @@ class Trade::ApplicationService
     @at = backdated_to || Time.current
   end
 
+  def self.from_approved_requests(requests)
+    backdated_tos = requests.map(&:backdated_to).uniq
+    raise ArgumentError, "Inconsistent backdated_to across group" if backdated_tos.count > 1
+
+    drops, adds = requests.partition(&:trade_action_drop?)
+
+    new(
+      requests.first.pool_team,
+      adding: adds.map(&:league_player_id),
+      dropping: drops.map(&:league_player_id),
+      backdated_to: requests.first.backdated_to,
+    )
+  end
+
   def call
     added_players = []
     dropped_players = []
