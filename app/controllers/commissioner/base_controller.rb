@@ -5,7 +5,9 @@ class Commissioner::BaseController < ApplicationController
   private
 
   def require_pool
-    @pool = Pool.find(params(:pool_id))
+    @pool = Pool.find(params[:pool_id])
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
   end
 
   def require_commissioner
