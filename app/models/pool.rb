@@ -13,7 +13,7 @@ class Pool < ApplicationRecord
   has_many :pool_teams, class_name: "Pool::Team"
   has_many :pool_boxes, class_name: "Pool::Box"
   has_many :trade_windows, class_name: "Trade::Window"
-  has_many :trade_requests, class_name: "Trade::Request"
+  has_many :trade_requests, through: :pool_teams, class_name: "Trade::Request"
 
   enum :pool_type, {
     box_select: 100,

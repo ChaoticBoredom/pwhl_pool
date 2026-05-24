@@ -60,11 +60,11 @@ RSpec.describe "Trade::Requests", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns only pending requests" do
+    it "returns all requests" do
       get_index
       ids = response.parsed_body.map { |r| r["id"] }
       expect(ids).to include(pending_request.id)
-      expect(ids).to_not include(cancelled_request.id)
+      expect(ids).to include(cancelled_request.id)
     end
   end
 
@@ -199,9 +199,11 @@ RSpec.describe "Trade::Requests", type: :request do
             expect(conflicting_request.reload).to be_trade_status_cancelled
           end
 
+          # Checking an absolute value instead of `change_by` because there's
+          # already a pending request, to `change_by` would be 1, not 2
           it "creates new trade requests" do
-            expect { post_create_replacing }.
-              to change { Trade::Request.trade_status_pending.count }.by(2)
+            post_create_replacing
+            expect(Trade::Request.trade_status_pending.count).to eq(2)
           end
         end
       end

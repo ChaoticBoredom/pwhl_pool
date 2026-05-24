@@ -22,7 +22,7 @@ class Commissioner::Trade::RequestsController < Commissioner::BaseController
         TradeApprovalWorker.perform_async(@trade_request.request_group_id)
       end
 
-      redner json: { message: "Trade request approved" }, status: :ok
+      render json: { message: "Trade request approved" }, status: :ok
     when "rejected"
       @trade_request.decide!(
         :rejected,

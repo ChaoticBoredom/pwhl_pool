@@ -83,7 +83,7 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
       subject(:approve) do
         patch request_url,
           params: { status: "approved" }.to_json,
-          headers: json_headers
+          headers: auth_headers
       end
 
       before(:each) { allow(TradeApprovalWorker).to receive(:perform_async) }
@@ -164,7 +164,7 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
     end
 
     context "when the request is not pending" do
-      before { pending_add.decide!(:cancelled, descided_by: owner, decided_at: Time.current) }
+      before { pending_add.decide!(:cancelled, decided_by: owner, decided_at: Time.current) }
 
       it "returns 404" do
         patch request_url,
