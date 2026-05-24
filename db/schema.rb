@@ -222,7 +222,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_22_102207) do
     t.index ["league_player_id", "status"], name: "index_trade_requests_on_league_player_id_and_status"
     t.index ["league_player_id"], name: "index_trade_requests_on_league_player_id"
     t.index ["pool_box_id"], name: "index_trade_requests_on_pool_box_id"
-    t.index ["pool_team_id", "league_player_id", "action"], name: "index_trade_requests_on_pending", unique: true, where: "(status = 0)"
+    t.index ["pool_team_id", "league_player_id"], name: "index_trade_requests_on_pending", unique: true, where: "(status = 0)"
     t.index ["pool_team_id", "status"], name: "index_trade_requests_on_pool_team_id_and_status"
     t.index ["pool_team_id"], name: "index_trade_requests_on_pool_team_id"
     t.index ["request_group_id"], name: "index_trade_requests_on_request_group_id"
