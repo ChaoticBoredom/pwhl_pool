@@ -150,7 +150,7 @@ RSpec.describe "PoolBoxes", type: :request do
     subject(:post_generate) do
       post "/api/pools/#{pool.id}/pool_boxes/generate",
         params: generate_params.to_json,
-        headers: auth_headers.merge("Content-Type" => "application/json")
+        headers: auth_headers
     end
 
     before { allow(BoxGenerationService).to receive(:new).and_return(fake_service) }

@@ -1,0 +1,6 @@
+json.array! @trade_requests do |trade_request|
+  json.partial! partial: "trade/requests/trade_request", locals: { trade_request: trade_request }
+
+  json.decided_by trade_request.decided_by&.id
+  json.rejected_reason trade_request.rejected_reason
+end

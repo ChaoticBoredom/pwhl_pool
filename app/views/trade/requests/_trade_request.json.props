@@ -1,0 +1,9 @@
+json.id trade_request.id
+json.action trade_request.action
+json.status trade_request.status
+json.league_player_id trade_request.league_player_id
+json.pool_box_id trade_request.pool_box_id
+json.request_group_id trade_request.request_group_id
+json.requested_at trade_request.requested_at.iso8601(3)
+json.decided_at trade_request.decided_at&.iso8601(3)
+json.backdated_to trade_request.backdated_to&.iso8601(3)

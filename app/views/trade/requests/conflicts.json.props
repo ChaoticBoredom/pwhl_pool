@@ -1,0 +1,5 @@
+json.conflicts do
+  json.array! @conflicts do |trade_request|
+    json.partial! partial: "trade/requests/trade_request", locals: { trade_request: trade_request }
+  end
+end

@@ -499,10 +499,7 @@ RSpec.describe "PWHL Pool Integration", type: :request do
   describe "pool_boxes#generate" do
     it "returns the expected response" do
       post "/api/pools/#{pool.id}/pool_boxes/generate",
-        headers: auth_headers.merge(
-          "Content-Type" => "application/json",
-          "Accept" => "application/json"
-        ),
+        headers: auth_headers,
         params: {
           teams: ["BOS"],
           scope: :per_team,

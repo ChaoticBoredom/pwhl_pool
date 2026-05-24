@@ -1,4 +1,4 @@
-class GameUpdater
+class GameUpdateWorker
   include Sidekiq::Worker
 
   def perform(game_id)
@@ -7,6 +7,6 @@ class GameUpdater
     Pwhl::GameData.new.update_live_game(game_id)
 
     # Run the update again if it isn't over yet!
-    GameUpdater.perform_in(1.minute, game_id) unless game.final?
+    GameUpdateWorker.perform_in(1.minute, game_id) unless game.final?
   end
 end

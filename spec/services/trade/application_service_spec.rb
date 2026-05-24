@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TradeApplicationService do
+RSpec.describe Trade::ApplicationService do
   let(:league) { create(:league, :pwhl) }
   let(:pool) { create(:pool, league: league) }
   let(:owner) { create(:user) }
@@ -31,6 +31,79 @@ RSpec.describe TradeApplicationService do
       dropping: dropping,
       backdated_to: backdated_to,
     ).call
+  end
+
+  describe ".from_approved_requests" do
+    let(:admin) { pool.admin }
+    let(:group_id) { SecureRandom.uuid }
+    let(:backdated_to) { 3.days.ago.midday }
+
+    let!(:approved_add) do
+      create(:trade_request,
+        :add,
+        :approved,
+        pool_team: pool_team,
+        league_player: skater_b,
+        pool_box: box,
+        requested_by: owner,
+        decided_by: admin,
+        request_group_id: group_id,
+      )
+    end
+
+    let!(:approved_drop) do
+      create(:trade_request,
+        :drop,
+        :approved,
+        pool_team: pool_team,
+        league_player: skater_a,
+        pool_box: box,
+        requested_by: owner,
+        decided_by: admin,
+        request_group_id: group_id,
+      )
+    end
+
+    let(:requests) { Trade::Request.where(request_group_id: group_id).trade_status_approved }
+
+    it "returns a Trade::ApplicationService instance" do
+      expect(described_class.from_approved_requests(requests)).to be_a(described_class)
+    end
+
+    it "sets adding from add requests" do
+      service = described_class.from_approved_requests(requests)
+      expect(service.instance_variable_get(:@adding)).to contain_exactly(skater_b.id)
+    end
+
+    it "sets dropping from drop requests" do
+      service = described_class.from_approved_requests(requests)
+      expect(service.instance_variable_get(:@dropping)).to contain_exactly(skater_a.id)
+    end
+
+    it "sets pool_team from the first request" do
+      service = described_class.from_approved_requests(requests)
+      expect(service.instance_variable_get(:@pool_team)).to eq(pool_team)
+    end
+
+    it "raises if backdated_to is inconsistent across requests" do
+      approved_add.update!(backdated_to: 3.days.ago.midday)
+      expect {
+        described_class.from_approved_requests(requests)
+      }.to raise_error(ArgumentError, /Inconsistent backdated_to/)
+    end
+
+    it "sets backdated_to from the request" do
+      approved_add.update!(backdated_to: backdated_to)
+      approved_drop.update!(backdated_to: backdated_to)
+      service = described_class.from_approved_requests(requests)
+      expect(service.instance_variable_get(:@at)).to be_within(1.second).of(backdated_to)
+    end
+
+    it "can be called directly" do
+      expect {
+        described_class.from_approved_requests(requests).call
+      }.to change { pool_team.pool_team_players.count }.by(1)
+    end
   end
 
   describe "#call" do
@@ -112,10 +185,10 @@ RSpec.describe TradeApplicationService do
           create(:pool_box, pool: pool, league_player_ids: [skater_d.id], active: false)
         end
 
-        it "raises TradeApplicationError" do
+        it "raises Trade::ApplicationService::ApplicationError" do
           expect {
             call_service(adding: [skater_d.id])
-          }.to raise_error(TradeApplicationService::TradeApplicationError, /No active box found/)
+          }.to raise_error(Trade::ApplicationService::ApplicationError, /No active box found/)
         end
 
         it "rolls back without creating any team players" do

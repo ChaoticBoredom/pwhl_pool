@@ -1,8 +1,8 @@
-class TradeApplicationService
+class Trade::ApplicationService
   Player = Data.define(:id, :name)
   Result = Data.define(:added_players, :dropped_players)
 
-  class TradeApplicationError < StandardError; end
+  class ApplicationError < StandardError; end
 
   def initialize(pool_team, adding:, dropping:, backdated_to: nil)
     @pool_team = pool_team
@@ -10,6 +10,20 @@ class TradeApplicationService
     @adding = adding
     @dropping = dropping
     @at = backdated_to || Time.current
+  end
+
+  def self.from_approved_requests(requests)
+    backdated_tos = requests.map(&:backdated_to).uniq
+    raise ArgumentError, "Inconsistent backdated_to across group" if backdated_tos.count > 1
+
+    drops, adds = requests.partition(&:trade_action_drop?)
+
+    new(
+      requests.first.pool_team,
+      adding: adds.map(&:league_player_id),
+      dropping: drops.map(&:league_player_id),
+      backdated_to: requests.first.backdated_to,
+    )
   end
 
   def call
@@ -28,7 +42,7 @@ class TradeApplicationService
       if @adding.any?
         @adding.each do |pid|
           box = box_by_player_id[pid]
-          raise TradeApplicationError, "No active box found for player #{pid}" unless box
+          raise ApplicationError, "No active box found for player #{pid}" unless box
 
           @pool_team.pool_team_players.create!(
             league_player_id: pid,
