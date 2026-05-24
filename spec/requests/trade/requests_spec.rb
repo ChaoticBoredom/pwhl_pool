@@ -27,8 +27,6 @@ RSpec.describe "Trade::Requests", type: :request do
     { new_player_ids: [skater_b.id] }.to_json
   end
 
-  let(:json_headers) { auth_headers.merge("Content-Type" => "application/json") }
-
   describe "GET /pool_teams/:pool_team_id/trade_requests" do
     let!(:pending_request) do
       create(:trade_request,
@@ -44,12 +42,13 @@ RSpec.describe "Trade::Requests", type: :request do
     let!(:cancelled_request) do
       create(:trade_request,
         :add,
-        :pending,
+        :cancelled,
         pool_team: pool_team,
         league_player: skater_a,
         pool_box: box,
         requested_by: user,
-      ).tap { |r| r.decide!(:cancelled, decided_by: user, decided_at: Time.current) }
+        decided_by: user,
+      )
     end
 
     subject(:get_index) do
@@ -73,7 +72,7 @@ RSpec.describe "Trade::Requests", type: :request do
     subject(:post_create) do
       post "/api/pool_teams/#{pool_team.id}/trade_requests",
         params: base_params,
-        headers: json_headers
+        headers: auth_headers
     end
 
     context "when not the team owner" do
@@ -187,7 +186,7 @@ RSpec.describe "Trade::Requests", type: :request do
           subject(:post_create_replacing) do
             post "/api/pool_teams/#{pool_team.id}/trade_requests",
               params: { new_player_ids: [skater_b.id], confirm_replace: true }.to_json,
-              headers: json_headers
+              headers: auth_headers
           end
 
           it "returns 201" do
