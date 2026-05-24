@@ -65,24 +65,72 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
     end
   end
 
-  describe "PATCH /commissioner/pools/:pool_id/trade_requests/:id" do
-    let(:request_url) { "#{base_url}/#{pending_add.id}" }
-
+  describe "PATCH /commissioner/pools/:pool_id/trade_requests" do
     context "when not the pool commissioner" do
       let(:auth_headers) { auth_headers_for(other_user) }
 
       it "returns 403" do
-        patch request_url,
+        patch base_url,
           params: { status: "approved" }.to_json,
           headers: auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end
 
+    context "when an id is not found" do
+      it "returns 404" do
+        patch base_url,
+          params: { ids: [SecureRandom.uuid], status: "approved" }.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when an id is not pending" do
+      it "returns 404" do
+        pending_add.decide!(:cancelled, decided_by: owner, decided_at: Time.current)
+        patch base_url,
+          params: { ids: [pending_add.id], status: "approved" }.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when an id belongs to a different pool" do
+      let(:other_pool) { create(:pool, league: league) }
+      let(:other_team) { create(:pool_team, pool: other_pool) }
+      let!(:other_request) do
+        create(:trade_request,
+          :add,
+          :pending,
+          pool_team: other_team,
+          league_player: skater_b,
+          pool_box: box,
+          requested_by: other_team.owner,
+        )
+      end
+
+      it "returns 404" do
+        patch base_url,
+          params: { ids: [other_request.id], status: "approved" }.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when passed duplicate ids" do
+      it "returns 404" do
+        patch base_url,
+          params: { ids: [pending_add.id, pending_add.id], status: "approved" }.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context "when approving" do
       subject(:approve) do
-        patch request_url,
-          params: { status: "approved" }.to_json,
+        patch base_url,
+          params: { ids: [pending_add.id], status: "approved" }.to_json,
           headers: auth_headers
       end
 
@@ -113,23 +161,112 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
         approve
       end
 
+      context "without backdated_to" do
+        it "keeps the original request_group_id" do
+          approve
+          expect(pending_add.reload.request_group_id).to eq(group_id)
+        end
+
+        it "enqueues the worker with the original request_group_id" do
+          approve
+          expect(TradeApprovalWorker).to have_received(:perform_async).with(group_id)
+        end
+      end
+
       context "with backdated_to" do
         let(:backdated_to) { 3.days.ago.midday }
 
-        it "sets backdated_to on the request" do
-          patch request_url,
-            params: { status: "approved", backdated_to: backdated_to.iso8601 }.to_json,
+        subject(:approve_backdated) do
+          patch base_url,
+            params: { ids: [pending_add.id], status: "approved", backdated_to: backdated_to.iso8601 }.to_json,
             headers: auth_headers
+        end
+
+        it "sets backdated_to on the request" do
+          approve_backdated
           expect(pending_add.reload.backdated_to).
             to be_within(1.second).of(backdated_to)
+        end
+
+        it "assigns a new request_group_id" do
+          approve_backdated
+          expect(pending_add.reload.request_group_id).to_not eq(group_id)
+        end
+
+        it "enqueues the worker with the new request_group_id" do
+          approve_backdated
+          new_group_id = pending_add.reload.request_group_id
+          expect(TradeApprovalWorker).to have_received(:perform_async).with(new_group_id)
+        end
+
+        context "when backdating a sub-group from the larger group" do
+          let!(:pending_drop) do
+            create(:trade_request,
+              :drop,
+              :pending,
+              pool_team: pool_team,
+              league_player: skater_a,
+              pool_box: box,
+              requested_by: owner,
+              request_group_id: group_id,
+            )
+          end
+
+          it "breaks the backdated request into its own group" do
+            approve_backdated
+            expect(pending_add.reload.request_group_id).to_not eq(pending_drop.request_group_id)
+          end
+
+          it "leaves the other request in the original group" do
+            approve_backdated
+            expect(pending_drop.reload.request_group_id).to eq(group_id)
+          end
+        end
+
+        context "when backdating across multiple groups" do
+          let(:other_group_id) { SecureRandom.uuid }
+
+          let!(:other_pending) do
+            create(:trade_request,
+              :add,
+              :pending,
+              pool_team: pool_team,
+              league_player: skater_a,
+              pool_box: box,
+              requested_by: owner,
+              request_group_id: other_group_id,
+            )
+          end
+
+          subject(:approve_multi_group_backdated) do
+            patch base_url,
+              params: {
+                ids: [pending_add.id, other_pending.id],
+                status: "approved",
+                backdated_to: backdated_to.iso8601,
+              }.to_json,
+              headers: auth_headers
+          end
+
+          it "preserves original_group_ids" do
+            approve_multi_group_backdated
+            expect(pending_add.reload.request_group_id).to eq(group_id)
+            expect(other_pending.reload.request_group_id).to eq(other_group_id)
+          end
+
+          it "enqueues a worker for each group id" do
+            approve_multi_group_backdated
+            expect(TradeApprovalWorker).to have_received(:perform_async).with(group_id)
+            expect(TradeApprovalWorker).to have_received(:perform_async).with(other_group_id)
+          end
         end
       end
     end
 
     context "when rejecting" do
       subject(:reject) do
-        patch request_url,
-          params: { status: "rejected", rejected_reason: "Too Late" }.to_json,
+        patch base_url,
+          params: { ids: [pending_add.id], status: "rejected", rejected_reason: "Too Late" }.to_json,
           headers: auth_headers
       end
 
@@ -156,43 +293,10 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
 
     context "with an invalid status" do
       it "returns 422" do
-        patch request_url,
+        patch base_url,
           params: { status: "banana" }.to_json,
           headers: auth_headers
         expect(response).to have_http_status(:unprocessable_content)
-      end
-    end
-
-    context "when the request is not pending" do
-      before { pending_add.decide!(:cancelled, decided_by: owner, decided_at: Time.current) }
-
-      it "returns 404" do
-        patch request_url,
-          params: { status: "approved" }.to_json,
-          headers: auth_headers
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-
-    context "when the request belongs to a different pool" do
-      let(:other_pool) { create(:pool, league: league) }
-      let(:other_pool_team) { create(:pool_team, pool: other_pool) }
-      let!(:other_request) do
-        create(:trade_request,
-          :add,
-          :pending,
-          pool_team: other_pool_team,
-          league_player: skater_b,
-          pool_box: box,
-          requested_by: other_pool_team.owner,
-        )
-      end
-
-      it "returns 404" do
-        patch "#{base_url}/#{other_request.id}",
-          params: { status: "approved" }.to_json,
-          headers: auth_headers
-        expect(response).to have_http_status(:not_found)
       end
     end
   end

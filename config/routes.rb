@@ -41,7 +41,11 @@ Rails.application.routes.draw do
 
     namespace :commissioner do
       resources :pools, only: [] do
-        resources :trade_requests, only: [:index, :update], controller: "trade/requests"
+        resources :trade_requests, only: [:index], controller: "trade/requests" do |variable|
+          collection do
+            patch :update
+          end
+        end
       end
     end
   end
