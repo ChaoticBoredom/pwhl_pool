@@ -47,7 +47,7 @@ Rails.application.routes.draw do
           end
         end
         namespace :reports do
-          resource :score_summary, only: [:show], controller: "commissioner/reports/score_summary"
+          resource :score_summary, only: [:show], controller: "score_summary"
         end
       end
     end
