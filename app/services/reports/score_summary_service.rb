@@ -19,7 +19,7 @@ class Reports::ScoreSummaryService
     filtered_records = filter_by_range(records)
     buckets = generate_buckets
 
-    @pool.pool_teams.map do |pool_team|
+    @pool.pool_teams.includes(pool_team_players: :league_player).map do |pool_team|
       team_players = pool_team.pool_team_players
       build_team_report(pool_team, team_players, filtered_records, buckets)
     end
@@ -43,7 +43,12 @@ class Reports::ScoreSummaryService
     end
 
     buckets = []
-    current = @range.first
+    current = case @period
+    when "week" then @range.first.beginning_of_week
+    when "month" then @range.first.beginning_of_month
+    else @range.first
+    end
+
     while current < @range.last
       bucket_end = [current + step - 1.second, @range.last].min
       buckets << [current, bucket_end]
@@ -72,15 +77,18 @@ class Reports::ScoreSummaryService
     report = {
       id: pool_team.id,
       team_name: pool_team.team_name,
-      total_score: player_data.sum { |p| p.nil? ? 0 : p[:total_score] },
+      total_score: player_data.sum { |p| p[:total_score] },
     }
 
-    if include_breakdown?("by_category") || include_breakdown?("by_player_category")
+    if include_breakdown?("by_category")
       report[:by_category] = sum_by_category(player_data.map { |p| p[:by_category] })
     end
 
-    if include_breakdown?("by_player") || include_breakdown?("by_player_category")
-      report[:by_player] = player_data.map { |p| p.except(:bucket_scores) }
+    if include_breakdown?("by_player")
+      report[:by_player] = player_data.map do |p|
+        player = p.except(:bucket_scores)
+        full_breakdown? ? player : player.except(:by_category)
+      end
     end
 
     if @period
@@ -109,7 +117,7 @@ class Reports::ScoreSummaryService
     end
 
     {
-      leage_player_id: team_player.league_player_id,
+      league_player_id: team_player.league_player_id,
       name: player.name,
       added_at: team_player.added_at,
       dropped_at: team_player.dropped_at,
@@ -127,11 +135,11 @@ class Reports::ScoreSummaryService
         total_score: player_data.sum { |p| p[:bucket_scores][i][:total] },
       }
 
-      if include_breakdown?("by_category") || include_breakdown?("by_player_category")
+      if include_breakdown?("by_category")
         period[:by_category] = sum_by_category(player_data.map { |p| p[:bucket_scores][i][:by_field] })
       end
 
-      if include_breakdown?("by_player") || include_breakdown?("by_player_category")
+      if include_breakdown?("by_player")
         period[:by_player] = player_data.map do |p|
           bucket = p[:bucket_scores][i]
           result = {
@@ -139,7 +147,7 @@ class Reports::ScoreSummaryService
             name: p[:name],
             total_score: bucket[:total],
           }
-          result[:by_category] = bucket[:by_field] if include_breakdown?("by_player_category")
+          result[:by_category] = bucket[:by_field] if full_breakdown?
           result
         end
       end
@@ -156,6 +164,10 @@ class Reports::ScoreSummaryService
   end
 
   def include_breakdown?(breakdown)
-    @breakdowns.include?(breakdown)
+    full_breakdown? || @breakdowns.include?(breakdown)
+  end
+
+  def full_breakdown?
+    @full_breakdown ||= @breakdowns.include?("full_breakdown")
   end
 end
