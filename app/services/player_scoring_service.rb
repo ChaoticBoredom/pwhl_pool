@@ -1,5 +1,5 @@
 class PlayerScoringService
-  include DateFiltering
+  include ScoringWindows
 
   def initialize(scorings)
     @calculator = ScoringCalculator.new(scorings)

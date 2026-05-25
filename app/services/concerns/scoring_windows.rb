@@ -1,4 +1,4 @@
-module DateFiltering
+module ScoringWindows
   extend ActiveSupport::Concern
 
   private
