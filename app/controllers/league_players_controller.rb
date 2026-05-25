@@ -15,12 +15,11 @@ class LeaguePlayersController < ApplicationController
 
     @expanded_scores = @stats.transform_values do |windowed_summary|
       windowed_summary.transform_values do |window|
-        window.each_with_object({}) do |(field, value), r_hash|
-          r_hash[field] = @calculator.calculate([{ field => value }], @player.roster_type)
-        end
+        @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.roster_type)
       end
     end
 
     render :show
   end
 end
+1

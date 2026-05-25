@@ -7,16 +7,16 @@ RSpec.describe ScoringCalculator do
 
   let(:skater_scorings) do
     [
-      create(:pool_scoring, :skater, :goals, pool: pool),
-      create(:pool_scoring, :skater, :assists, pool: pool),
+      create(:pool_scoring, :skater, :goals, pool: pool, value: 2),
+      create(:pool_scoring, :skater, :assists, pool: pool, value: 1),
     ]
   end
 
   let(:goalie_scorings) do
     [
-      create(:pool_scoring, :goalie, :saves, pool: pool),
-      create(:pool_scoring, :goalie, :wins, pool: pool),
-      create(:pool_scoring, :goalie, :shutouts, pool: pool),
+      create(:pool_scoring, :goalie, :saves, pool: pool, value: 0.25),
+      create(:pool_scoring, :goalie, :wins, pool: pool, value: 3),
+      create(:pool_scoring, :goalie, :shutouts, pool: pool, value: 5),
     ]
   end
 
@@ -45,7 +45,7 @@ RSpec.describe ScoringCalculator do
 
       it "calculates score for a single record" do
         calculator.calculate([build_stat(goals: 1, assists: 1)], :skater)
-        expect(calculator.calculate([build_stat(goals: 1, assists: 1)], :skater)).to eq(5.0)
+        expect(calculator.calculate([build_stat(goals: 1, assists: 1)], :skater)).to eq(3.0)
       end
 
       it "sums scores across multiple records" do
@@ -53,11 +53,11 @@ RSpec.describe ScoringCalculator do
           build_stat(goals: 2),
           build_stat(assists: 3),
         ]
-        expect(calculator.calculate(stats, :skater)).to eq(12.0)
+        expect(calculator.calculate(stats, :skater)).to eq(7.0)
       end
 
       it "applies correct weights per field" do
-        expect(calculator.calculate([build_stat(goals: 1, assists: 2)], :skater)).to eq(7.0)
+        expect(calculator.calculate([build_stat(goals: 1, assists: 2)], :skater)).to eq(4.0)
       end
     end
 
@@ -71,7 +71,7 @@ RSpec.describe ScoringCalculator do
       end
 
       it "calculates score for a single hash" do
-        expect(calculator.calculate([{ goals: 1, assists: 1 }], :skater)).to eq(5.0)
+        expect(calculator.calculate([{ goals: 1, assists: 1 }], :skater)).to eq(3.0)
       end
 
       it "sums scores across multiple hashes" do
@@ -79,11 +79,11 @@ RSpec.describe ScoringCalculator do
           { goals: 2 },
           { assists: 3 },
         ]
-        expect(calculator.calculate(inputs, :skater)).to eq(12.0)
+        expect(calculator.calculate(inputs, :skater)).to eq(7.0)
       end
 
       it "applies correct weights per field" do
-        expect(calculator.calculate([{ goals: 1, assists: 2 }], :skater)).to eq(7.0)
+        expect(calculator.calculate([{ goals: 1, assists: 2 }], :skater)).to eq(4.0)
       end
 
       it "returns 0 for unrecognised fields" do
@@ -108,6 +108,39 @@ RSpec.describe ScoringCalculator do
       it "calculates score for a goalie hash" do
         expect(calculator.calculate([{ saves: 20, win: true, shutout: true }], :goalie)).to eq(13.0)
       end
+    end
+  end
+
+  describe "#calculate_by_field" do
+    let(:calculator) { build_calculator(skater_scorings) }
+
+    it "returns empty hash for empty records" do
+      expect(calculator.calculate_by_field([], :skater)).to eq({})
+    end
+
+    it "returns empty hash when no scoring rules exist for position" do
+      expect(calculator.calculate_by_field([{ shots: 5 }], :goalie)).to eq({})
+    end
+
+    it "returns a hash keyed by field name" do
+      result = calculator.calculate_by_field([{ goals: 1, assists: 1 }], :skater)
+      expect(result.keys).to match_array(["goals", "assists"])
+    end
+
+    it "calculates scores per field" do
+      result = calculator.calculate_by_field([{ goals: 1, assists: 2 }], :skater)
+      expect(result["goals"]).to eq(2.0)
+      expect(result["assists"]).to eq(2.0)
+    end
+
+    it "sums across multiple records per field" do
+      result = calculator.calculate_by_field([{ goals: 1 }, { goals: 2 }], :skater)
+      expect(result["goals"]).to eq(6.0)
+    end
+
+    it "returns 0.0 for fields with no matching records" do
+      result = calculator.calculate_by_field([{ goals: 1 }], :skater)
+      expect(result["assists"]).to eq(0.0)
     end
   end
 end
