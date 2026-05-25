@@ -27,9 +27,9 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
     )
   end
 
-  let(:base_url) { "/api/commissioner/pools/#{pool.id}/trade_requests" }
+  let(:base_url) { "/api/commissioner/#{pool.id}/trade_requests" }
 
-  describe "GET /commissioner/pools/:pool_id/trade_requests" do
+  describe "GET /commissioner/:pool_id/trade_requests" do
     let!(:approved_request) do
       create(:trade_request,
         :approved,
@@ -65,7 +65,7 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
     end
   end
 
-  describe "PATCH /commissioner/pools/:pool_id/trade_requests" do
+  describe "PATCH /commissioner/:pool_id/trade_requests" do
     context "when not the pool commissioner" do
       let(:auth_headers) { auth_headers_for(other_user) }
 
