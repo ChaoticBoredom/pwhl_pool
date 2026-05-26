@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { RequireAuth } from "./RequireAuth";
 import { Dashboard } from "./Dashboard";
+import { PoolReports } from "./PoolReports";
 import AuthForm from "./AuthForm";
 import BoxGenerator from "./BoxGenerator";
 import JoinPoolPrompt from "./JoinPoolPrompt";
@@ -25,6 +26,7 @@ export function AppRouter() {
           <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
           <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
+          <Route path="/pools/:poolId/reports" element={<PoolReports />} />
         </Route>
       </Routes>
     </div>
