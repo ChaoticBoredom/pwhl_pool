@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { RequireAuth } from "./RequireAuth";
 import { Dashboard } from "./Dashboard";
-import { PoolReports } from "./PoolReports";
 import AuthForm from "./AuthForm";
 import BoxGenerator from "./BoxGenerator";
 import JoinPoolPrompt from "./JoinPoolPrompt";
 import PoolDetails from "./PoolDetails";
+import PoolReports from "./PoolReports";
 import PoolScoring from "./PoolScoring";
 import PoolTeamDetails from "./PoolTeamDetails";
 import PlayerSelection from "./PlayerSelection";
