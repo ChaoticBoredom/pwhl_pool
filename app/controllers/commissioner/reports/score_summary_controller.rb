@@ -12,6 +12,6 @@ class Commissioner::Reports::ScoreSummaryController < Commissioner::BaseControll
       breakdowns: @breakdowns,
       period: params[:period]
     ).call
-    render json: @report.to_json
+    render :show
   end
 end

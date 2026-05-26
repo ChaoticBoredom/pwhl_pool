@@ -1,0 +1,4 @@
+json.teams @report
+json.labels do
+  json.partial! partial: "shared/stat_labels"
+end
