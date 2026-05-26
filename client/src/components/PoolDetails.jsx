@@ -70,7 +70,7 @@ function PoolDetails() {
       {isAdmin && (
         <button
           className="btn-primary btn-top"
-          onClick={() => navigate(`/pools/${poolId}/reports`)}
+          onClick={() => navigate(`/pools/${poolId}/reports/standings`)}
         >
           Season Report
         </button>

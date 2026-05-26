@@ -5,7 +5,9 @@ import AuthForm from "./AuthForm";
 import BoxGenerator from "./BoxGenerator";
 import JoinPoolPrompt from "./JoinPoolPrompt";
 import PoolDetails from "./PoolDetails";
-import PoolReports from "./PoolReports";
+import ReportStandings from "./ReportStandings";
+import ReportCategories from "./ReportCategories";
+import ReportTeams from "./ReportTeams";
 import PoolScoring from "./PoolScoring";
 import PoolTeamDetails from "./PoolTeamDetails";
 import PlayerSelection from "./PlayerSelection";
@@ -26,7 +28,10 @@ export function AppRouter() {
           <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
           <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
-          <Route path="/pools/:poolId/reports" element={<PoolReports />} />
+          <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
+          <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
+          <Route path="/pools/:poolId/reports/teams" element={<ReportTeams />} />
+          <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
         </Route>
       </Routes>
     </div>
