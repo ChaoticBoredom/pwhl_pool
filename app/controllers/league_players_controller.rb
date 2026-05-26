@@ -15,11 +15,13 @@ class LeaguePlayersController < ApplicationController
 
     @expanded_scores = @stats.transform_values do |windowed_summary|
       windowed_summary.transform_values do |window|
-        @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.roster_type)
+        scored = @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.roster_type)
+        PlayerStatService::STATS[@player.roster_type].each_with_object({}) do |field, h|
+          h[field] = scored.fetch(field.to_s, scored.fetch(field, 0.0))
+        end
       end
     end
 
     render :show
   end
 end
-1

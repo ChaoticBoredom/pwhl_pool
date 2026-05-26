@@ -8,29 +8,20 @@ class ScoringCalculator
   end
 
   def calculate_by_field(inputs, roster_type)
-    return {} if inputs.empty?
+    return Hash.new(0.0) if inputs.empty?
 
     scoring_fields = @scorings[roster_type]
-    return {} if scoring_fields.nil?
+    return Hash.new(0.0) if scoring_fields.nil?
 
     normalized = normalize_inputs(inputs)
 
-    all_fields(normalized, scoring_fields).each_with_object({}) do |field, r_hash|
-      scoring = scoring_fields.find { |s| s.key(field) }
-      value = scoring ? inputs.sum { |input| parse_field(input[field] || input[field.to_sym]) } * scoring[:value] : 0.0
-      r_hash[field] = value
+    scoring_fields.each_with_object(Hash.new(0.0)) do |scoring, r_hash|
+      field = scoring[:field_name]
+      r_hash[field] = normalized.sum { |input| parse_field(input[field]) } * scoring[:value]
     end
   end
 
   private
-
-  def all_fields(inputs, scoring_fields)
-    (input_field_names(inputs) + scoring_fields.map { |s| s[:field_name] }).uniq
-  end
-
-  def input_field_names(inputs)
-    inputs.flat_map { |input| input.keys.map(&:to_s) }.uniq
-  end
 
   def parse_field(val)
     case val

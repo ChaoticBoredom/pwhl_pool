@@ -103,7 +103,7 @@ class Reports::ScoreSummaryService
 
     bucket_scores = buckets.map do |bucket_from, bucket_to|
       clipped = clip_to_active_range_and_bucket(player_records, team_player, bucket_from, bucket_to)
-      by_field = @calculator.calculate_by_field(clipped, player.roster_type)
+      by_field = normalize_by_category(@calculator.calculate_by_field(clipped, player.roster_type), player.roster_type)
       {
         from: bucket_from,
         to: bucket_to,
@@ -125,6 +125,12 @@ class Reports::ScoreSummaryService
       by_category: total_by_field,
       bucket_scores: bucket_scores,
     }
+  end
+
+  def normalize_by_category(by_field, roster_type)
+    PlayerStatService::STATS[roster_type].each_with_object({}) do |field, h|
+      h[field.to_s] = by_field.fetch(field.to_s, by_field.fetch(field, 0.0))
+    end
   end
 
   def build_period_report(buckets, player_data)
