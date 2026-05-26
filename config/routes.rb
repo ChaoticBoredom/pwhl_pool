@@ -46,6 +46,9 @@ Rails.application.routes.draw do
             patch :update
           end
         end
+        namespace :reports do
+          resource :score_summary, only: [:show], controller: "score_summary"
+        end
       end
     end
   end

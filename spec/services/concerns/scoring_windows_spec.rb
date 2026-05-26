@@ -1,9 +1,9 @@
 require "rails_helper"
 
-RSpec.describe DateFiltering do
+RSpec.describe ScoringWindows do
   let(:test_class) do
     Class.new do
-      include DateFiltering
+      include ScoringWindows
 
       def calculate_aggregate(records, position)
         # Sum goals, and that's it
@@ -41,18 +41,18 @@ RSpec.describe DateFiltering do
   end
 
   describe "#initialize" do
-    let(:incomplete_class) { Class.new { include DateFiltering } }
+    let(:incomplete_class) { Class.new { include ScoringWindows } }
     let(:incomplete_service) { incomplete_class.new }
 
     it "raises an error if extending class does not define a calculate_aggregate method" do
-      incomplete_service = Class.new { include DateFiltering }
+      incomplete_service = Class.new { include ScoringWindows }
 
       expect { incomplete_service.new.send(:calculate_aggregate, [], :skater) }.
         to raise_error(NotImplementedError, /calculate_aggregate/)
     end
 
     it "raises an error if extending class does not define a default_return method" do
-      incomplete_service = Class.new { include DateFiltering }
+      incomplete_service = Class.new { include ScoringWindows }
 
       expect { incomplete_service.new.send(:default_return) }.
         to raise_error(NotImplementedError, /default_return/)

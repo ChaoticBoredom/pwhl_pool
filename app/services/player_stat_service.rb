@@ -1,5 +1,5 @@
 class PlayerStatService
-  include DateFiltering
+  include ScoringWindows
 
   STATS = {
     goalie: [

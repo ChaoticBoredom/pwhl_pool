@@ -4,13 +4,20 @@ class ScoringCalculator
   end
 
   def calculate(inputs, roster_type)
-    return 0 if inputs.empty?
+    calculate_by_field(inputs, roster_type).values.sum
+  end
+
+  def calculate_by_field(inputs, roster_type)
+    return Hash.new(0.0) if inputs.empty?
 
     scoring_fields = @scorings[roster_type]
-    return 0 if scoring_fields.nil?
+    return Hash.new(0.0) if scoring_fields.nil?
 
-    scoring_fields.sum do |s|
-      (inputs.sum { |input| parse_field(input[s[:field_name]] || input[s[:field_name].to_sym]) }) * s[:value]
+    normalized = normalize_inputs(inputs)
+
+    scoring_fields.each_with_object(Hash.new(0.0)) do |scoring, r_hash|
+      field = scoring[:field_name]
+      r_hash[field] = normalized.sum { |input| parse_field(input[field]) } * scoring[:value]
     end
   end
 
@@ -29,5 +36,11 @@ class ScoringCalculator
     scorings.pluck(:roster_type, :field_name, :value).
       group_by { |row| row[0] }.
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
+  end
+
+  def normalize_inputs(inputs)
+    inputs.map do |input|
+      input.is_a?(Hash) ? input.with_indifferent_access : input.attributes.with_indifferent_access
+    end
   end
 end
