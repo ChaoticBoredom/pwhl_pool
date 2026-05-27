@@ -1,3 +1,7 @@
+json.period @period || "season"
+json.breakdowns @breakdowns
+json.from @from
+json.to @to
 json.teams @report
 json.labels do
   json.partial! partial: "shared/stat_labels"

@@ -3,6 +3,7 @@ class Commissioner::Reports::ScoreSummaryController < Commissioner::BaseControll
     pool_start, pool_end = @pool.start_end_range.minmax
     @from = params[:from] ? Time.zone.parse(params[:from]).beginning_of_day : pool_start
     @to = params[:to] ? Time.zone.parse(params[:to]).end_of_day : [pool_end, 1.day.ago.end_of_day].min
+    @period = params[:period]
     @range = @from..@to
     @breakdowns = Array(params[:breakdowns] || "by_team")
 
@@ -10,7 +11,7 @@ class Commissioner::Reports::ScoreSummaryController < Commissioner::BaseControll
       @pool,
       @range,
       breakdowns: @breakdowns,
-      period: params[:period]
+      period: @period
     ).call
     render :show
   end
