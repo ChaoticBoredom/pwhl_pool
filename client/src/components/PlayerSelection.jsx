@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from '../context/AuthContext'
@@ -9,7 +9,6 @@ const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
   const { authHeaders } = useAuth();
   const navigate = useNavigate();
-  const [selections, setSelections] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
   const {data: boxData} = useQuery({
@@ -31,15 +30,18 @@ const PlayerSelection = () => {
 
   const isCurrentSeason = !boxData?.using_reference_season;
 
-  useEffect(() => {
-    if (!boxData) return;
+  const initialSelections = useMemo(() => {
+    if (!boxData) return {};
     const initial = {};
     boxData.boxes.forEach(b => {
       const selected = b.players.find(p => p.selected);
       if (selected) initial[b.id] = selected.id;
     });
-    setSelections(initial);
+    return initial;
   }, [boxData]);
+
+  const [rawSelections, setSelections] = useState({});
+  const selections = { ...initialSelections, ...rawSelections };
 
   const handleSubmit = async () => {
     setIsSaving(true);

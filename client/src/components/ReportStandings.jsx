@@ -6,9 +6,10 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
 } from "recharts";
-import ReportNav from "./ReportNav";
-import ReportFilters from "./ReportFilters";
-import { teamColour, fmt, periodLabel, ChartTooltip } from "../utils/reportUtils";
+import ReportNav from "./reports/ReportNav";
+import ReportFilters from "./reports/ReportFilters";
+import ChartTooltip from "./ChartTooltip";
+import { teamColour, fmt, periodLabel, seasonBounds } from "../utils/reportUtils";
 
 export default function ReportStandings() {
   const { poolId } = useParams();
@@ -23,15 +24,37 @@ export default function ReportStandings() {
     staleTime: 60_000,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["reports-trajectory", poolId, period],
+  // Bounds query — always month, no date params, shared cache key
+  const { data: boundsData } = useQuery({
+    queryKey: ["reports-bounds", poolId],
     queryFn: () =>
-      fetch(`/api/commissioner/${poolId}/reports/score_summary?period=${period}`, { headers: authHeaders })
+      fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
         .then(r => r.json()),
     staleTime: 60_000,
   });
 
-  const teams = data?.teams ?? [];
+  const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
+  // Use season bounds as defaults when inputs are empty
+  const effectiveFrom = from || bounds.from;
+  const effectiveTo = to || bounds.to;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["reports-trajectory", poolId, period, effectiveFrom, effectiveTo],
+    queryFn: () => {
+      const params = new URLSearchParams({ period });
+      if (effectiveFrom) params.set("from", effectiveFrom);
+      if (effectiveTo) params.set("to", effectiveTo);
+      return fetch(`/api/commissioner/${poolId}/reports/score_summary?${params}`, { headers: authHeaders })
+        .then(r => r.json());
+    },
+    enabled: !!effectiveFrom && !!effectiveTo,
+    staleTime: 60_000,
+  });
+
+  const teams = useMemo(() => data?.teams ?? [], [data]);
 
   const colourMap = useMemo(() => {
     const map = {};
@@ -47,28 +70,28 @@ export default function ReportStandings() {
     });
   };
 
-  const sorted = [...teams].sort((a, b) => b.total_score - a.total_score);
-  const visibleTeams = teams.filter(t => !hiddenIds.has(t.id));
-  const periods = teams[0]?.periods ?? [];
+  const sorted       = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
+  const visibleTeams = useMemo(() => teams.filter(t => !hiddenIds.has(t.id)), [teams, hiddenIds]);
+  const periods      = useMemo(() => teams[0]?.periods ?? [], [teams]);
 
   const chartData = useMemo(() => {
     if (!periods.length) return [];
-    const data = periods.map((p, i) => {
+    const rows = periods.map((p, i) => {
       const row = { period: periodLabel(p.from) };
       visibleTeams.forEach(team => { row[team.id] = team.periods[i]?.total_score ?? 0; });
       return row;
     });
     if (view === "cumulative") {
       const running = {};
-      data.forEach(row => {
+      rows.forEach(row => {
         visibleTeams.forEach(team => {
           running[team.id] = (running[team.id] ?? 0) + (row[team.id] ?? 0);
           row[team.id] = running[team.id];
         });
       });
     }
-    return data;
-  }, [teams, hiddenIds, view, period]);
+    return rows;
+  }, [periods, visibleTeams, view]);
 
   return (
     <div className="app-wrapper">
@@ -79,13 +102,17 @@ export default function ReportStandings() {
       </div>
 
       <ReportNav poolId={poolId} />
-      <ReportFilters period={period} onPeriodChange={setPeriod} />
+      <ReportFilters
+        period={period} onPeriodChange={setPeriod}
+        from={from}     onFromChange={setFrom}
+        to={to}         onToChange={setTo}
+        placeholder={{ from: bounds.from, to: bounds.to }}
+      />
 
       {isLoading && <div className="report-loading">Loading…</div>}
 
       {teams.length > 0 && (
         <div className="rp-layout">
-          {/* Standings sidebar */}
           <div className="rp-standings">
             <p className="rp-section-label">Standings</p>
             <div className="standings-list">
@@ -109,7 +136,6 @@ export default function ReportStandings() {
             )}
           </div>
 
-          {/* Trajectory chart */}
           <div className="rp-main">
             <div className="rp-tabs">
               <span className="rp-section-label" style={{ padding: "0.5rem 0.75rem", margin: 0 }}>

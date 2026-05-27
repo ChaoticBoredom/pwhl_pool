@@ -2,24 +2,21 @@ import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
-import ReportNav from "./ReportNav";
+import ReportNav from "./reports/ReportNav";
+import ReportFilters from "./reports/ReportFilters";
 import TeamBadge from "./TeamBadge";
-import { teamColour, fmt } from "../utils/reportUtils";
+import { teamColour, fmt, seasonBounds } from "../utils/reportUtils";
 
-// ── Group players by box, collapse re-adds by league_player_id ──
 function groupByBox(players) {
   const boxes = {};
-
   players.forEach(p => {
     const boxId = p.pool_box?.id ?? "unassigned";
-
     if (!boxes[boxId]) {
       boxes[boxId] = {
         box: p.pool_box ?? { id: "unassigned", name: "Unassigned", position: 999 },
         players: {},
       };
     }
-
     const pid = p.league_player_id;
     if (!boxes[boxId].players[pid]) {
       boxes[boxId].players[pid] = {
@@ -33,24 +30,17 @@ function groupByBox(players) {
         is_active: false,
       };
     }
-
     const entry = boxes[boxId].players[pid];
     entry.tenures.push({ added_at: p.added_at, dropped_at: p.dropped_at });
     entry.total_score += p.total_score;
     if (!p.dropped_at) entry.is_active = true;
-
-    // Merge team codes preserving order, deduplicating
     p.team_short_codes?.forEach(code => {
       if (!entry.team_short_codes.includes(code)) entry.team_short_codes.push(code);
     });
-
-    // Merge by_category
     Object.entries(p.by_category ?? {}).forEach(([k, v]) => {
       entry.by_category[k] = (entry.by_category[k] ?? 0) + v;
     });
   });
-
-  // Sort boxes by position value, players within each box by total_score desc
   return Object.values(boxes)
     .sort((a, b) => (a.box.position ?? 999) - (b.box.position ?? 999))
     .map(b => ({
@@ -62,22 +52,22 @@ function groupByBox(players) {
 const tenureStr = (tenures) =>
   tenures.map(t => {
     const from = new Date(t.added_at).toLocaleDateString("default", { month: "short", day: "numeric" });
-    const to = t.dropped_at
+    const to   = t.dropped_at
       ? new Date(t.dropped_at).toLocaleDateString("default", { month: "short", day: "numeric" })
       : "present";
     return `${from} – ${to}`;
   }).join(" · ");
 
-// ── Team detail view ─────────────────────────────────────────────
 function TeamDetail({ team, labels, colourMap }) {
   const grouped = useMemo(() => groupByBox(team.by_player ?? []), [team]);
 
-  // Collect all scoring keys with any non-zero value across the team
-  const keySet = new Set();
-  (team.by_player ?? []).forEach(p => {
-    Object.entries(p.by_category ?? {}).forEach(([k, v]) => { if (v > 0) keySet.add(k); });
-  });
-  const keys = [...keySet];
+  const keys = useMemo(() => {
+    const keySet = new Set();
+    (team.by_player ?? []).forEach(p => {
+      Object.entries(p.by_category ?? {}).forEach(([k, v]) => { if (v > 0) keySet.add(k); });
+    });
+    return [...keySet];
+  }, [team]);
 
   return (
     <div className="rp-drilldown">
@@ -139,11 +129,12 @@ function TeamDetail({ team, labels, colourMap }) {
   );
 }
 
-// ── Teams list ───────────────────────────────────────────────────
 export default function ReportTeams() {
   const { poolId, teamId } = useParams();
   const { authHeaders } = useAuth();
   const navigate = useNavigate();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const { data: pool } = useQuery({
     queryKey: ["pool", poolId],
@@ -151,18 +142,35 @@ export default function ReportTeams() {
     staleTime: 60_000,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["reports-players", poolId],
+  const { data: boundsData } = useQuery({
+    queryKey: ["reports-bounds", poolId],
     queryFn: () =>
-      fetch(
-        `/api/commissioner/${poolId}/reports/score_summary?breakdowns[]=by_player&breakdowns[]=by_category`,
-        { headers: authHeaders }
-      ).then(r => r.json()),
+      fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
+        .then(r => r.json()),
+    staleTime: 60_000,
+  });
+
+  const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
+  const effectiveFrom = from || bounds.from;
+  const effectiveTo   = to   || bounds.to;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["reports-players", poolId, effectiveFrom, effectiveTo],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      params.append("breakdowns[]", "by_player");
+      params.append("breakdowns[]", "by_category");
+      if (effectiveFrom) params.set("from", effectiveFrom);
+      if (effectiveTo) params.set("to",   effectiveTo);
+      return fetch(`/api/commissioner/${poolId}/reports/score_summary?${params}`, { headers: authHeaders })
+        .then(r => r.json());
+    },
+    enabled: !!effectiveFrom && !!effectiveTo,
     staleTime: 5 * 60_000,
   });
 
-  const teams = data?.teams ?? [];
-  const labels = data?.labels ?? {};
+  const teams  = useMemo(() => data?.teams ?? [], [data]);
+  const labels = useMemo(() => data?.labels ?? {}, [data]);
 
   const colourMap = useMemo(() => {
     const map = {};
@@ -170,8 +178,8 @@ export default function ReportTeams() {
     return map;
   }, [teams]);
 
-  const sorted = [...teams].sort((a, b) => b.total_score - a.total_score);
-  const selectedTeam = teamId ? teams.find(t => t.id === teamId) : null;
+  const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
+  const selectedTeam = useMemo(() => teamId ? teams.find(t => t.id === teamId) : null, [teams, teamId]);
 
   return (
     <div className="app-wrapper">
@@ -182,6 +190,12 @@ export default function ReportTeams() {
       </div>
 
       <ReportNav poolId={poolId} />
+      <ReportFilters
+        from={from} onFromChange={setFrom}
+        to={to}     onToChange={setTo}
+        showPeriod={false}
+        placeholder={{ from: bounds.from, to: bounds.to }}
+      />
 
       {isLoading && <div className="report-loading">Loading…</div>}
 

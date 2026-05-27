@@ -6,8 +6,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
-import ReportNav from "./ReportNav";
-import { teamColour, fmt, ChartTooltip } from "../utils/reportUtils";
+import ReportNav from "./reports/ReportNav";
+import ReportFilters from "./reports/ReportFilters";
+import ChartTooltip from "./ChartTooltip";
+import { teamColour, fmt, seasonBounds } from "../utils/reportUtils";
 
 const CAT_COLOURS = [
   "#c084fc", "#34d399", "#f59e0b", "#60a5fa",
@@ -18,6 +20,8 @@ const CAT_COLOURS = [
 export default function ReportCategories() {
   const { poolId } = useParams();
   const { authHeaders } = useAuth();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [hiddenIds, setHiddenIds] = useState(new Set());
 
   const { data: pool } = useQuery({
@@ -26,16 +30,33 @@ export default function ReportCategories() {
     staleTime: 60_000,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["reports-category", poolId],
+  const { data: boundsData } = useQuery({
+    queryKey: ["reports-bounds", poolId],
     queryFn: () =>
-      fetch(`/api/commissioner/${poolId}/reports/score_summary?breakdowns[]=by_category`, { headers: authHeaders })
+      fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
         .then(r => r.json()),
+    staleTime: 60_000,
+  });
+
+  const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
+  const effectiveFrom = from || bounds.from;
+  const effectiveTo = to || bounds.to;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["reports-category", poolId, effectiveFrom, effectiveTo],
+    queryFn: () => {
+      const params = new URLSearchParams({ "breakdowns[]": "by_category" });
+      if (effectiveFrom) params.set("from", effectiveFrom);
+      if (effectiveTo) params.set("to", effectiveTo);
+      return fetch(`/api/commissioner/${poolId}/reports/score_summary?${params}`, { headers: authHeaders })
+        .then(r => r.json());
+    },
+    enabled: !!effectiveFrom && !!effectiveTo,
     staleTime: 5 * 60_000,
   });
 
-  const teams = data?.teams ?? [];
-  const labels = data?.labels ?? {};
+  const teams  = useMemo(() => data?.teams ?? [], [data]);
+  const labels = useMemo(() => data?.labels ?? {}, [data]);
 
   const colourMap = useMemo(() => {
     const map = {};
@@ -51,19 +72,21 @@ export default function ReportCategories() {
     });
   };
 
-  const sorted = [...teams].sort((a, b) => b.total_score - a.total_score);
-  const visibleTeams = teams.filter(t => !hiddenIds.has(t.id));
+  const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
+  const visibleTeams = useMemo(() => teams.filter(t => !hiddenIds.has(t.id)), [teams, hiddenIds]);
 
-  const keySet = new Set();
-  visibleTeams.forEach(t => {
-    Object.entries(t.by_category ?? {}).forEach(([k, v]) => { if (v > 0) keySet.add(k); });
-  });
-  const keys = [...keySet];
-
-  const chartData = visibleTeams.map(team => ({
-    name: team.team_name,
-    ...Object.fromEntries(keys.map(k => [k, team.by_category?.[k] ?? 0])),
-  }));
+  const { keys, chartData } = useMemo(() => {
+    const keySet = new Set();
+    visibleTeams.forEach(t => {
+      Object.entries(t.by_category ?? {}).forEach(([k, v]) => { if (v > 0) keySet.add(k); });
+    });
+    const keys = [...keySet];
+    const chartData = visibleTeams.map(team => ({
+      name: team.team_name,
+      ...Object.fromEntries(keys.map(k => [k, team.by_category?.[k] ?? 0])),
+    }));
+    return { keys, chartData };
+  }, [visibleTeams]);
 
   return (
     <div className="app-wrapper">
@@ -74,12 +97,17 @@ export default function ReportCategories() {
       </div>
 
       <ReportNav poolId={poolId} />
+      <ReportFilters
+        from={from} onFromChange={setFrom}
+        to={to}     onToChange={setTo}
+        showPeriod={false}
+        placeholder={{ from: bounds.from, to: bounds.to }}
+      />
 
       {isLoading && <div className="report-loading">Loading…</div>}
 
       {teams.length > 0 && (
         <div className="rp-layout">
-          {/* Standings sidebar */}
           <div className="rp-standings">
             <p className="rp-section-label">Standings</p>
             <div className="standings-list">
@@ -103,7 +131,6 @@ export default function ReportCategories() {
             )}
           </div>
 
-          {/* Category chart — full width feels better here */}
           <div className="rp-main">
             <div className="rp-tabs">
               <span className="rp-section-label" style={{ padding: "0.5rem 0.75rem", margin: 0 }}>
