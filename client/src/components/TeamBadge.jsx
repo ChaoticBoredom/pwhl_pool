@@ -1,7 +1,9 @@
 import { PWHL_TEAMS } from "../constants/teams";
 
-const TeamBadge = ({ short_code }) => {
-  const teamInfo = PWHL_TEAMS[short_code] || PWHL_TEAMS["default"];
+const TeamBadge = ({ shortCode }) => {
+  const teamInfo = PWHL_TEAMS[shortCode] || PWHL_TEAMS["default"];
+  console.log(shortCode)
+  console.log(teamInfo)
 
   return (
     <span
@@ -11,7 +13,7 @@ const TeamBadge = ({ short_code }) => {
         color: teamInfo.text,
       }}
     >
-      {short_code}
+      {shortCode}
     </span>
   );
 };

@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import ReportNav from "./reports/ReportNav";
 import ReportFilters from "./reports/ReportFilters";
 import TeamBadge from "./TeamBadge";
-import { teamColour, fmt, seasonBounds } from "../utils/reportUtils";
+import { buildColourMap, fmt, seasonBounds } from "../utils/reportUtils";
 
 function groupByBox(players) {
   const boxes = {};
@@ -172,11 +172,7 @@ export default function ReportTeams() {
   const teams  = useMemo(() => data?.teams ?? [], [data]);
   const labels = useMemo(() => data?.labels ?? {}, [data]);
 
-  const colourMap = useMemo(() => {
-    const map = {};
-    teams.forEach(t => { map[t.id] = teamColour(t.id); });
-    return map;
-  }, [teams]);
+  const colourMap = useMemo(() => buildColourMap(teams), [teams]);
 
   const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
   const selectedTeam = useMemo(() => teamId ? teams.find(t => t.id === teamId) : null, [teams, teamId]);

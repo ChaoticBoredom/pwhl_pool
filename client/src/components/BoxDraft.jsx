@@ -27,7 +27,7 @@ function DraftBox({ box }) {
               <div className="player-display-row">
                 <div className="player-identity-vertical">
                   <span className="player-name">{player.name}</span>
-                  <TeamBadge short_code={player.team_short_code} />
+                  <TeamBadge shortCode={player.team_short_code} />
                 </div>
                 <div className="score-display-vertical">
                   <span className="score-value">{Number(player.score).toFixed(2)}</span>

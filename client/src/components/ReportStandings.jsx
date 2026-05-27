@@ -9,7 +9,7 @@ import {
 import ReportNav from "./reports/ReportNav";
 import ReportFilters from "./reports/ReportFilters";
 import ChartTooltip from "./ChartTooltip";
-import { teamColour, fmt, periodLabel, seasonBounds } from "../utils/reportUtils";
+import { buildColourMap, fmt, periodLabel, seasonBounds } from "../utils/reportUtils";
 
 export default function ReportStandings() {
   const { poolId } = useParams();
@@ -56,11 +56,7 @@ export default function ReportStandings() {
 
   const teams = useMemo(() => data?.teams ?? [], [data]);
 
-  const colourMap = useMemo(() => {
-    const map = {};
-    teams.forEach(t => { map[t.id] = teamColour(t.id); });
-    return map;
-  }, [teams]);
+  const colourMap = useMemo(() => buildColourMap(teams), [teams]);
 
   const toggleHidden = (id) => {
     setHiddenIds(prev => {
@@ -70,9 +66,9 @@ export default function ReportStandings() {
     });
   };
 
-  const sorted       = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
+  const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
   const visibleTeams = useMemo(() => teams.filter(t => !hiddenIds.has(t.id)), [teams, hiddenIds]);
-  const periods      = useMemo(() => teams[0]?.periods ?? [], [teams]);
+  const periods = useMemo(() => teams[0]?.periods ?? [], [teams]);
 
   const chartData = useMemo(() => {
     if (!periods.length) return [];

@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { isValidDate } from "@/utils/reportUtils";
+
 const PERIODS = [
   { value: "day",   label: "Day"   },
   { value: "week",  label: "Week"  },
@@ -11,6 +14,22 @@ export default function ReportFilters({
   placeholder = {},
   showPeriod = true,
 }) {
+  const [localFrom, setLocalFrom] = useState(from);
+  const [localTo, setLocalTo] = useState(to);
+
+  // Sync upward only when values are valid or cleared
+  useEffect(() => {
+    if (localFrom === "" || isValidDate(localFrom)) onFromChange(localFrom);
+  }, [localFrom]);
+
+  useEffect(() => {
+    if (localTo === "" || isValidDate(localTo)) onToChange(localTo);
+  }, [localTo]);
+
+  // Keep local in sync if parent clears
+  useEffect(() => { setLocalFrom(from); }, [from]);
+  useEffect(() => { setLocalTo(to); }, [to]);
+
   return (
     <div className="rp-controls">
       {showPeriod && (
@@ -36,22 +55,22 @@ export default function ReportFilters({
           <input
             type="date"
             className="reports-date-input"
-            value={from}
+            value={localFrom}
             placeholder={placeholder.from ?? ""}
-            onChange={e => onFromChange(e.target.value)}
+            onChange={e => setLocalFrom(e.target.value)}
           />
           <span className="reports-date-sep">–</span>
           <input
             type="date"
             className="reports-date-input"
-            value={to}
+            value={localTo}
             placeholder={placeholder.to ?? ""}
-            onChange={e => onToChange(e.target.value)}
+            onChange={e => setLocalTo(e.target.value)}
           />
-          {(from || to) && (
+          {(localFrom || localTo) && (
             <button
               className="reports-date-clear"
-              onClick={() => { onFromChange(""); onToChange(""); }}
+              onClick={() => { setLocalFrom(""); setLocalTo(""); }}
               title="Clear date range"
             >
               ✕

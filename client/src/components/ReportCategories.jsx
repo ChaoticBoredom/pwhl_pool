@@ -9,7 +9,7 @@ import {
 import ReportNav from "./reports/ReportNav";
 import ReportFilters from "./reports/ReportFilters";
 import ChartTooltip from "./ChartTooltip";
-import { teamColour, fmt, seasonBounds } from "../utils/reportUtils";
+import { buildColourMap, fmt, seasonBounds } from "../utils/reportUtils";
 
 const CAT_COLOURS = [
   "#c084fc", "#34d399", "#f59e0b", "#60a5fa",
@@ -58,11 +58,7 @@ export default function ReportCategories() {
   const teams  = useMemo(() => data?.teams ?? [], [data]);
   const labels = useMemo(() => data?.labels ?? {}, [data]);
 
-  const colourMap = useMemo(() => {
-    const map = {};
-    teams.forEach(t => { map[t.id] = teamColour(t.id); });
-    return map;
-  }, [teams]);
+  const colourMap = useMemo(() => buildColourMap(teams), [teams]);
 
   const toggleHidden = (id) => {
     setHiddenIds(prev => {
