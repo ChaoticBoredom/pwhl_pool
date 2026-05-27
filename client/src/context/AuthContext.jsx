@@ -8,12 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
     return localStorage.getItem('user') || null;
   });
+  const [isGod, setIsGod] = useState(() => {
+    return localStorage.getItem("god") === 'true';
+  })
   const [token, setToken] = useState(() => {
     return localStorage.getItem('token') || null;
   });
 
-  const login = (user, newToken) => {
+  const login = (user, newToken, god = false) => {
     localStorage.setItem('user', user);
+    localStorage.setItem("god", god);
     localStorage.setItem('token', newToken);
     setCurrentUser(user);
     setToken(newToken);
@@ -21,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem("god");
     localStorage.removeItem('token');
     setCurrentUser(null);
     setToken(null);
@@ -34,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   }), [token]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, token, login, logout, authHeaders }}>
+    <AuthContext.Provider value={{ currentUser, token, login, logout, authHeaders, isGod }}>
       {children}
     </AuthContext.Provider>
   );

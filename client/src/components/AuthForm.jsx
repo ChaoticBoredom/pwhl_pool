@@ -48,7 +48,7 @@ export default function AuthForm() {
 
       if (response.ok) {
         const result = await response.json()
-        login(result.data.user, result.data.token);
+        login(result.data.user, result.data.token, result.data.god);
         navigate(nextPath);
       } else {
         alert(isLogin ? "Invalid email or password" : "Could not create account");
