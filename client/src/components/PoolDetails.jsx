@@ -7,7 +7,7 @@ import { DataRow } from './DataRow'
 
 function PoolDetails() {
   const { poolId } = useParams()
-  const { authHeaders, currentUser } = useAuth();
+  const { authHeaders, currentUser, isGod } = useAuth();
   const navigate = useNavigate();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
@@ -50,7 +50,7 @@ function PoolDetails() {
 
   if (isLoading || !pool) return <div>Loading pool details...</div>
 
-  const isAdmin = currentUser && pool.admin.id === currentUser;
+  const isAdmin = currentUser && (pool.admin.id === currentUser || isGod);
   const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
 
   return (

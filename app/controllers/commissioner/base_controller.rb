@@ -11,6 +11,6 @@ class Commissioner::BaseController < ApplicationController
   end
 
   def require_commissioner
-    head :forbidden unless current_user == @pool.admin
+    head :forbidden unless current_user == @pool.admin || current_user&.admin?
   end
 end
