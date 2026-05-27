@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
-import ReportNav from "./reports/ReportNav";
-import ReportFilters from "./reports/ReportFilters";
-import TeamBadge from "./TeamBadge";
-import { buildColourMap, fmt, seasonBounds } from "../utils/reportUtils";
+import { useAuth } from "@/context/AuthContext";
+import ReportNav from "@/components/reports/ReportNav";
+import ReportFilters from "@/components/reports/ReportFilters";
+import CollapsibleStandings from "@/components/reports/CollapsibleStandings";
+import TeamBadge from "@/components/TeamBadge";
+import { fmt, seasonBounds } from "@/utils/reportUtils";
+import { buildColourMap } from "@/utils/colourUtils";
 
 function groupByBox(players) {
   const boxes = {};
@@ -52,7 +54,7 @@ function groupByBox(players) {
 const tenureStr = (tenures) =>
   tenures.map(t => {
     const from = new Date(t.added_at).toLocaleDateString("default", { month: "short", day: "numeric" });
-    const to   = t.dropped_at
+    const to = t.dropped_at
       ? new Date(t.dropped_at).toLocaleDateString("default", { month: "short", day: "numeric" })
       : "present";
     return `${from} – ${to}`;
@@ -135,6 +137,7 @@ export default function ReportTeams() {
   const navigate = useNavigate();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [hiddenIds, setHiddenIds] = useState(new Set());
 
   const { data: pool } = useQuery({
     queryKey: ["pool", poolId],
@@ -147,12 +150,12 @@ export default function ReportTeams() {
     queryFn: () =>
       fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
         .then(r => r.json()),
-    staleTime: 60_000,
+    staleTime: 60 * 60_000,
   });
 
   const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
   const effectiveFrom = from || bounds.from;
-  const effectiveTo   = to   || bounds.to;
+  const effectiveTo = to || bounds.to;
 
   const { data, isLoading } = useQuery({
     queryKey: ["reports-players", poolId, effectiveFrom, effectiveTo],
@@ -161,21 +164,27 @@ export default function ReportTeams() {
       params.append("breakdowns[]", "by_player");
       params.append("breakdowns[]", "by_category");
       if (effectiveFrom) params.set("from", effectiveFrom);
-      if (effectiveTo) params.set("to",   effectiveTo);
+      if (effectiveTo) params.set("to", effectiveTo);
       return fetch(`/api/commissioner/${poolId}/reports/score_summary?${params}`, { headers: authHeaders })
         .then(r => r.json());
     },
     enabled: !!effectiveFrom && !!effectiveTo,
-    staleTime: 5 * 60_000,
+    staleTime: 60 * 60_000,
   });
 
-  const teams  = useMemo(() => data?.teams ?? [], [data]);
+  const teams = useMemo(() => data?.teams ?? [], [data]);
   const labels = useMemo(() => data?.labels ?? {}, [data]);
-
   const colourMap = useMemo(() => buildColourMap(teams), [teams]);
-
   const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
   const selectedTeam = useMemo(() => teamId ? teams.find(t => t.id === teamId) : null, [teams, teamId]);
+
+  const toggleHidden = (id) => {
+    setHiddenIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="app-wrapper">
@@ -187,8 +196,9 @@ export default function ReportTeams() {
 
       <ReportNav poolId={poolId} />
       <ReportFilters
+        key={`${from}-${to}`}
         from={from} onFromChange={setFrom}
-        to={to}     onToChange={setTo}
+        to={to} onToChange={setTo}
         showPeriod={false}
         placeholder={{ from: bounds.from, to: bounds.to }}
       />
@@ -197,30 +207,44 @@ export default function ReportTeams() {
 
       {teams.length > 0 && (
         selectedTeam ? (
-          <>
-            <button
-              className="back-to-dashboard"
-              style={{ display: "block", marginBottom: "1rem" }}
-              onClick={() => navigate(`/pools/${poolId}/reports/teams`)}
-            >
-              ← All Teams
-            </button>
-            <TeamDetail team={selectedTeam} labels={labels} colourMap={colourMap} />
-          </>
-        ) : (
-          <div className="rp-team-grid" style={{ marginTop: "1.5rem" }}>
-            {sorted.map((team, i) => (
-              <div
-                key={team.id}
-                className="rp-team-card"
-                onClick={() => navigate(`/pools/${poolId}/reports/teams/${team.id}`)}
+          <div className="rp-full">
+            <div className="rp-chart-header">
+              <button
+                className="back-to-dashboard"
+                style={{ margin: 0 }}
+                onClick={() => navigate(`/pools/${poolId}/reports/teams`)}
               >
-                <span className="standings-rank">{i + 1}</span>
-                <span className="rp-team-card-swatch" style={{ background: colourMap[team.id] }} />
-                <span className="rp-team-card-name">{team.team_name}</span>
-                <span className="rp-team-card-score">{fmt(team.total_score)}</span>
-              </div>
-            ))}
+                ← All Teams
+              </button>
+            </div>
+            <TeamDetail team={selectedTeam} labels={labels} colourMap={colourMap} />
+          </div>
+        ) : (
+          <div className="rp-full">
+            <div className="rp-team-grid" style={{ padding: "1rem" }}>
+              {sorted.map((team, i) => (
+                <div
+                  key={team.id}
+                  className={`rp-team-card${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
+                  onClick={() => navigate(`/pools/${poolId}/reports/teams/${team.id}`)}
+                >
+                  <span className="standings-rank">{i + 1}</span>
+                  <span className="rp-team-card-swatch" style={{ background: colourMap[team.id] }} />
+                  <span className="rp-team-card-name">{team.team_name}</span>
+                  <span className="rp-team-card-score">{fmt(team.total_score)}</span>
+                </div>
+              ))}
+            </div>
+
+            <CollapsibleStandings
+              teams={teams}
+              hiddenIds={hiddenIds}
+              onToggle={toggleHidden}
+              colourMap={colourMap}
+              showActions
+              onSelectAll={() => setHiddenIds(new Set())}
+              onSelectNone={() => setHiddenIds(new Set(teams.map(t => t.id)))}
+            />
           </div>
         )
       )}

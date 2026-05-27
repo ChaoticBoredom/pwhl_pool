@@ -1,15 +1,17 @@
 import { useState, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceArea,
 } from "recharts";
-import ReportNav from "./reports/ReportNav";
-import ReportFilters from "./reports/ReportFilters";
-import ChartTooltip from "./ChartTooltip";
-import { buildColourMap, fmt, periodLabel, seasonBounds, isValidDate } from "../utils/reportUtils";
+import ReportNav from "@/components/reports/ReportNav";
+import ReportFilters from "@/components/reports/ReportFilters";
+import ChartTooltip from "@/components/ChartTooltip";
+import CollapsibleStandings from "@/components/reports/CollapsibleStandings";
+import { periodLabel, seasonBounds } from "@/utils/reportUtils";
+import { buildColourMap } from "@/utils/colourUtils";
 
 export default function ReportStandings() {
   const { poolId } = useParams();
@@ -17,11 +19,8 @@ export default function ReportStandings() {
   const [period, setPeriod] = useState("month");
   const [view, setView] = useState("cumulative");
   const [hiddenIds, setHiddenIds] = useState(new Set());
-  const [standingsOpen, setStandingsOpen] = useState(false);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-
-  // Scrub state
   const [scrubStart, setScrubStart] = useState(null);
   const [scrubEnd, setScrubEnd] = useState(null);
   const isScrubbing = useRef(false);
@@ -37,7 +36,7 @@ export default function ReportStandings() {
     queryFn: () =>
       fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
         .then(r => r.json()),
-    staleTime: 60_000,
+    staleTime: 60 * 60_000,
   });
 
   const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
@@ -55,14 +54,14 @@ export default function ReportStandings() {
         .then(r => r.json());
     },
     enabled: !!effectiveFrom && !!effectiveTo,
-    staleTime: 60_000,
+    staleTime: 60 * 60_000,
   });
 
   const teams = useMemo(() => data?.teams ?? [], [data]);
   const colourMap = useMemo(() => buildColourMap(teams), [teams]);
-  const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
   const visibleTeams = useMemo(() => teams.filter(t => !hiddenIds.has(t.id)), [teams, hiddenIds]);
   const periods = useMemo(() => teams[0]?.periods ?? [], [teams]);
+  const dataPeriod = data?.period;
 
   const toggleHidden = (id) => {
     setHiddenIds(prev => {
@@ -72,23 +71,18 @@ export default function ReportStandings() {
     });
   };
 
-  const selectAll = () => setHiddenIds(new Set());
-  const selectNone = () => setHiddenIds(new Set(teams.map(t => t.id)));
-
   const resetZoom = () => { setFrom(""); setTo(""); };
 
   const periodsByLabel = useMemo(() => {
     const map = {};
-    periods.forEach(p => {
-      map[periodLabel(p.from, data?.period)] = p;
-    });
+    periods.forEach(p => { map[periodLabel(p.from, dataPeriod)] = p; });
     return map;
-  }, [periods, data?.period]);
+  }, [periods, dataPeriod]);
 
   const chartData = useMemo(() => {
     if (!periods.length) return [];
     const rows = periods.map((p, i) => {
-      const row = { period: periodLabel(p.from, data?.period) };
+      const row = { period: periodLabel(p.from, dataPeriod) };
       visibleTeams.forEach(team => { row[team.id] = team.periods[i]?.total_score ?? 0; });
       return row;
     });
@@ -102,7 +96,7 @@ export default function ReportStandings() {
       });
     }
     return rows;
-  }, [periods, visibleTeams, view]);
+  }, [periods, visibleTeams, view, dataPeriod]);
 
   const handleMouseDown = (e) => {
     if (!e?.activeLabel) return;
@@ -119,11 +113,10 @@ export default function ReportStandings() {
   const handleMouseUp = () => {
     if (!isScrubbing.current) return;
     isScrubbing.current = false;
-
-    if (scrubStart && scrubEnd) {
+    if (scrubStart && scrubEnd && scrubStart !== scrubEnd) {
       const startPeriod = periodsByLabel[scrubStart];
       const endPeriod = periodsByLabel[scrubEnd];
-      if (startPeriod && endPeriod && startPeriod !== endPeriod) {
+      if (startPeriod && endPeriod) {
         const [a, b] = [startPeriod, endPeriod].sort(
           (x, y) => new Date(x.from) - new Date(y.from)
         );
@@ -131,7 +124,6 @@ export default function ReportStandings() {
         setTo(b.to.slice(0, 10));
       }
     }
-
     setScrubStart(null);
     setScrubEnd(null);
   };
@@ -154,6 +146,7 @@ export default function ReportStandings() {
 
       <ReportNav poolId={poolId} />
       <ReportFilters
+        key={`${from}-${to}`}
         period={period} onPeriodChange={setPeriod}
         from={from} onFromChange={setFrom}
         to={to} onToChange={setTo}
@@ -164,14 +157,11 @@ export default function ReportStandings() {
 
       {teams.length > 0 && (
         <div className="rp-full">
-          {/* Chart header */}
           <div className="rp-chart-header">
             <span className="rp-section-label" style={{ margin: 0 }}>Score Trajectory</span>
             <div className="rp-chart-controls">
               {isZoomed && (
-                <button className="rp-reset-zoom" onClick={resetZoom}>
-                  Reset Zoom
-                </button>
+                <button className="rp-reset-zoom" onClick={resetZoom}>Reset Zoom</button>
               )}
               <div className="reports-toggle">
                 {[
@@ -190,7 +180,6 @@ export default function ReportStandings() {
             </div>
           </div>
 
-          {/* Full-width chart */}
           <div className="rp-chart-full">
             <ResponsiveContainer width="100%" height={400}>
               <LineChart
@@ -231,41 +220,15 @@ export default function ReportStandings() {
             </ResponsiveContainer>
           </div>
 
-          {/* Collapsible standings */}
-          <div className="rp-standings-bar">
-            <button
-              className="rp-standings-toggle"
-              onClick={() => setStandingsOpen(o => !o)}
-            >
-              <span className="rp-section-label" style={{ margin: 0 }}>
-                Standings ({teams.length} teams)
-              </span>
-              <span className="rp-standings-chevron">{standingsOpen ? "▲" : "▼"}</span>
-            </button>
-
-            {standingsOpen && (
-              <>
-                <div className="rp-standings-actions">
-                  <button className="btn-primary btn-sm" onClick={selectAll}>Select All</button>
-                  <button className="btn-primary btn-sm" onClick={selectNone}>Select None</button>
-                </div>
-                <div className="rp-standings-grid">
-                  {sorted.map((team, i) => (
-                    <div
-                      key={team.id}
-                      className={`rp-standings-item${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
-                      onClick={() => toggleHidden(team.id)}
-                    >
-                      <span className="standings-rank">{i + 1}</span>
-                      <span className="standings-swatch" style={{ background: colourMap[team.id] }} />
-                      <span className="rp-standings-item-name">{team.team_name}</span>
-                      <span className="standings-score">{fmt(team.total_score)}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+          <CollapsibleStandings
+            teams={teams}
+            hiddenIds={hiddenIds}
+            onToggle={toggleHidden}
+            colourMap={colourMap}
+            showActions
+            onSelectAll={() => setHiddenIds(new Set())}
+            onSelectNone={() => setHiddenIds(new Set(teams.map(t => t.id)))}
+          />
         </div>
       )}
     </div>

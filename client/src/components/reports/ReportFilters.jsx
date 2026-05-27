@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { isValidDate } from "@/utils/reportUtils";
 
 const PERIODS = [
@@ -17,18 +17,19 @@ export default function ReportFilters({
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo, setLocalTo] = useState(to);
 
-  // Sync upward only when values are valid or cleared
+  // Stable refs so effects don't need the callbacks in their dep arrays
+  const onFromRef = useRef(onFromChange);
+  const onToRef = useRef(onToChange);
+  useEffect(() => { onFromRef.current = onFromChange; }, [onFromChange]);
+  useEffect(() => { onToRef.current = onToChange; }, [onToChange]);
+
   useEffect(() => {
-    if (localFrom === "" || isValidDate(localFrom)) onFromChange(localFrom);
+    if (localFrom === "" || isValidDate(localFrom)) onFromRef.current(localFrom);
   }, [localFrom]);
 
   useEffect(() => {
-    if (localTo === "" || isValidDate(localTo)) onToChange(localTo);
+    if (localTo === "" || isValidDate(localTo)) onToRef.current(localTo);
   }, [localTo]);
-
-  // Keep local in sync if parent clears
-  useEffect(() => { setLocalFrom(from); }, [from]);
-  useEffect(() => { setLocalTo(to); }, [to]);
 
   return (
     <div className="rp-controls">

@@ -1,21 +1,17 @@
 import { useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer,
+  Tooltip, ResponsiveContainer,
 } from "recharts";
-import ReportNav from "./reports/ReportNav";
-import ReportFilters from "./reports/ReportFilters";
-import ChartTooltip from "./ChartTooltip";
-import { buildColourMap, fmt, seasonBounds } from "../utils/reportUtils";
-
-const CAT_COLOURS = [
-  "#c084fc", "#34d399", "#f59e0b", "#60a5fa",
-  "#f87171", "#a78bfa", "#4ade80", "#fb923c",
-  "#38bdf8", "#e879f9", "#facc15", "#86efac",
-];
+import ReportNav from "@/components/reports/ReportNav";
+import ReportFilters from "@/components/reports/ReportFilters";
+import ChartTooltip from "@/components/ChartTooltip";
+import CollapsibleStandings from "@/components/reports/CollapsibleStandings";
+import { seasonBounds } from "@/utils/reportUtils";
+import { buildColourMap, buildCatColourMap } from "@/utils/colourUtils";
 
 export default function ReportCategories() {
   const { poolId } = useParams();
@@ -23,6 +19,7 @@ export default function ReportCategories() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [hiddenIds, setHiddenIds] = useState(new Set());
+  const [hiddenCats, setHiddenCats] = useState(new Set());
 
   const { data: pool } = useQuery({
     queryKey: ["pool", poolId],
@@ -35,7 +32,7 @@ export default function ReportCategories() {
     queryFn: () =>
       fetch(`/api/commissioner/${poolId}/reports/score_summary?period=month`, { headers: authHeaders })
         .then(r => r.json()),
-    staleTime: 60_000,
+    staleTime: 60 * 60_000,
   });
 
   const bounds = useMemo(() => seasonBounds(boundsData), [boundsData]);
@@ -52,12 +49,11 @@ export default function ReportCategories() {
         .then(r => r.json());
     },
     enabled: !!effectiveFrom && !!effectiveTo,
-    staleTime: 5 * 60_000,
+    staleTime: 60 * 60_000,
   });
 
-  const teams  = useMemo(() => data?.teams ?? [], [data]);
+  const teams = useMemo(() => data?.teams ?? [], [data]);
   const labels = useMemo(() => data?.labels ?? {}, [data]);
-
   const colourMap = useMemo(() => buildColourMap(teams), [teams]);
 
   const toggleHidden = (id) => {
@@ -68,21 +64,35 @@ export default function ReportCategories() {
     });
   };
 
-  const sorted = useMemo(() => [...teams].sort((a, b) => b.total_score - a.total_score), [teams]);
+  const toggleCat = (key) => {
+    setHiddenCats(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  };
+
   const visibleTeams = useMemo(() => teams.filter(t => !hiddenIds.has(t.id)), [teams, hiddenIds]);
 
-  const { keys, chartData } = useMemo(() => {
+  // All keys derived from full team list — stable, not affected by hiddenCats
+  const allKeys = useMemo(() => {
     const keySet = new Set();
     visibleTeams.forEach(t => {
       Object.entries(t.by_category ?? {}).forEach(([k, v]) => { if (v > 0) keySet.add(k); });
     });
-    const keys = [...keySet];
-    const chartData = visibleTeams.map(team => ({
-      name: team.team_name,
-      ...Object.fromEntries(keys.map(k => [k, team.by_category?.[k] ?? 0])),
-    }));
-    return { keys, chartData };
+    return [...keySet];
   }, [visibleTeams]);
+
+  // Stable colour map — assigned by position in allKeys, never shifts
+  const catColourMap = useMemo(() => buildCatColourMap(allKeys), [allKeys]);
+
+  const chartData = useMemo(() => {
+    const visibleKeys = allKeys.filter(k => !hiddenCats.has(k));
+    return visibleTeams.map(team => ({
+      name: team.team_name,
+      ...Object.fromEntries(visibleKeys.map(k => [k, team.by_category?.[k] ?? 0])),
+    }));
+  }, [visibleTeams, allKeys, hiddenCats]);
 
   return (
     <div className="app-wrapper">
@@ -94,8 +104,9 @@ export default function ReportCategories() {
 
       <ReportNav poolId={poolId} />
       <ReportFilters
+        key={`${from}-${to}`}
         from={from} onFromChange={setFrom}
-        to={to}     onToChange={setTo}
+        to={to} onToChange={setTo}
         showPeriod={false}
         placeholder={{ from: bounds.from, to: bounds.to }}
       />
@@ -103,65 +114,64 @@ export default function ReportCategories() {
       {isLoading && <div className="report-loading">Loading…</div>}
 
       {teams.length > 0 && (
-        <div className="rp-layout">
-          <div className="rp-standings">
-            <p className="rp-section-label">Standings</p>
-            <div className="standings-list">
-              {sorted.map((team, i) => (
-                <div
-                  key={team.id}
-                  className={`standings-row standings-row--toggleable${hiddenIds.has(team.id) ? " standings-row--hidden" : ""}`}
-                  onClick={() => toggleHidden(team.id)}
-                >
-                  <span className="standings-rank">{i + 1}</span>
-                  <span className="standings-swatch" style={{ background: colourMap[team.id] }} />
-                  <span className="standings-name">{team.team_name}</span>
-                  <span className="standings-score">{fmt(team.total_score)}</span>
-                </div>
-              ))}
-            </div>
-            {hiddenIds.size > 0 && (
-              <button className="standings-reset" onClick={() => setHiddenIds(new Set())}>
-                Show all
+        <div className="rp-full">
+          <div className="rp-chart-header">
+            <span className="rp-section-label" style={{ margin: 0 }}>Scoring by Category</span>
+          </div>
+
+          <div className="rp-cat-filters">
+            {allKeys.map(k => (
+              <button
+                key={k}
+                className={`rp-cat-pill${hiddenCats.has(k) ? " rp-cat-pill--hidden" : ""}`}
+                style={{ "--cat-colour": catColourMap[k] }}
+                onClick={() => toggleCat(k)}
+              >
+                {labels[k] ?? k}
               </button>
+            ))}
+          </div>
+
+          <div className="rp-chart-full">
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={chartData} margin={{ top: 8, right: 24, left: 0, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 10, fill: "var(--text-muted)" }}
+                    angle={-30}
+                    textAnchor="end"
+                    interval={0}
+                    tickFormatter={v => v.length > 15 ? `${v.slice(0, 15)}…` : v}
+                  />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--text-muted)" }} width={44} />
+                  <Tooltip content={<ChartTooltip />} />
+                  {allKeys.filter(k => !hiddenCats.has(k)).map(k => (
+                    <Bar
+                      key={k}
+                      dataKey={k}
+                      name={labels[k] ?? k}
+                      stackId="a"
+                      fill={catColourMap[k]}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="report-loading">No category data.</p>
             )}
           </div>
 
-          <div className="rp-main">
-            <div className="rp-tabs">
-              <span className="rp-section-label" style={{ padding: "0.5rem 0.75rem", margin: 0 }}>
-                Scoring by Category
-              </span>
-            </div>
-            <div className="rp-chart-area">
-              {chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 60 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 10, fill: "var(--text-muted)" }}
-                      angle={-30}
-                      textAnchor="end"
-                      interval={0}
-                    />
-                    <YAxis tick={{ fontSize: 11, fill: "var(--text-muted)" }} width={44} />
-                    <Tooltip content={<ChartTooltip />} />
-                    <Legend
-                      formatter={v => labels[v] ?? v}
-                      wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
-                    />
-                    {keys.map((k, i) => (
-                      <Bar key={k} dataKey={k} name={labels[k] ?? k}
-                        stackId="a" fill={CAT_COLOURS[i % CAT_COLOURS.length]} />
-                    ))}
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="report-loading">No category data.</p>
-              )}
-            </div>
-          </div>
+          <CollapsibleStandings
+            teams={teams}
+            hiddenIds={hiddenIds}
+            onToggle={toggleHidden}
+            colourMap={colourMap}
+            showActions
+            onSelectAll={() => setHiddenIds(new Set())}
+            onSelectNone={() => setHiddenIds(new Set(teams.map(t => t.id)))}
+          />
         </div>
       )}
     </div>

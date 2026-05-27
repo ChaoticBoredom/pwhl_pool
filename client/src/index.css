@@ -1234,13 +1234,13 @@ select {
 
 /* Page shell */
 .rp-header { margin-bottom: 1.5rem; }
- 
+
 .rp-subtitle {
   margin: 0;
   font-size: 0.95rem;
   color: var(--text-muted);
 }
- 
+
 /* Controls bar */
 .rp-controls {
   display: flex;
@@ -1252,13 +1252,13 @@ select {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
- 
+
 .rp-control-group {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
 }
- 
+
 .rp-control-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1266,7 +1266,7 @@ select {
   letter-spacing: 0.07em;
   color: var(--text-muted);
 }
- 
+
 /* Two-column layout */
 .rp-layout {
   display: grid;
@@ -1274,11 +1274,11 @@ select {
   gap: 1.5rem;
   align-items: start;
 }
- 
+
 @media (max-width: 768px) {
   .rp-layout { grid-template-columns: 1fr; }
 }
- 
+
 /* Standings sidebar */
 .rp-standings {
   background: var(--card-bg);
@@ -1288,7 +1288,7 @@ select {
   position: sticky;
   top: 1rem;
 }
- 
+
 .rp-section-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1297,14 +1297,14 @@ select {
   color: var(--text-muted);
   margin: 0 0 0.75rem;
 }
- 
+
 /* Standings list */
 .standings-list {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
- 
+
 /* Grid layout so name actually gets the space */
 .standings-row {
   display: grid;
@@ -1317,7 +1317,7 @@ select {
   border-radius: var(--radius);
   font-size: 0.825rem;
 }
- 
+
 .standings-rank {
   text-align: right;
   font-family: var(--mono);
@@ -1326,13 +1326,13 @@ select {
   font-size: 0.7rem;
   font-weight: 600;
 }
- 
+
 .standings-swatch {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
- 
+
 .standings-name {
   color: var(--text-h);
   font-weight: 500;
@@ -1341,7 +1341,7 @@ select {
   text-overflow: ellipsis;
   min-width: 0; /* critical for grid truncation */
 }
- 
+
 .standings-score {
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -1349,20 +1349,20 @@ select {
   font-weight: 700;
   color: var(--text-h);
 }
- 
+
 .standings-row--toggleable {
   cursor: pointer;
   user-select: none;
   transition: opacity 0.15s, background 0.15s, border-color 0.15s;
 }
- 
+
 .standings-row--toggleable:hover {
   background: var(--accent-bg);
   border-color: var(--accent-border);
 }
- 
+
 .standings-row--hidden { opacity: 0.35; }
- 
+
 .standings-reset {
   margin-top: 0.5rem;
   font-size: 0.8rem;
@@ -1373,9 +1373,9 @@ select {
   padding: 0.25rem 0;
   text-decoration: underline;
 }
- 
+
 .standings-reset:hover { color: var(--text-h); }
- 
+
 /* Main content panel */
 .rp-main {
   background: var(--card-bg);
@@ -1383,7 +1383,7 @@ select {
   border-radius: var(--radius);
   overflow: hidden;
 }
- 
+
 /* Tab bar */
 .rp-tabs {
   display: flex;
@@ -1393,12 +1393,12 @@ select {
   border-bottom: 1px solid var(--border);
   background: var(--card-bg);
 }
- 
+
 /* Chart area */
 .rp-chart-area {
   padding: 1rem 0.5rem 1rem 0;
 }
- 
+
 /* Team grid (players tab) */
 .rp-team-grid {
   display: grid;
@@ -1406,7 +1406,7 @@ select {
   gap: 0.75rem;
   padding: 1rem;
 }
- 
+
 .rp-team-card {
   display: flex;
   align-items: center;
@@ -1418,19 +1418,19 @@ select {
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
- 
+
 .rp-team-card:hover {
   background: var(--accent-bg);
   border-color: var(--accent-border);
 }
- 
+
 .rp-team-card-swatch {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
- 
+
 .rp-team-card-name {
   flex: 1;
   font-size: 0.875rem;
@@ -1440,7 +1440,7 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
 }
- 
+
 .rp-team-card-score {
   font-family: var(--mono);
   font-size: 0.875rem;
@@ -1448,10 +1448,10 @@ select {
   color: var(--accent);
   flex-shrink: 0;
 }
- 
+
 /* Drilldown player table */
 .rp-drilldown { padding: 1rem; }
- 
+
 .rp-drilldown-header {
   display: flex;
   align-items: center;
@@ -1460,28 +1460,28 @@ select {
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--border);
 }
- 
+
 .rp-drilldown-swatch {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
 }
- 
+
 .rp-drilldown-name {
   flex: 1;
   font-weight: 700;
   font-size: 1rem;
   color: var(--text-h);
 }
- 
+
 .rp-drilldown-total {
   font-family: var(--mono);
   font-weight: 700;
   font-size: 1rem;
   color: var(--accent);
 }
- 
+
 .rp-player-table {
   display: flex;
   flex-direction: column;
@@ -1490,7 +1490,7 @@ select {
   overflow: hidden;
   font-size: 0.8rem;
 }
- 
+
 .rp-player-row {
   display: grid;
   grid-template-columns: 1fr 120px repeat(var(--cat-cols, 4), 52px) 60px;
@@ -1499,9 +1499,9 @@ select {
   border-bottom: 1px solid var(--border);
   gap: 0.5rem;
 }
- 
+
 .rp-player-row:last-child { border-bottom: none; }
- 
+
 .rp-player-row--header {
   background: var(--card-bg);
   font-size: 0.7rem;
@@ -1510,9 +1510,9 @@ select {
   letter-spacing: 0.05em;
   color: var(--text-muted);
 }
- 
+
 .rp-player-row--dropped { opacity: 0.6; }
- 
+
 .rp-player-name {
   font-weight: 600;
   color: var(--text-h);
@@ -1523,7 +1523,7 @@ select {
   align-items: center;
   gap: 0.5rem;
 }
- 
+
 .rp-dropped-badge {
   font-size: 0.65rem;
   font-weight: 600;
@@ -1535,45 +1535,45 @@ select {
   letter-spacing: 0.04em;
   flex-shrink: 0;
 }
- 
+
 .rp-tenure {
   font-size: 0.7rem;
   color: var(--text-muted);
   white-space: nowrap;
 }
- 
+
 .rp-cat-cell { text-align: right; }
- 
+
 .rp-cat-value {
   font-family: var(--mono);
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: var(--text-h);
 }
- 
+
 .rp-cat-total {
   font-weight: 700;
   color: var(--accent);
 }
- 
+
 .rp-zero { color: var(--text-muted); font-weight: 400; }
- 
+
 /* ── Shared reports-* classes (token-corrected) ───────────── */
- 
+
 .reports-section-title {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-h);
   margin: 0;
 }
- 
+
 .reports-toggle {
   display: flex;
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
 }
- 
+
 .reports-toggle__btn {
   padding: 0.3rem 0.875rem;
   font-size: 0.8rem;
@@ -1584,20 +1584,24 @@ select {
   color: var(--text-muted);
   transition: background 0.15s, color 0.15s;
 }
- 
+
 .reports-toggle__btn:hover {
   background: var(--card-bg);
   color: var(--text-h);
 }
- 
+
 .reports-toggle__btn--active {
   background: var(--accent);
   color: #fff;
 }
- 
+
 /* Tooltip */
+.recharts-tooltip-wrapper {
+  opacity: 1 !important;
+}
+
 .report-tooltip {
-  background: var(--card-bg-elevated);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 0.625rem 0.75rem;
@@ -1606,13 +1610,13 @@ select {
   max-height: 300px;
   overflow-y: auto;
 }
- 
+
 .report-tooltip__label {
   font-weight: 600;
   color: var(--text-h);
   margin: 0 0 0.5rem;
 }
- 
+
 .report-tooltip__row {
   display: flex;
   align-items: center;
@@ -1620,28 +1624,28 @@ select {
   margin: 0.2rem 0;
   color: var(--text);
 }
- 
+
 .report-tooltip__swatch {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
- 
+
 .report-tooltip__team {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
- 
+
 .report-tooltip__value {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   flex-shrink: 0;
 }
- 
+
 /* Loading / error */
 .report-loading,
 .report-error {
@@ -1650,9 +1654,9 @@ select {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
- 
+
 .report-error { color: var(--danger-text); }
- 
+
 /* ── Report sub-nav ──────────────────────────────────────────── */
 .report-nav {
   display: flex;
@@ -1663,7 +1667,7 @@ select {
   width: fit-content;
   margin-bottom: 1.5rem;
 }
- 
+
 .report-nav__link {
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
@@ -1674,26 +1678,26 @@ select {
   border-right: 1px solid var(--border);
   transition: background 0.15s, color 0.15s;
 }
- 
+
 .report-nav__link:last-child {
   border-right: none;
 }
- 
+
 .report-nav__link:hover {
   background: var(--card-bg);
   color: var(--text-h);
 }
- 
+
 .report-nav__link--active {
   background: var(--accent);
   color: #fff;
 }
- 
+
 /* ── Box sections (Teams page) ───────────────────────────────── */
 .rp-box-section {
   margin-bottom: 1.5rem;
 }
- 
+
 .rp-box-header {
   display: flex;
   align-items: center;
@@ -1708,20 +1712,20 @@ select {
   letter-spacing: 0.05em;
   color: var(--text-muted);
 }
- 
+
 .rp-box-name { flex: 1; }
- 
+
 .rp-box-total {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   color: var(--accent);
 }
- 
+
 .rp-box-section .rp-player-table {
   border-top: none;
   border-radius: 0 0 var(--radius) var(--radius);
 }
- 
+
 /* ── Team badges ─────────────────────────────────────────────── */
 .rp-team-badges {
   display: inline-flex;
@@ -1729,19 +1733,19 @@ select {
   gap: 2px;
   flex-shrink: 0;
 }
- 
+
 .rp-team-badge-wrap {
   display: inline-flex;
   align-items: center;
   gap: 2px;
 }
- 
+
 .rp-team-sep {
   font-size: 0.65rem;
   color: var(--text-muted);
   line-height: 1;
 }
- 
+
 /* ── Full-width chart layout (Standings page) ────────────────── */
 .rp-full {
   display: flex;
@@ -1752,7 +1756,7 @@ select {
   border-radius: var(--radius);
   overflow: hidden;
 }
- 
+
 .rp-chart-header {
   display: flex;
   align-items: center;
@@ -1760,13 +1764,13 @@ select {
   padding: 0.625rem 1rem;
   border-bottom: 1px solid var(--border);
 }
- 
+
 .rp-chart-controls {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
- 
+
 .rp-reset-zoom {
   font-size: 0.75rem;
   font-weight: 600;
@@ -1778,22 +1782,22 @@ select {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
- 
+
 .rp-reset-zoom:hover {
   background: var(--accent);
   color: #fff;
 }
- 
+
 .rp-chart-full {
   padding: 1rem 0.5rem 0.5rem 0;
   cursor: crosshair;
 }
- 
+
 /* ── Collapsible standings bar ───────────────────────────────── */
 .rp-standings-bar {
   border-top: 1px solid var(--border);
 }
- 
+
 .rp-standings-toggle {
   width: 100%;
   display: flex;
@@ -1806,29 +1810,29 @@ select {
   text-align: left;
   transition: background 0.15s;
 }
- 
+
 .rp-standings-toggle:hover {
   background: var(--accent-bg);
 }
- 
+
 .rp-standings-chevron {
   font-size: 0.65rem;
   color: var(--text-muted);
 }
- 
+
 .rp-standings-actions {
   display: flex;
   gap: 0.5rem;
   padding: 0 1rem 0.625rem;
 }
- 
+
 .rp-standings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 0.375rem;
   padding: 0 1rem 1rem;
 }
- 
+
 .rp-standings-item {
   display: grid;
   grid-template-columns: 18px 12px 1fr auto;
@@ -1843,16 +1847,16 @@ select {
   user-select: none;
   transition: opacity 0.15s, background 0.15s, border-color 0.15s;
 }
- 
+
 .rp-standings-item:hover {
   background: var(--accent-bg);
   border-color: var(--accent-border);
 }
- 
+
 .rp-standings-item--hidden {
   opacity: 0.35;
 }
- 
+
 .rp-standings-item-name {
   color: var(--text-h);
   font-weight: 500;
@@ -1860,4 +1864,35 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+/* ── Category filter pills ───────────────────────────────────── */
+.rp-cat-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.rp-cat-pill {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 2px solid var(--cat-colour);
+  background: transparent;
+  color: var(--cat-colour);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+}
+
+.rp-cat-pill:hover {
+  background: var(--cat-colour);
+  color: #fff;
+}
+
+.rp-cat-pill--hidden {
+  opacity: 0.3;
+  background: transparent;
 }
