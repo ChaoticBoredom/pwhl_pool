@@ -4,12 +4,10 @@ FactoryBot.define do
       league { raise ArgumentError, "Must pass league: explicitly to :pwhl_skater_stat factory" }
     end
 
-    association :league_game, factory: %i[league_game final]
-    association :league_team
-
     after(:build) do |stat, evaluator|
       stat.league_player = evaluator.league_player || build(:pwhl_skater, league: evaluator.league)
       stat.league_game = evaluator.league_game || build(:league_game, :final, league: evaluator.league)
+      stat.league_team = evaluator.league_team || stat.league_player.current_team
     end
 
     goals             { 0 }

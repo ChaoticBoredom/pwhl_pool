@@ -8,7 +8,7 @@ const Player = ({ player, children }) => {
 
       <div className="player-identity-vertical">
         <span className="player-name">{player.name}</span>
-        <TeamBadge short_code={player.current_team_short_code} />
+        <TeamBadge shortCode={player.current_team_short_code} />
       </div>
     </div>
   )

@@ -6,7 +6,7 @@ function Matchup({ away, home, showScore = false })
 {
   return (
     <div className="game-matchup">
-      <TeamBadge short_code={away.short_code} />
+      <TeamBadge shortCode={away.short_code} />
       {showScore && (
         <span className="game-score">{away.score}</span>
       )}
@@ -14,7 +14,7 @@ function Matchup({ away, home, showScore = false })
       {showScore && (
         <span className="game-score">{home.score}</span>
       )}
-      <TeamBadge short_code={home.short_code} />
+      <TeamBadge shortCode={home.short_code} />
     </div>
   );
 }

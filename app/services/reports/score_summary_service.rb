@@ -5,6 +5,11 @@ class Reports::ScoreSummaryService
     @breakdowns = Array(breakdowns)
     @period = period
     @calculator = ScoringCalculator.new(pool.scoring)
+
+    @teams_by_id = League::Team.
+      where(league_id: @pool.league_id).
+      pluck(:id, :short_code).
+      to_h
   end
 
   def call
@@ -19,7 +24,7 @@ class Reports::ScoreSummaryService
     filtered_records = filter_by_range(records)
     buckets = generate_buckets
 
-    @pool.pool_teams.includes(pool_team_players: :league_player).map do |pool_team|
+    @pool.pool_teams.includes(pool_team_players: [:league_player, :pool_box]).map do |pool_team|
       team_players = pool_team.pool_team_players
       build_team_report(pool_team, team_players, filtered_records, buckets)
     end
@@ -29,7 +34,9 @@ class Reports::ScoreSummaryService
 
   def filter_by_range(records)
     records.transform_values do |player_records|
-      player_records.select { |r| @range.cover?(r.start_time) }
+      player_records.
+        select { |r| @range.cover?(r.start_time) }.
+        sort_by(&:start_time)
     end
   end
 
@@ -116,6 +123,10 @@ class Reports::ScoreSummaryService
       b[:by_field].each { |field, score| r_hash[field] += score }
     end
 
+    team_short_codes = player_records.
+      map(&:league_team_id).
+      uniq.
+      filter_map { |id| @teams_by_id[id] }
     {
       league_player_id: team_player.league_player_id,
       name: player.name,
@@ -124,6 +135,13 @@ class Reports::ScoreSummaryService
       total_score: total_by_field.values.sum,
       by_category: total_by_field,
       bucket_scores: bucket_scores,
+      position: player.position,
+      team_short_codes: team_short_codes,
+      pool_box: {
+        id: team_player.pool_box.id,
+        name: team_player.pool_box.name,
+        position: team_player.pool_box.position,
+      },
     }
   end
 

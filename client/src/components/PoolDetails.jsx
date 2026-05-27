@@ -67,6 +67,14 @@ function PoolDetails() {
       >
         Scoring Rules
       </button>
+      {isAdmin && (
+        <button
+          className="btn-primary btn-top"
+          onClick={() => navigate(`/pools/${poolId}/reports/standings`)}
+        >
+          Season Report
+        </button>
+      )}
       <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
       <div className="pool-standings">
         <DataRow isHeader gridClass={poolGrid}>
