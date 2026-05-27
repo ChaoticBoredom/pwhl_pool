@@ -220,6 +220,72 @@ RSpec.describe Reports::ScoreSummaryService do
       it "does not include by_category on players without full_breakdown" do
         expect(team_result[:by_player].first).to_not have_key(:by_category)
       end
+
+      context "team_short_codes" do
+        let(:team_a) { create(:league_team, league: league, short_code: "AAA") }
+        let(:team_b) { create(:league_team, league: league, short_code: "BBB") }
+        let(:skater) { create(:pwhl_skater, league: league, current_team: team_a) }
+
+        let!(:game_team_a) do
+          create(:league_game, :final,
+            league: league,
+            season_id: "9",
+            start_time: Time.zone.parse("2026-01-20 19:00:00"),
+          )
+        end
+
+        let!(:game_team_b) do
+          create(:league_game, :final,
+            league: league,
+            season_id: "9",
+            start_time: Time.zone.parse("2026-02-20 19:00:00"),
+          )
+        end
+
+        let!(:skater_stat_team_a) do
+          create(:pwhl_skater_stat,
+            league: league,
+            league_player: skater,
+            league_game: game_team_a,
+            league_team: team_a,
+            goals: 1,
+          )
+        end
+
+        let!(:skater_stat_team_b) do
+          create(:pwhl_skater_stat,
+            league: league,
+            league_player: skater,
+            league_game: game_team_b,
+            league_team: team_b,
+            goals: 1,
+          )
+        end
+
+        let(:result) { build_service(breakdowns: ["by_player"]).call }
+        let(:skater_player_data) { team_result[:by_player].find { |p| p[:league_player_id] == skater.id } }
+
+        it "returns short codes for all teams the player had stats with" do
+          expect(skater_player_data[:team_short_codes]).to match_array(["AAA", "BBB"])
+        end
+
+        it "returns short codes in chronological order" do
+          expect(skater_player_data[:team_short_codes]).to eq(["AAA", "BBB"])
+        end
+
+        it "deduplicates short codes for players with multiple stats from the same team" do
+          single_team_player = team_result[:by_player].find { |p| p[:league_player_id] == dropped_skater.id }
+          expect(single_team_player[:team_short_codes].length).to eq(1)
+        end
+
+        it "returns empty array for player with no stats in range" do
+          range = Time.zone.parse("2025-01-01").beginning_of_day..Time.zone.parse("2025-06-01").end_of_day
+          out_of_range_result = build_service(range: range, breakdowns: ["by_player"]).call
+          player = out_of_range_result.find { |t| t[:id] == pool_team.id }[:by_player]
+            .find { |p| p[:league_player_id] == skater.id }
+          expect(player[:team_short_codes]).to eq([])
+        end
+      end
     end
 
     context "with full_breakdown breakdown" do
