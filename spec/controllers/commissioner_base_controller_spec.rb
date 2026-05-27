@@ -30,6 +30,16 @@ RSpec.describe Commissioner::BaseController, type: :controller do
     end
   end
 
+  context "when the user is a god user" do
+    let(:god_user) { create(:user, admin: true) }
+    before { request.headers.merge!(auth_headers_for(god_user)) }
+
+    it "allows the request through" do
+      get :index, params: { pool_id: pool.id }
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   context "when pool_id is missing" do
     before { request.headers.merge!(auth_headers_for(commissioner)) }
 
