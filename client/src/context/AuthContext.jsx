@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("god", god);
     localStorage.setItem('token', newToken);
     setCurrentUser(user);
+    setIsGod(god);
     setToken(newToken);
   };
 
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("god");
     localStorage.removeItem('token');
     setCurrentUser(null);
+    setIsGod(null);
     setToken(null);
   };
 
