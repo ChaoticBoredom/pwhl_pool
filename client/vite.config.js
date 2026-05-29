@@ -5,6 +5,17 @@ import { fileURLToPath, URL } from "url"
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("recharts") || id.includes("d3")) {
+            return "recharts";
+          }
+        }
+      }
+    }
+  },
   plugins: [
     tailwindcss(),
     react(),
