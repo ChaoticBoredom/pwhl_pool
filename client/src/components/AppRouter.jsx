@@ -1,16 +1,16 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { RequireAuth } from "./RequireAuth";
-import { Dashboard } from "./Dashboard";
-import AuthForm from "./AuthForm";
-import BoxGenerator from "./BoxGenerator";
-import JoinPoolPrompt from "./JoinPoolPrompt";
-import PoolDetails from "./PoolDetails";
-import ReportStandings from "./ReportStandings";
-import ReportCategories from "./ReportCategories";
-import ReportTeams from "./ReportTeams";
-import PoolScoring from "./PoolScoring";
-import PoolTeamDetails from "./PoolTeamDetails";
-import PlayerSelection from "./PlayerSelection";
+import { RequireAuth } from "@c/auth/RequireAuth";
+import { Dashboard } from "@c/pool/Dashboard";
+import AuthForm from "@c/auth/AuthForm";
+import BoxGenerator from "@c/boxes/BoxGenerator";
+import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
+import PoolDetails from "@c/pool/PoolDetails";
+import ReportStandings from "@c/reports/ReportStandings";
+import ReportCategories from "@c/reports/ReportCategories";
+import ReportTeams from "@c/reports/ReportTeams";
+import PoolScoring from "@c/pool/PoolScoring";
+import PoolTeamDetails from "@c/pool/PoolTeamDetails";
+import PlayerSelection from "@c/players/PlayerSelection";
 
 export function AppRouter() {
 
