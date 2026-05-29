@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
-import { useAuth } from  '../context/AuthContext'
+import { useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuth } from  "@/context/AuthContext";
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
