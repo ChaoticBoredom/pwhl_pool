@@ -11,7 +11,10 @@ export default defineConfig({
   ],
   resolve: {
     extensions: ['.jsx', '.js', '.ts', '.tsx'],
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      "@": fileURLToPath(new URL('./src', import.meta.url)),
+      "@c": fileURLToPath(new URL("./src/components", import.meta.url)),
+    },
   },
   server: {
     proxy: {
