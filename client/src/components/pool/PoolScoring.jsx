@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from '../context/AuthContext';
-import { ScoringSection } from'./ScoringSection';
+import { useAuth } from "@/context/AuthContext";
+import { ScoringSection } from "./ScoringSection";
 
 export default function PoolScoring() {
   const { poolId } = useParams()

@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext';
-import { EditableField } from './EditableField';
-import { DataRow } from './DataRow'
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { EditableField } from "@c/shared/EditableField";
+import { DataRow } from "@c/shared/DataRow";
 
 function PoolDetails() {
   const { poolId } = useParams()
