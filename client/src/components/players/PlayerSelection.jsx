@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import React, { useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from '../context/AuthContext'
-import BoxSelection from './BoxSelection'
-import getTradingState from "../utils/tradingState";
+import { useAuth } from "@/context/AuthContext";
+import BoxSelection from "@c/boxes/BoxSelection";
+import getTradingState from "@/utils/tradingState";
 
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
