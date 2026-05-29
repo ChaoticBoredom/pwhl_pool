@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { EditableField } from "@c/shared/EditableField";
 import { DataRow } from "@c/shared/DataRow";
 
 function PoolDetails() {
   const { poolId } = useParams()
-  const { authHeaders, currentUser, isGod } = useAuth();
-  const navigate = useNavigate();
+  const { authHeaders } = useAuth();
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
 
   const { data: pool, isLoading, dataUpdatedAt } = useQuery({
@@ -18,20 +17,6 @@ function PoolDetails() {
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
     gcTime: 5 * 60 * 1000, // 5 minutes to store cached data
   })
-
-  const changePoolName = async (newValue) => {
-    const response = await fetch(`/api/pools/${pool.id}`, {
-      method: 'PATCH',
-      headers: authHeaders,
-      body: JSON.stringify({ name: newValue })
-    });
-
-    if (!response.ok) {
-      console.log("Pool update error:")
-    }
-
-    return await response.json()
-  }
 
   useEffect(() => {
     if (pool?.name) {
@@ -50,31 +35,12 @@ function PoolDetails() {
 
   if (isLoading || !pool) return <div>Loading pool details...</div>
 
-  const isAdmin = currentUser && (pool.admin.id === currentUser || isGod);
   const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
 
   return (
     <div>
-      <h1 className="pool-title">
-        {isAdmin ?
-          (<EditableField value={pool.name} onSave={changePoolName} />) :
-          pool.name}
-      </h1>
-      <button
-        className="btn-primary btn-top"
-        onClick={() => navigate(`/pools/${poolId}/scoring`)}
-      >
-        Scoring Rules
-      </button>
-      {isAdmin && (
-        <button
-          className="btn-primary btn-top"
-          onClick={() => navigate(`/pools/${poolId}/reports/standings`)}
-        >
-          Season Report
-        </button>
-      )}
-      <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
+      <p className="helper-text">Commissioner: {pool.admin.name}</p>
+      <p className="helper-text">Last Updated At: {lastFetchedAt}</p>
       <div className="pool-standings">
         <DataRow isHeader gridClass={poolGrid}>
           <div />
