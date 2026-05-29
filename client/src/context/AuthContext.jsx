@@ -1,33 +1,33 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import React, { createContext, useState, useContext, useMemo } from 'react';
+import React, { createContext, useState, useContext, useMemo } from "react";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
-    return localStorage.getItem('user') || null;
+    return localStorage.getItem("user") || null;
   });
   const [isGod, setIsGod] = useState(() => {
-    return localStorage.getItem("god") === 'true';
+    return localStorage.getItem("god") === "true";
   })
   const [token, setToken] = useState(() => {
-    return localStorage.getItem('token') || null;
+    return localStorage.getItem("token") || null;
   });
 
   const login = (user, newToken, god = false) => {
-    localStorage.setItem('user', user);
+    localStorage.setItem("user", user);
     localStorage.setItem("god", god);
-    localStorage.setItem('token', newToken);
+    localStorage.setItem("token", newToken);
     setCurrentUser(user);
     setIsGod(god);
     setToken(newToken);
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     localStorage.removeItem("god");
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setCurrentUser(null);
     setIsGod(null);
     setToken(null);
