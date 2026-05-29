@@ -1,6 +1,6 @@
-import React from 'react';
-import { DataRow } from './DataRow';
-import Player from './Player';
+import React from "react";
+import { DataRow } from "@c/shared/DataRow";
+import Player from '@c/players/Player';
 
 const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
   const selectionGrid = "grid-cols-[1fr_80px]";
