@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import {
-  Trophy, Shirt, BarChart2, Star, FileBarChart,
-  ArrowLeftRight, Settings, LayoutDashboard,
-  PanelLeftClose, PanelLeftOpen, ChevronDown, ChevronRight,
+  Trophy, Shirt, Star, FileBarChart, BarChart2,
+  ArrowLeftRight, Settings, List,
+  ChevronDown, ChevronRight,
 } from "lucide-react";
 
-const NAV_COLLAPSED_KEY = "nav_collapsed";
-
-const NavItem = ({ to, icon: Icon, label, collapsed, end = false }) => (
+const NavItem = ({ to, icon: Icon, label, collapsed, end = false, onClick }) => (
   <NavLink
     to={to}
     end={end}
+    onClick={onClick}
     className={({ isActive }) =>
       `side-nav__item${isActive ? " side-nav__item--active" : ""}`
     }
@@ -24,51 +24,45 @@ const NavItem = ({ to, icon: Icon, label, collapsed, end = false }) => (
 
 const NavSection = ({ label, children, collapsed }) => (
   <div className="side-nav__section">
-    {!collapsed && (
-      <span className="side-nav__section-label">{label}</span>
-    )}
+    {!collapsed && <span className="side-nav__section-label">{label}</span>}
     {collapsed && <div className="side-nav__section-divider" />}
     {children}
   </div>
 );
 
-export default function SideNav({ poolId, pool, isAdmin }) {
-  const [collapsed, setCollapsed] = useState(() => {
-    return localStorage.getItem(NAV_COLLAPSED_KEY) === "true";
-  });
+export default function SideNav({ poolId, pool, isAdmin, collapsed, onNavigate, className = "" }) {
+  const { currentUser } = useAuth();
   const [reportsOpen, setReportsOpen] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem(NAV_COLLAPSED_KEY, collapsed);
-  }, [collapsed]);
-
   const base = `/pools/${poolId}`;
 
+  const myTeam = pool?.pool_teams?.find(t => t.user?.id === currentUser);
+
   return (
-    <nav className={`side-nav${collapsed ? " side-nav--collapsed" : ""}`}>
+    <nav className={`side-nav${collapsed ? " side-nav--collapsed" : ""} ${className}`.trim()}>
       <div className="side-nav__content">
-        {/* Pool name */}
         {!collapsed && pool && (
           <div className="side-nav__pool-name">{pool.name}</div>
         )}
 
         <NavSection label="Pool" collapsed={collapsed}>
-          <NavItem to={base} icon={Trophy} label="Standings" collapsed={collapsed} end />
-          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} />
+          <NavItem to={base} icon={Trophy} label="Standings" collapsed={collapsed} end onClick={onNavigate} />
+          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} onClick={onNavigate} />
         </NavSection>
 
-        <NavSection label="My Team" collapsed={collapsed}>
-          <NavItem
-            to={pool?.pool_teams ? `${base}/teams/${pool.pool_teams.find(t => t.user?.id)?.id}` : base}
-            icon={Shirt}
-            label="My Team"
-            collapsed={collapsed}
-          />
-        </NavSection>
+        {myTeam && (
+          <NavSection label="My Team" collapsed={collapsed}>
+            <NavItem
+              to={`${base}/teams/${myTeam.id}`}
+              icon={Shirt}
+              label="My Team"
+              collapsed={collapsed}
+              onClick={onNavigate}
+            />
+          </NavSection>
+        )}
 
         {isAdmin && (
           <NavSection label="Commissioner" collapsed={collapsed}>
-            {/* Reports — collapsible when expanded, single item when collapsed */}
             {collapsed ? (
               <NavLink
                 to={`${base}/reports/standings`}
@@ -76,6 +70,7 @@ export default function SideNav({ poolId, pool, isAdmin }) {
                   `side-nav__item${isActive ? " side-nav__item--active" : ""}`
                 }
                 title="Reports"
+                onClick={onNavigate}
               >
                 <FileBarChart size={18} className="side-nav__icon" />
               </NavLink>
@@ -94,35 +89,30 @@ export default function SideNav({ poolId, pool, isAdmin }) {
                 </button>
                 {reportsOpen && (
                   <div className="side-nav__group-children">
-                    <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} />
-                    <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} />
-                    <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} />
+                    <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
+                    <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
+                    <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />
                   </div>
                 )}
               </div>
             )}
 
-            <NavItem to={`${base}/trades`} icon={ArrowLeftRight} label="Trades" collapsed={collapsed} />
-            <NavItem to={`${base}/settings`} icon={Settings} label="Pool Settings" collapsed={collapsed} />
+            <NavItem to={`${base}/trades`} icon={ArrowLeftRight} label="Trades" collapsed={collapsed} onClick={onNavigate} />
+            <NavItem to={`${base}/settings`} icon={Settings} label="Pool Settings" collapsed={collapsed} onClick={onNavigate} />
           </NavSection>
         )}
       </div>
 
       <div className="side-nav__footer">
-        <NavLink to="/" className="side-nav__item" title={collapsed ? "All Pools" : undefined}>
-          <LayoutDashboard size={18} className="side-nav__icon" />
+        <NavLink
+          to="/"
+          className="side-nav__item"
+          title={collapsed ? "All Pools" : undefined}
+          onClick={onNavigate}
+        >
+          <List size={18} className="side-nav__icon" />
           {!collapsed && <span className="side-nav__label">All Pools</span>}
         </NavLink>
-        <button
-          className="side-nav__collapse-btn"
-          onClick={() => setCollapsed(c => !c)}
-          title={collapsed ? "Expand" : "Collapse"}
-        >
-          {collapsed
-            ? <PanelLeftOpen size={18} />
-            : <PanelLeftClose size={18} />
-          }
-        </button>
       </div>
     </nav>
   );
