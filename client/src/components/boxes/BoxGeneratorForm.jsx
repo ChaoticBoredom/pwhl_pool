@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 const TEAMS = ["BOS", "MIN", "MTL", "NY", "OTT", "TOR", "SEA", "VAN"];
 const POSITIONS = ["F", "D", "G"];

@@ -1,4 +1,4 @@
-import { fmt } from "../utils/reportUtils";
+import { fmt } from "@/utils/reportUtils";
 
 export default function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;

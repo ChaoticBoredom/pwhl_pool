@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
-import { DataRow } from "./DataRow";
-import { EditableField } from "./EditableField";
-import { GameData } from "./GameData";
-import { PlayerDrawer } from "./PlayerDrawer";
-import { useDrawerState } from "../hooks/useDrawerState";
-import getTradingState from "../utils/tradingState";
+import { useAuth } from "@/context/AuthContext";
+import { DataRow } from "@c/shared/DataRow";
+import { EditableField } from "@c/shared/EditableField";
+import { GameData } from "@c/shared/GameData";
+import { PlayerDrawer } from "@c/players/PlayerDrawer";
+import { useDrawerState } from "@/hooks/useDrawerState";
+import getTradingState from "@/utils/tradingState";
 
-import Player from "./Player";
+import Player from "@c/players/Player";
 
 const GRID_MOBILE = "grid-cols-[1fr_80px]";
 const GRID_MD = "md:grid-cols-[1fr_100px_100px_80px_100px_80px]"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TeamBadge from "./TeamBadge";
+import TeamBadge from "@c/shared/TeamBadge";
 
 function DraftBox({ box }) {
   const [open, setOpen] = useState(false);

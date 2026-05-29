@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export function DataRow({ to, children, gridClass = "", isHeader = false, compact = false, onClick }) {
   const baseClasses = `grid ${gridClass} items-center w-full px-4 ${compact ? "py-1.5" : "py-3"}`;

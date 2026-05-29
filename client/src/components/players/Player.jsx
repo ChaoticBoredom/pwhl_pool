@@ -1,5 +1,5 @@
-import React from 'react'
-import TeamBadge from "./TeamBadge";
+import React from "react";
+import TeamBadge from "@c/shared/TeamBadge";
 
 const Player = ({ player, children }) => {
   return (
