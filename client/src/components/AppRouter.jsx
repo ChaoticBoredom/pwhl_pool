@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
+import PoolLayout from "@c/nav/PoolLayout"
 
 import AuthForm from "@c/auth/AuthForm";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
@@ -27,23 +28,26 @@ export function AppRouter() {
           <Route path="/" element={<Dashboard />}/>
 
           <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
-          <Route path="/pools/:poolId" element={<PoolDetails />} />
-          <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
-          <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
-          <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
 
-          <Route
-            element={
-              <Suspense fallback={<div className="report-loading">Loading...</div>}>
-                <Outlet />
-              </Suspense>
-            }
-          >
-            <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
-            <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
-            <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
-            <Route path="/pools/:poolId/reports/teams" element={<ReportTeams />} />
-            <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
+          <Route path="/pools/:poolId" element={<PoolLayout />}>
+            <Route path="/pools/:poolId" element={<PoolDetails />} />
+            <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
+            <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
+            <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
+
+            <Route
+              element={
+                <Suspense fallback={<div className="report-loading">Loading...</div>}>
+                  <Outlet />
+                </Suspense>
+              }
+            >
+              <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
+              <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
+              <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
+              <Route path="/pools/:poolId/reports/teams" element={<ReportTeams />} />
+              <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
+            </Route>
           </Route>
         </Route>
       </Routes>
