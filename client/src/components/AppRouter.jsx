@@ -21,39 +21,37 @@ const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
 export function AppRouter() {
 
   return (
-    <div className="app-wrapper">
-      <Routes>
-        <Route path="/login" element={<AuthForm />} />
+    <Routes>
+      <Route path="/login" element={<AuthForm />} />
 
-        <Route element={<RequireAuth />}>
-          <Route element={<GlobalLayout />}>
-            <Route path="/" element={<Dashboard />}/>
+      <Route element={<RequireAuth />}>
+        <Route element={<GlobalLayout />}>
+          <Route path="/" element={<Dashboard />}/>
 
-            <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
-          </Route>
+          <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
+        </Route>
 
-          <Route path="/pools/:poolId" element={<PoolLayout />}>
-            <Route path="/pools/:poolId" element={<PoolDetails />} />
-            <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
-            <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
-            <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
+        <Route path="/pools/:poolId" element={<PoolLayout />}>
+          <Route path="/pools/:poolId" element={<PoolDetails />} />
+          <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
+          <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
+          <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
 
-            <Route
-              element={
-                <Suspense fallback={<div className="report-loading">Loading...</div>}>
-                  <Outlet />
-                </Suspense>
-              }
-            >
-              <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
-              <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
-              <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
-              <Route path="/pools/:poolId/reports/teams" element={<ReportTeams />} />
-              <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
-            </Route>
+          <Route
+            element={
+              <Suspense fallback={<div className="report-loading">Loading...</div>}>
+                <Outlet />
+              </Suspense>
+            }
+          >
+            <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
+            <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
+            <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
+            <Route path="/pools/:poolId/reports/teams" element={<ReportTeams />} />
+            <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
           </Route>
         </Route>
-      </Routes>
-    </div>
+      </Route>
+    </Routes>
   );
 }
