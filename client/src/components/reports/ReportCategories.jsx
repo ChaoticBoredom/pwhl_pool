@@ -6,10 +6,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
 } from "recharts";
-import ReportNav from "@c/reports/ReportNav";
-import ReportFilters from "@c/reports/ReportFilters";
+import ReportNav from "./ReportNav";
+import ReportFilters from "./ReportFilters";
 import ChartTooltip from "@c/shared/ChartTooltip";
-import CollapsibleStandings from "@c/reports/CollapsibleStandings";
+import CollapsibleStandings from "./CollapsibleStandings";
 import { seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap, buildCatColourMap } from "@/utils/colourUtils";
 

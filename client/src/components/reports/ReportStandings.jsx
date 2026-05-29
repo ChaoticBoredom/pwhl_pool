@@ -6,10 +6,10 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceArea,
 } from "recharts";
-import ReportNav from "@c/reports/ReportNav";
-import ReportFilters from "@c/reports/ReportFilters";
+import ReportNav from "./ReportNav";
+import ReportFilters from "./ReportFilters";
 import ChartTooltip from "@c/shared/ChartTooltip";
-import CollapsibleStandings from "@c/reports/CollapsibleStandings";
+import CollapsibleStandings from "./CollapsibleStandings";
 import { periodLabel, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
 
