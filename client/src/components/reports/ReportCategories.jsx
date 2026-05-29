@@ -96,7 +96,6 @@ export default function ReportCategories() {
 
   return (
     <div className="app-wrapper">
-      <Link to={`/pools/${poolId}`} className="back-to-dashboard">← Back to Pool</Link>
       <div className="rp-header">
         <h1 className="page-title">Season Report</h1>
         {pool && <p className="rp-subtitle">{pool.name}</p>}

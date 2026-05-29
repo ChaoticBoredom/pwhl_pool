@@ -55,7 +55,6 @@ function PoolDetails() {
 
   return (
     <div>
-      <Link to="/" className="back-to-dashboard">← Back to Dashboard</Link>
       <h1 className="pool-title">
         {isAdmin ?
           (<EditableField value={pool.name} onSave={changePoolName} />) :

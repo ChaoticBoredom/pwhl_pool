@@ -64,8 +64,6 @@ function PoolTeamDetails() {
 
   return (
     <div className="selection-container">
-      <Link to={`/pools/${poolId}`} className="back-to-dashboard">← Back to Pool</Link>
-
       <div className="selection-header">
         <div>
           <h2 className="page-title">
