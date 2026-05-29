@@ -2,10 +2,10 @@ import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import ReportNav from "@/components/reports/ReportNav";
-import ReportFilters from "@/components/reports/ReportFilters";
-import CollapsibleStandings from "@/components/reports/CollapsibleStandings";
-import TeamBadge from "@/components/TeamBadge";
+import ReportNav from "@c/reports/ReportNav";
+import ReportFilters from "@c/reports/ReportFilters";
+import CollapsibleStandings from "@c/reports/CollapsibleStandings";
+import TeamBadge from "@c/shared/TeamBadge";
 import { fmt, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
 
