@@ -1,4 +1,4 @@
-import { PWHL_TEAMS } from "../constants/teams";
+import { PWHL_TEAMS } from "@/constants/teams";
 
 const TeamBadge = ({ shortCode }) => {
   const teamInfo = PWHL_TEAMS[shortCode] || PWHL_TEAMS["default"];
