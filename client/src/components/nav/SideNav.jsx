@@ -31,6 +31,42 @@ const NavSection = ({ label, children, collapsed }) => (
   </div>
 );
 
+const ReportsNavCollapsed = ({ base, onNavigate }) => (
+  <NavLink
+    to={`${base}/reports/standings`}
+    className={({ isActive }) =>
+      `side-nav__item${isActive ? " side-nav__item--active" : ""}`
+    }
+    title="Reports"
+    onClick={onNavigate}
+  >
+    <FileBarChart size={18} className="side-nav__icon" />
+  </NavLink>
+);
+
+const ReportsNavExpanded = ({ base, onNavigate, reportsOpen, setReportsOpen }) => (
+  <div className="side-nav__group">
+    <button
+      className="side-nav__group-toggle"
+      onClick={() => setReportsOpen(o => !o)}
+    >
+      <FileBarChart size={18} className="side-nav__icon" />
+      <span className="side-nav__label">Reports</span>
+      {reportsOpen
+        ? <ChevronDown size={14} className="side-nav__chevron" />
+        : <ChevronRight size={14} className="side-nav__chevron" />
+      }
+    </button>
+    {reportsOpen && (
+      <div className="side-nav__group-children">
+        <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
+        <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
+        <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />
+      </div>
+    )}
+  </div>
+);
+
 export default function SideNav({ poolId, pool, isAdmin, collapsed, onNavigate, className = "" }) {
   const { currentUser } = useAuth();
   const [reportsOpen, setReportsOpen] = useState(false);
@@ -64,40 +100,9 @@ export default function SideNav({ poolId, pool, isAdmin, collapsed, onNavigate, 
 
         {isAdmin && (
           <NavSection label="Commissioner" collapsed={collapsed}>
-            {collapsed ? (
-              <NavLink
-                to={`${base}/reports/standings`}
-                className={({ isActive }) =>
-                  `side-nav__item${isActive ? " side-nav__item--active" : ""}`
-                }
-                title="Reports"
-                onClick={onNavigate}
-              >
-                <FileBarChart size={18} className="side-nav__icon" />
-              </NavLink>
-            ) : (
-              <div className="side-nav__group">
-                <button
-                  className="side-nav__group-toggle"
-                  onClick={() => setReportsOpen(o => !o)}
-                >
-                  <FileBarChart size={18} className="side-nav__icon" />
-                  <span className="side-nav__label">Reports</span>
-                  {reportsOpen
-                    ? <ChevronDown size={14} className="side-nav__chevron" />
-                    : <ChevronRight size={14} className="side-nav__chevron" />
-                  }
-                </button>
-                {reportsOpen && (
-                  <div className="side-nav__group-children">
-                    <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
-                    <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
-                    <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />
-                  </div>
-                )}
-              </div>
-            )}
-
+            {collapsed
+              ? <ReportsNavCollapsed base={base} onNavigate={onNavigate} />
+              : <ReportsNavExpanded base={base} onNavigate={onNavigate} reportsOpen={reportsOpen} setReportsOpen={setReportsOpen} />}
             {/* Coming Soon
             <NavItem to={`${base}/trades`} icon={ArrowLeftRight} label="Trades" collapsed={collapsed} onClick={onNavigate} />
             <NavItem to={`${base}/settings`} icon={Settings} label="Pool Settings" collapsed={collapsed} onClick={onNavigate} />
