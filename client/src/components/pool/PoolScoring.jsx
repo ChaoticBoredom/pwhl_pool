@@ -19,10 +19,6 @@ export default function PoolScoring() {
 
   return (
     <div className="selection-container">
-      <Link to={`/pools/${poolId}`} className="back-to-dashboard">
-        ← Back to Pool
-      </Link>
- 
       <h2 className="scoring-page-title">Scoring Rules</h2>
  
       <ScoringSection title="Skaters (Forwards and Defense)" scorings={scorings.skaters} />

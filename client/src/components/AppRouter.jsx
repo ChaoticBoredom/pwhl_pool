@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
+import PoolLayout from "@c/nav/PoolLayout"
+import TopBar from "@c/nav/TopBar";
 
 import AuthForm from "@c/auth/AuthForm";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
@@ -19,14 +21,22 @@ const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
 export function AppRouter() {
 
   return (
-    <div className="app-wrapper">
-      <Routes>
-        <Route path="/login" element={<AuthForm />} />
+    <Routes>
+      <Route path="/login" element={<AuthForm />} />
 
-        <Route element={<RequireAuth />}>
+      <Route element={<RequireAuth />}>
+        <Route element={
+          <div className="pool-layout">
+            <TopBar />
+            <main className="pool-layout__main"><Outlet /></main>
+          </div>
+        }>
           <Route path="/" element={<Dashboard />}/>
 
           <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
+        </Route>
+
+        <Route path="/pools/:poolId" element={<PoolLayout />}>
           <Route path="/pools/:poolId" element={<PoolDetails />} />
           <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
@@ -46,7 +56,7 @@ export function AppRouter() {
             <Route path="/pools/:poolId/reports/teams/:teamId" element={<ReportTeams />} />
           </Route>
         </Route>
-      </Routes>
-    </div>
+      </Route>
+    </Routes>
   );
 }
