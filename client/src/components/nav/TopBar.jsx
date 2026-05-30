@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Menu, Home, User, LogOut, UserCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -52,7 +52,7 @@ export default function TopBar({ pool, onMenuToggle }) {
 
           {userMenuOpen && (
             <div className="top-bar__dropdown">
-              <Link
+              {/*<Link
                 to="/profile"
                 className="top-bar__dropdown-item"
                 onClick={() => setUserMenuOpen(false)}
@@ -60,7 +60,7 @@ export default function TopBar({ pool, onMenuToggle }) {
                 <User size={15} />
                 Profile
               </Link>
-              <div className="top-bar__dropdown-divider" />
+              <div className="top-bar__dropdown-divider" />*/}
               <button
                 className="top-bar__dropdown-item top-bar__dropdown-item--danger"
                 onClick={() => { setUserMenuOpen(false); logout(); }}

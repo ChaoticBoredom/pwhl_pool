@@ -16,7 +16,7 @@ const GRID_MD = "md:grid-cols-[1fr_100px_100px_80px_100px_80px]"
 const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
 
 function PoolTeamDetails() {
-  const { poolId, teamId } = useParams()
+  const { teamId } = useParams()
   const { currentUser, authHeaders } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();

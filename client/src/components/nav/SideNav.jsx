@@ -3,10 +3,11 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import {
   Trophy, Shirt, Star, FileBarChart, BarChart2,
-  ArrowLeftRight, Settings, List,
+  ArrowLeftRight, Settings, Home,
   ChevronDown, ChevronRight,
 } from "lucide-react";
 
+// eslint-disable-next-line no-unused-vars
 const NavItem = ({ to, icon: Icon, label, collapsed, end = false, onClick }) => (
   <NavLink
     to={to}
@@ -97,8 +98,10 @@ export default function SideNav({ poolId, pool, isAdmin, collapsed, onNavigate, 
               </div>
             )}
 
+            {/* Coming Soon
             <NavItem to={`${base}/trades`} icon={ArrowLeftRight} label="Trades" collapsed={collapsed} onClick={onNavigate} />
             <NavItem to={`${base}/settings`} icon={Settings} label="Pool Settings" collapsed={collapsed} onClick={onNavigate} />
+            */}
           </NavSection>
         )}
       </div>
@@ -110,7 +113,7 @@ export default function SideNav({ poolId, pool, isAdmin, collapsed, onNavigate, 
           title={collapsed ? "All Pools" : undefined}
           onClick={onNavigate}
         >
-          <List size={18} className="side-nav__icon" />
+          <Home size={18} className="side-nav__icon" />
           {!collapsed && <span className="side-nav__label">All Pools</span>}
         </NavLink>
       </div>
