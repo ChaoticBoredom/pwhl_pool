@@ -6,10 +6,7 @@ class Reports::ScoreSummaryService
     @period = period
     @calculator = ScoringCalculator.new(pool.scoring)
 
-    @teams_by_id = League::Team.
-      where(league_id: @pool.league_id).
-      pluck(:id, :short_code).
-      to_h
+    @teams_by_id = League::Team.short_codes_by_league(@pool.league_id)
   end
 
   def call
