@@ -6,6 +6,7 @@ class Commissioner::Reports::ScoreSummaryController < Commissioner::BaseControll
     @period = params[:period]
     @range = @from..@to
     @breakdowns = Array(params[:breakdowns] || "by_team")
+    @config = @pool.league.stat_config
 
     @report = Reports::ScoreSummaryService.new(
       @pool,

@@ -7,7 +7,7 @@ RSpec.describe PlayerStatService do
   let(:pool_team) { create(:pool_team, pool: pool) }
   let(:season_start) { Time.zone.parse("2025-11-21") }
 
-  let(:service) { described_class.new }
+  let(:service) { described_class.new(Pwhl::StatConfig::STATS) }
 
   def build_stat(start_time:, goals: 0, assists: 0, shots: 0, penalty_minutes: 0.minutes, time_on_ice: 15.minutes)
     build(:pwhl_skater_stat,

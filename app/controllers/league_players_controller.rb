@@ -3,10 +3,11 @@ class LeaguePlayersController < ApplicationController
     @team_player = Pool::TeamPlayer.find(params[:id])
     @player = @team_player.league_player
     @pool = @team_player.pool
+    @config = @pool.league.stat_config
 
     records = PlayerRecordQuery.new(player_ids: [@team_player.league_player_id], season_id: @pool.season_id).records
 
-    @stat_service = PlayerStatService.new
+    @stat_service = PlayerStatService.new(@config::STATS)
     @scoring_service = PlayerScoringService.new(@pool.scoring)
     @calculator = ScoringCalculator.new(@pool.scoring)
 
@@ -16,7 +17,7 @@ class LeaguePlayersController < ApplicationController
     @expanded_scores = @stats.transform_values do |windowed_summary|
       windowed_summary.transform_values do |window|
         scored = @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.roster_type)
-        PlayerStatService::STATS[@player.roster_type].each_with_object({}) do |field, h|
+        @config::STATS[@player.roster_type].each_with_object({}) do |field, h|
           h[field] = scored.fetch(field.to_s, scored.fetch(field, 0.0))
         end
       end

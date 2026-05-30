@@ -16,5 +16,7 @@ json.pool_scores do
 end
 
 json.labels do
-  json.partial! partial: "shared/stat_labels"
+  @config::STAT_LABELS.each do |key, label|
+    json.set! key, label
+  end
 end

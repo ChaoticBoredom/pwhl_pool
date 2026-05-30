@@ -5,11 +5,9 @@ class Reports::ScoreSummaryService
     @breakdowns = Array(breakdowns)
     @period = period
     @calculator = ScoringCalculator.new(pool.scoring)
+    @stats = @pool.league.stat_config::STATS
 
-    @teams_by_id = League::Team.
-      where(league_id: @pool.league_id).
-      pluck(:id, :short_code).
-      to_h
+    @teams_by_id = League::Team.short_codes_by_league(@pool.league_id)
   end
 
   def call
@@ -146,7 +144,7 @@ class Reports::ScoreSummaryService
   end
 
   def normalize_by_category(by_field, roster_type)
-    PlayerStatService::STATS[roster_type].each_with_object({}) do |field, h|
+    @stats[roster_type].each_with_object({}) do |field, h|
       h[field.to_s] = by_field.fetch(field.to_s, by_field.fetch(field, 0.0))
     end
   end

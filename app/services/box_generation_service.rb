@@ -1,16 +1,10 @@
 class BoxGenerationService
   class BoxGenerationError < StandardError; end
-
-  POSITION_GROUPS = {
-    "F" => ["F", "LW", "RW", "C"],
-    "D" => ["D", "LD", "RD"],
-    "G" => ["G"],
-  }.freeze
-
   def initialize(pool, config = BoxGeneration::Config.new, season_id: nil)
     @pool = pool
     @config = config
     @season_id = season_id || pool.display_season_id
+    @position_groups = pool.league.stat_config::POSITION_GROUPS
   end
 
   def call
@@ -106,7 +100,7 @@ class BoxGenerationService
   end
 
   def normalized_position(position)
-    POSITION_GROUPS.find { |_, v| v.include?(position) }&.first || position
+    @position_groups.find { |_, v| v.include?(position) }&.first || position
   end
 
   def validate_no_duplicates!(box_players)

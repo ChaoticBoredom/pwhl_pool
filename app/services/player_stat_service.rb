@@ -1,17 +1,9 @@
 class PlayerStatService
   include ScoringWindows
 
-  STATS = {
-    goalie: [
-      :goals, :assists, :goals_against, :shots_against, :penalty_minutes,
-      :win, :shutout, :saves, :time_on_ice, :game_started
-    ],
-    skater: [
-      :goals, :assists, :penalty_minutes, :shots, :hits, :time_on_ice,
-      :plus_minus, :power_play_goals, :short_handed_goals, :shots_blocked,
-      :faceoffs_taken, :faceoffs_won, :game_winning_goals
-    ],
-  }.with_indifferent_access.freeze
+  def initialize(stats = nil)
+    @stats = stats
+  end
 
   def player_summaries(team_players, records)
     return {} if team_players.empty?
@@ -37,9 +29,9 @@ class PlayerStatService
   private
 
   def calculate_aggregate(records, roster_type)
-    return STATS[roster_type].to_h { |k| [k, 0] } if records.empty?
+    return @stats[roster_type].to_h { |k| [k, 0] } if records.empty?
 
-    STATS[roster_type].each_with_object({}) do |s, r_hash|
+    @stats[roster_type].each_with_object({}) do |s, r_hash|
       r_hash[s] = records.sum { |r| parse_field(s, r[s]) }
     end
   end
