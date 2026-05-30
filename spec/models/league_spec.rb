@@ -67,4 +67,11 @@ RSpec.describe League, type: :model do
       end
     end
   end
+
+  describe "#stat_config" do
+    it "returns the correct stat config for the league type" do
+      league = create(:league, :pwhl)
+      expect(league.stat_config).to eq(Pwhl::StatConfig)
+    end
+  end
 end

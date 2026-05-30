@@ -17,4 +17,8 @@ class League < ApplicationRecord
   def games_active?
     games.where(start_time: Time.current.all_day).in_progress.exists?
   end
+
+  def stat_config
+    "#{short_name.capitalize}::StatConfig".constantize
+  end
 end
