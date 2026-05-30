@@ -1,24 +1,8 @@
-import { useState, useRef, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Home, UserCircle, User, LogOut } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
 import UserMenu from "./UserMenu";
 
 export default function GlobalLayout() {
-  const { logout } = useAuth();
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
   return (
     <div className="pool-layout">
       <header className="top-bar">
