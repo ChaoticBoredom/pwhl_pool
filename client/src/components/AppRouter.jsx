@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
 import PoolLayout from "@c/nav/PoolLayout"
-import GlobalLayout from "@c/nav/GlobalLayout";
+import TopBar from "@c/nav/TopBar";
 
 import AuthForm from "@c/auth/AuthForm";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
@@ -25,7 +25,12 @@ export function AppRouter() {
       <Route path="/login" element={<AuthForm />} />
 
       <Route element={<RequireAuth />}>
-        <Route element={<GlobalLayout />}>
+        <Route element={
+          <div className="pool-layout">
+            <TopBar />
+            <main className="pool-layout__main"><Outlet /></main>
+          </div>
+        }>
           <Route path="/" element={<Dashboard />}/>
 
           <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
