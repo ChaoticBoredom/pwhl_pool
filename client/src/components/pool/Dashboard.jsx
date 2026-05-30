@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export function Dashboard() {
-  const { authHeaders, logout } = useAuth();
+  const { authHeaders } = useAuth();
   const [pools, setPools] = useState([]);
 
 
@@ -17,8 +17,7 @@ export function Dashboard() {
   return (
     <div>
       <div style={{display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Dashboard</h1>
-        <button onClick={logout}>Logout</button>
+        <h1>Pool List</h1>
       </div>
 
       <ul>

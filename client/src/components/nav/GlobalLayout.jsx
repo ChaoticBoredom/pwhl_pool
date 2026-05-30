@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Home, UserCircle, User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import UserMenu from "./UserMenu";
 
 export default function GlobalLayout() {
   const { logout } = useAuth();
@@ -32,36 +33,7 @@ export default function GlobalLayout() {
             <Home size={20} />
           </Link>
 
-          <div className="top-bar__user-menu" ref={menuRef}>
-            <button
-              className="top-bar__btn"
-              onClick={() => setUserMenuOpen(o => !o)}
-              aria-label="User menu"
-            >
-              <UserCircle size={20} />
-            </button>
-
-            {userMenuOpen && (
-              <div className="top-bar__dropdown">
-                <Link
-                  to="/profile"
-                  className="top-bar__dropdown-item"
-                  onClick={() => setUserMenuOpen(false)}
-                >
-                  <User size={15} />
-                  Profile
-                </Link>
-                <div className="top-bar__dropdown-divider" />
-                <button
-                  className="top-bar__dropdown-item top-bar__dropdown-item--danger"
-                  onClick={() => { setUserMenuOpen(false); logout(); }}
-                >
-                  <LogOut size={15} />
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
+          <UserMenu />
         </div>
       </header>
 
