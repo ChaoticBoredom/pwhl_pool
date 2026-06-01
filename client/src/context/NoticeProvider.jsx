@@ -1,17 +1,12 @@
-import { createContext, useCallback, useContext, useRef, useState } from "react";
-
-const NoticeContext = createContext(null);
+import { useCallback, useRef, useState } from "react";
+import { NoticeContext } from "@/context/NoticeContext.js";
 
 const AUTO_DISMISS_MS = 10_000;
 const INLINE_CAP = 3;
 
 let nextId = 1;
 
-// severity: "success" | "info" | "warning" | "error" | "action"
-// floating: error + action
-// inline: success (auto-dismiss) + info + warning
-
-export function NoticeProvider({ children }) {
+export default function NoticeProvider({ children }) {
   const [inline, setInline] = useState([]);
   const [floating, setFloating] = useState([]);
   const timers = useRef({});

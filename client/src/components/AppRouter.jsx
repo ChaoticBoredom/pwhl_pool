@@ -18,6 +18,9 @@ const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
 const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
 
+// Dev specific pages
+const NoticeTestPage = lazy(() => import("@c/dev/NoticeTestPage"));
+
 export function AppRouter() {
 
   return (
@@ -37,6 +40,13 @@ export function AppRouter() {
         </Route>
 
         <Route path="/pools/:poolId" element={<PoolLayout />}>
+          {import.meta.env.DEV && (
+            <Route
+              path="/pools/:poolId/dev/notices"
+              element={<NoticeTestPage />}
+            />
+          )}
+
           <Route path="/pools/:poolId" element={<PoolDetails />} />
           <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />

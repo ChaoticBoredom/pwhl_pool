@@ -31,16 +31,16 @@
   --warning-text: #d97706;
   --success-bg: rgba(16, 185, 129, 0.1);
   --success-text: #059669;
-  --danger-bg: rgba(220, 38, 38, 0.1);
-  --danger-border: rgba(220, 38, 38, 0.3);
-  --danger-text: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.12);
+  --danger-border: rgba(220, 38, 38, 0.45);
+  --danger-text: #b91c1c;
 
   --info-bg: rgba(59, 130, 246, 0.1);
   --info-text: #3b82f6;
   --info-border: rgba(59, 130, 246, 0.3);
-  --action-bg: rgba(249, 115, 22, 0.1);
-  --action-text: #f97316;
-  --action-border: rgba(249, 115, 22, 0.3);
+  --action-bg: rgba(249, 115, 22, 0.15);
+  --action-text: #ea6c00;
+  --action-border: rgba(249, 115, 22, 0.5);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;

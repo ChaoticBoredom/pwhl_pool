@@ -1,4 +1,4 @@
-import { useNotices } from "@/hooks/useNotices";
+import useNotices from "@/hooks/useNotices";
 
 const ICONS = {
   success: "✓",
