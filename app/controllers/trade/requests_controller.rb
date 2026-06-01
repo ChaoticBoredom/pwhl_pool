@@ -5,6 +5,7 @@ class Trade::RequestsController < ApplicationController
   def index
     @trade_requests = @pool_team.
       trade_requests.
+      includes(league_player: :current_team).
       order(requested_at: :desc)
 
     render :index
