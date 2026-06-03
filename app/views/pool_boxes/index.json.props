@@ -17,9 +17,7 @@ json.boxes do
 
         scores = @player_scores[player.id]
 
-        json.scores do
-          json.partial! partial: 'players/scores_raw', locals: { summary: scores }
-        end
+        json.partial! partial: "players/scores", locals: { scores: scores[:scores], clipped: nil }
       end
     end
   end

@@ -26,6 +26,22 @@ class PlayerStatService
     player_summaries([team_player], records)[team_player.id]
   end
 
+  def raw_player_summaries(players, records)
+    return {} if players.empty?
+
+    players.each_with_object({}) do |player, r_hash|
+      player_records = records[player.id] || []
+
+      r_hash[player.id] = {
+        stats: build_stats_summary(player_records, player.roster_type),
+      }
+    end
+  end
+
+  def raw_player_summary(player, records)
+    raw_player_summaries([player], records)[player.id]
+  end
+
   private
 
   def calculate_aggregate(records, roster_type)

@@ -328,13 +328,13 @@ RSpec.describe PlayerScoringService do
     it "returns a summary hash for each player" do
       records = { skater.id => [build_stat(start_time: 1.day.ago)] }
       result = service.raw_player_summaries([skater], records)
-      expect(result[skater.id]).to include(:today, :yesterday, :week_to_date, :month_to_date, :season_to_date)
+      expect(result[skater.id][:scores]).to include(:today, :yesterday, :week_to_date, :month_to_date, :season_to_date)
     end
 
     it "returns full season stats without clipping" do
       records = { skater.id => [build_stat(start_time: Time.zone.parse("2025-11-22 19:00:00"), goals: 1)] }
       result = service.raw_player_summaries([skater], records)
-      expect(result[skater.id][:season_to_date]).to eq(3.0)
+      expect(result[skater.id][:scores][:season_to_date]).to eq(3.0)
     end
 
     it "returns an empty hash on empty input" do
@@ -349,8 +349,24 @@ RSpec.describe PlayerScoringService do
       }
 
       result = service.raw_player_summaries([skater, skater2], records)
-      expect(result[skater.id][:today]).to eq(3.0)
-      expect(result[skater2.id][:today]).to eq(4.0)
+      expect(result[skater.id][:scores][:today]).to eq(3.0)
+      expect(result[skater2.id][:scores][:today]).to eq(4.0)
+    end
+  end
+
+  describe "#raw_player_summary" do
+    around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
+
+    let(:skater) { create(:pwhl_skater, league: league) }
+    let(:service) { build_service(skater_scorings) }
+
+    it "delegates to raw_player_summaries" do
+      stat = build_stat(start_time: 2.hours.ago, goals: 1)
+      records = { skater.id => [stat] }
+
+      expect(service.raw_player_summary(skater, records)).to eq(
+        service.raw_player_summaries([skater], records)[skater.id],
+      )
     end
   end
 

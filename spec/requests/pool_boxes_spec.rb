@@ -33,8 +33,8 @@ RSpec.describe "PoolBoxes", type: :request do
           instance_double(PlayerRecordQuery, records: {})
         )
         allow_any_instance_of(PlayerScoringService).to receive(:raw_player_summaries).and_return(
-          player_a.id => { today: 1.0, yesterday: 2.0, week_to_date: 3.0, month_to_date: 4.0, season_to_date: 5.0 },
-          player_b.id => { today: 0.0, yesterday: 0.0, week_to_date: 0.0, month_to_date: 0.0, season_to_date: 10.0 },
+          player_a.id => { scores: { today: 1.0, yesterday: 2.0, week_to_date: 3.0, month_to_date: 4.0, season_to_date: 5.0 } },
+          player_b.id => { scores: { today: 0.0, yesterday: 0.0, week_to_date: 0.0, month_to_date: 0.0, season_to_date: 10.0 } },
         )
       end
 

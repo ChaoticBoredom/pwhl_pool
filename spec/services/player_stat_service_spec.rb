@@ -177,4 +177,78 @@ RSpec.describe PlayerStatService do
       expect(service.player_summary(tp, records)).to eq(service.player_summaries([tp], records)[tp.id])
     end
   end
+
+  describe "#raw_player_summaries" do
+    around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
+
+    let(:skater) { create(:pwhl_skater, league: league) }
+
+    def raw_summary_for(skater, records)
+      service.raw_player_summaries([skater], records)[skater.id]
+    end
+
+    it "returns a stats key for each player" do
+      result = raw_summary_for(skater, { skater.id => [] })
+      expect(result).to have_key(:stats)
+    end
+
+    it "does not return clipped_stats" do
+      result = raw_summary_for(skater, { skater.id => [] })
+      expect(result).to_not have_key(:clipped_stats)
+    end
+
+    it "returns all time windows" do
+      result = raw_summary_for(skater, { skater.id => [] })
+      expect(result[:stats].keys).to match_array(%i[
+        today yesterday week_to_date month_to_date season_to_date
+      ])
+    end
+
+    it "returns full season stats without clipping" do
+      records = {
+        skater.id => [
+          build_stat(start_time: Time.zone.parse("2025-11-22 19:00:00"), goals: 1),
+          build_stat(start_time: 2.hours.ago, goals: 1),
+        ],
+      }
+      result = raw_summary_for(skater, records)
+      expect(result[:stats][:season_to_date][:goals]).to eq(2)
+    end
+
+    it "returns zeroed stats for a player with no records" do
+      result = raw_summary_for(skater, {})
+      expect(result[:stats][:today][:goals]).to eq(0)
+    end
+
+    it "returns an empty hash on empty input" do
+      expect(service.raw_player_summaries([], {})).to eq({})
+    end
+
+    it "handles multiple players in one call" do
+      skater2 = create(:pwhl_skater, league: league)
+      records = {
+        skater.id => [build_stat(start_time: 2.hours.ago, goals: 1)],
+        skater2.id => [build_stat(start_time: 2.hours.ago, assists: 2)],
+      }
+
+      result = service.raw_player_summaries([skater, skater2], records)
+      expect(result[skater.id][:stats][:today][:goals]).to eq(1)
+      expect(result[skater2.id][:stats][:today][:assists]).to eq(2)
+    end
+  end
+
+  describe "#raw_player_summary" do
+    around { |ex| travel_to(Time.zone.parse("2026-01-15 14:00:00"), &ex) }
+
+    let(:skater) { create(:pwhl_skater, league: league) }
+
+    it "delegates to raw_player_summaries" do
+      stat = build_stat(start_time: 2.hours.ago, goals: 1)
+      records = { skater.id => [stat] }
+
+      expect(service.raw_player_summary(skater, records)).to eq(
+        service.raw_player_summaries([skater], records)[skater.id],
+      )
+    end
+  end
 end

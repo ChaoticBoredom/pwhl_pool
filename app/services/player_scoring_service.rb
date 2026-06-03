@@ -45,8 +45,12 @@ class PlayerScoringService
 
     players.each_with_object({}) do |player, r_hash|
       player_records = records[player.id] || []
-      r_hash[player.id] = build_scores_summary(player_records, player.roster_type)
+      r_hash[player.id] = { scores: build_scores_summary(player_records, player.roster_type) }
     end
+  end
+
+  def raw_player_summary(player, records)
+    raw_player_summaries([player], records)[player.id]
   end
 
   private
