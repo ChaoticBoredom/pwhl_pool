@@ -36,7 +36,7 @@ function ModeToggle({ value, onChange }) {
   return (
     <div className="player-drawer-mode-toggle" role="group" aria-label="Display mode">
       {[
-        { key: "raw", label: "Stats"  },
+        { key: "raw", label: "Stats" },
         { key: "points", label: "Points" },
       ].map(({ key, label }) => (
         <button
@@ -56,7 +56,7 @@ function ClipToggle({ clipped, onChange }) {
     <div className="player-drawer-mode-toggle" role="group" aria-label="Stat window">
       {[
         { key: false, label: "Full season" },
-        { key: true,  label: "This pool"   },
+        { key: true, label: "This pool" },
       ].map(({ key, label }) => (
         <button
           key={String(key)}
@@ -83,8 +83,8 @@ function StatRow({ field, rawValue, pointValue, mode, label }) {
     display = showPoints ? (pointValue === 0 ? "-" : `+${Number(pointValue).toFixed(2)}`) : `${rawValue ?? 0}m`;
   } else if (showPoints) {
     const pts = pointValue ?? 0;
-    display   = pts === 0 ? "—" : `${pts > 0 ? "+" : ""}${Number(pts).toFixed(2)}`;
-  }else {
+    display = pts === 0 ? "—" : `${pts > 0 ? "+" : ""}${Number(pts).toFixed(2)}`;
+  } else {
     display = rawValue ?? 0;
   }
 
@@ -98,57 +98,71 @@ function StatRow({ field, rawValue, pointValue, mode, label }) {
   );
 }
 
-export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerChange }) {
+// poolId: if provided, fetches from league_players#show (no clip toggle)
+// otherwise fetches from team_player (full drawer with clip toggle)
+export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerChange, poolId }) {
   const { authHeaders } = useAuth();
   const { tab, mode, clipped } = drawerState;
+  const isLeagueMode = !!poolId;
+
+  const queryUrl = isLeagueMode
+    ? `/api/players/${player.id}?pool_id=${poolId}`
+    : `/api/players/${player.id}/team_player`;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["player-detail", player.id],
-    queryFn:  () =>
-      fetch(`/api/players/${player.id}/team_player`, { headers: authHeaders })
-        .then(r => r.json()),
-    enabled:   isOpen,
+    queryKey: isLeagueMode
+      ? ["player-league-detail", player.id, poolId]
+      : ["player-detail", player.id],
+    queryFn: () =>
+      fetch(queryUrl, { headers: authHeaders }).then(r => r.json()),
+    enabled: isOpen,
     staleTime: 5 * 60 * 1000,
   });
 
   if (!isOpen) return null;
 
   const labels = data?.labels ?? {};
+  const effectiveClipped = isLeagueMode ? false : clipped;
 
-  const rawSource = clipped ? data?.raw_stats?.clipped_scores : data?.raw_stats?.scores;
+  const rawSource = effectiveClipped ? data?.raw_stats?.clipped_scores : data?.raw_stats?.scores;
   const periodRaw = rawSource?.[tab] ?? {};
 
-  const pointSource = clipped ? data?.expanded_pool_scores?.clipped_scores : data?.expanded_pool_scores?.scores;
+  const pointSource = effectiveClipped ? data?.expanded_pool_scores?.clipped_scores : data?.expanded_pool_scores?.scores;
   const periodPoints = pointSource?.[tab] ?? {};
 
-  const totalSource  = clipped ? data?.pool_scores?.clipped_scores : data?.pool_scores?.scores;
-  const periodTotal  = totalSource?.[tab] ?? 0;
+  const totalSource = effectiveClipped ? data?.pool_scores?.clipped_scores : data?.pool_scores?.scores;
+  const periodTotal = totalSource?.[tab] ?? 0;
 
   const relevantFields = Object.keys(data?.raw_stats?.scores?.season_to_date ?? {});
 
   return (
     <div className="player-drawer" role="region" aria-label={`${player.name} stats`}>
-
       <div className="player-drawer-controls">
         <TabBar active={tab} onSelect={(v) => onDrawerChange("tab", v)} />
         <div className="player-drawer-actions">
           <ModeToggle value={mode} onChange={(v) => onDrawerChange("mode", v)} />
-          <ClipToggle clipped={clipped} onChange={(v) => onDrawerChange("clipped", v)} />
-          <button
-            onClick={onClose}
-            className="player-drawer-close"
-            aria-label={`Close ${player.name} stats`}
-          >
-            <X size={13} />
-          </button>
+          {!isLeagueMode && (
+            <ClipToggle clipped={clipped} onChange={(v) => onDrawerChange("clipped", v)} />
+          )}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="player-drawer-close"
+              aria-label={`Close ${player.name} stats`}
+            >
+              <X size={13} />
+            </button>
+          )}
         </div>
       </div>
 
       <div className="player-drawer-summary">
         <span className="player-drawer-summary-score">
-          {clipped && tab === "season_to_date"
+          {isLeagueMode
+            ? `${TABS.find(t => t.key === tab)?.label} total`
+            : effectiveClipped && tab === "season_to_date"
             ? `Season from ${new Date(player.added_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
-            : clipped
+            : effectiveClipped
             ? `${TABS.find(t => t.key === tab)?.label} (pool)`
             : `${TABS.find(t => t.key === tab)?.label} total`
           }
@@ -156,13 +170,8 @@ export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerCha
       </div>
 
       <div>
-        {isLoading && (
-          <div className="player-drawer-loading">Loading stats…</div>
-        )}
-
-        {isError && (
-          <div className="player-drawer-error">Could not load stats</div>
-        )}
+        {isLoading && <div className="player-drawer-loading">Loading stats…</div>}
+        {isError && <div className="player-drawer-error">Could not load stats</div>}
 
         {!isLoading && !isError && relevantFields.length === 0 && (
           <div className="player-drawer-empty">No stats recorded yet</div>
@@ -192,7 +201,7 @@ export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerCha
         )}
       </div>
 
-      {clipped && data && player.dropped_at && (
+      {!isLeagueMode && effectiveClipped && data && player.dropped_at && (
         <div className="player-drawer-clip-notice">
           Dropped {new Date(player.dropped_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
         </div>

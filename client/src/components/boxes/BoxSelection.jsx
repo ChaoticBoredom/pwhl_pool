@@ -1,33 +1,88 @@
-import React from "react";
+import { ChevronRight } from "lucide-react";
 import { DataRow } from "@c/shared/DataRow";
-import Player from '@c/players/Player';
+import Player from "@c/players/Player";
 
-const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
+const BoxSelection = ({
+  box,
+  isCurrentSeason,
+  selectedPlayerId,
+  onSelect,
+  pendingByPlayer,
+  onExpandDetails,
+  isDesktop,
+}) => {
   const selectionGrid = "grid-cols-[1fr_80px]";
+  const boxRequests = box.players.flatMap(p => pendingByPlayer[p.id] ?? []);
+  const hasPending = boxRequests.length > 0;
 
   return (
     <div className="box-container mb-6">
-      <h3>{box.name}</h3>
+      <div className="box-selection__header">
+        <h3>{box.name}</h3>
+        {isDesktop && (
+          <button
+            className={`box-selection__expand-btn ${hasPending ? "box-selection__expand-btn--pending" : ""}`}
+            onClick={() => onExpandDetails(
+              hasPending ? "trades" : "players",
+              hasPending
+                ? { boxName: box.name, requests: boxRequests }
+                : { players: box.players },
+            )}
+            title={hasPending ? "View pending requests" : "View player details"}
+          >
+            {hasPending
+              ? <span className="box-selection__pending-count">{boxRequests.length} pending</span>
+              : null
+            }
+            <ChevronRight size={16} />
+          </button>
+        )}
+      </div>
+
       <div className="player-list">
         {box.players.map(player => {
           const isSelected = selectedPlayerId === player.id;
+          const playerRequests = pendingByPlayer[player.id] ?? [];
+          const hasDrop = playerRequests.some(r => r.action === "drop");
+          const hasAdd = playerRequests.some(r => r.action === "add");
 
           return (
             <DataRow
               key={player.id}
               gridClass={selectionGrid}
-              onClick={() => onSelect(player.id)}
+              onClick={() => {
+                onSelect(player.id);
+                if (isDesktop) {
+                  onExpandDetails("player", { player });
+                }
+              }}
             >
-              <Player player={player}>
-                <input
-                  type="radio"
-                  name={`box-${box.id}`}
-                  checked={isSelected}
-                  onChange={() => onSelect(player.id)}
-                />
-              </Player>
+              <div className="box-selection__player-row">
+                <Player player={player}>
+                  <input
+                    type="radio"
+                    name={`box-${box.id}`}
+                    checked={isSelected}
+                    onChange={() => onSelect(player.id)}
+                  />
+                </Player>
+                <div className="box-selection__badges">
+                  {hasDrop && (
+                    <span className="box-selection__trade-badge box-selection__trade-badge--drop">
+                      Drop pending
+                    </span>
+                  )}
+                  {hasAdd && (
+                    <span className="box-selection__trade-badge box-selection__trade-badge--add">
+                      Add pending
+                    </span>
+                  )}
+                </div>
+              </div>
               <div className="score-display-vertical">
-                <span className="score-label">{isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}</span>
+                <span className="score-label">
+                  {isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}
+                </span>
                 <span className="score-value">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>
@@ -38,4 +93,4 @@ const BoxSelection = ({ box, isCurrentSeason, selectedPlayerId, onSelect }) => {
   );
 };
 
-export default BoxSelection
+export default BoxSelection;
