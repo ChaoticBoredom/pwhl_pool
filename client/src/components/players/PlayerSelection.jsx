@@ -24,7 +24,6 @@ const PlayerSelection = () => {
   const queryClient = useQueryClient();
   const isDesktop = useIsDesktop();
   const pendingsSectionRef = useRef(null);
-  const panelRef = useRef(null);
 
   const [detailPanel, setDetailPanel] = useState(null);
 
@@ -197,14 +196,11 @@ const PlayerSelection = () => {
   });
 
   const handleExpandDetails = (type, payload) => {
-    if (type === "player") {
-      setDetailPanel({ type: "player", player: payload.player });
+    if (type === "comparison") {
+      setDetailPanel({ type: "comparison", boxId: payload.boxId, boxName: payload.boxName, players: payload.players });
     } else if (type === "trades") {
       setDetailPanel({ type: "trades", boxName: payload.boxName, requests: payload.requests });
-    } else if (type === "players") {
-      setDetailPanel(null);
     }
-     panelRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const saveLabel = () => {
@@ -251,6 +247,7 @@ const PlayerSelection = () => {
             <SelectionDetailPanel
               panel={detailPanel}
               poolId={poolId}
+              selectedPlayerId={detailPanel?.boxId ? selections[detailPanel.boxId] : null}
               onCancelRequest={cancelRequest}
               isCancelling={isCancelling}
             />

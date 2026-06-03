@@ -7,7 +7,7 @@ const BoxSelection = ({
   isCurrentSeason,
   selectedPlayerId,
   onSelect,
-  pendingByPlayer,
+  pendingByPlayer = {},
   onExpandDetails,
   isDesktop,
 }) => {
@@ -23,17 +23,16 @@ const BoxSelection = ({
           <button
             className={`box-selection__expand-btn ${hasPending ? "box-selection__expand-btn--pending" : ""}`}
             onClick={() => onExpandDetails(
-              hasPending ? "trades" : "players",
+              hasPending ? "trades" : "comparison",
               hasPending
                 ? { boxName: box.name, requests: boxRequests }
-                : { players: box.players },
+                : { boxId: box.id, boxName: box.name, players: box.players },
             )}
-            title={hasPending ? "View pending requests" : "View player details"}
+            title={hasPending ? "View pending requests" : "Compare players"}
           >
-            {hasPending
-              ? <span className="box-selection__pending-count">{boxRequests.length} pending</span>
-              : null
-            }
+            {hasPending && (
+              <span className="box-selection__pending-count">{boxRequests.length} pending</span>
+            )}
             <ChevronRight size={16} />
           </button>
         )}
@@ -50,12 +49,7 @@ const BoxSelection = ({
             <DataRow
               key={player.id}
               gridClass={selectionGrid}
-              onClick={() => {
-                onSelect(player.id);
-                if (isDesktop) {
-                  onExpandDetails("player", { player });
-                }
-              }}
+              onClick={() => onSelect(player.id)}
             >
               <div className="box-selection__player-row">
                 <Player player={player}>
