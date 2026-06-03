@@ -1,5 +1,6 @@
 json.using_reference_season @pool.using_reference_season?
 json.trading_state @pool.trade_policy_result
+json.pending_trades @has_pending_trades
 
 json.boxes do
   json.array! @boxes do |box|

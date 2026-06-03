@@ -21,6 +21,11 @@ RSpec.describe "PoolBoxes", type: :request do
         get_index
         expect(response.parsed_body["boxes"]).to eq([])
       end
+
+      it "returns pending_trades as false" do
+        get_index
+        expect(response.parsed_body["pending_trades"]).to be(false)
+      end
     end
 
     context "with boxes and players" do
@@ -30,7 +35,7 @@ RSpec.describe "PoolBoxes", type: :request do
 
       before do
         allow(PlayerRecordQuery).to receive(:new).and_return(
-          instance_double(PlayerRecordQuery, records: {})
+          instance_double(PlayerRecordQuery, records: {}),
         )
         allow_any_instance_of(PlayerScoringService).to receive(:raw_player_summaries).and_return(
           player_a.id => { scores: { today: 1.0, yesterday: 2.0, week_to_date: 3.0, month_to_date: 4.0, season_to_date: 5.0 } },
@@ -77,28 +82,81 @@ RSpec.describe "PoolBoxes", type: :request do
         end
       end
 
-      context "when the current user has a pool team" do
-        let!(:pool_team) { create(:pool_team, pool: pool, owner: user) }
+      context "selection via current user fallback" do
+        context "when the current user has a pool team" do
+          let!(:pool_team) { create(:pool_team, pool: pool, owner: user) }
 
-        it "marks a player on the current team as selected" do
+          it "marks a player on the current team as selected" do
+            create(:pool_team_player, pool_team: pool_team, league_player: player_a)
+            get_index
+            players = response.parsed_body["boxes"].first["players"]
+            expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)
+          end
+
+          it "marks a player not on the current team as not selected" do
+            get_index
+            players = response.parsed_body["boxes"].first["players"]
+            expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(false)
+          end
+
+          it "returns pending_trades true when team has pending requests" do
+            create(:trade_request, :add, :pending, pool_team: pool_team, league_player: player_a)
+            get_index
+            expect(response.parsed_body["pending_trades"]).to be(true)
+          end
+
+          it "returns pending_trades false when team has no pending requests" do
+            get_index
+            expect(response.parsed_body["pending_trades"]).to be(false)
+          end
+        end
+
+        context "when the current user has no pool team" do
+          it "marks all players as not selected" do
+            get_index
+            players = response.parsed_body["boxes"].first["players"]
+            expect(players.map { |p| p["selected"] }).to all(be(false))
+          end
+
+          it "returns pending_trades as false" do
+            get_index
+            expect(response.parsed_body["pending_trades"]).to be(false)
+          end
+        end
+      end
+
+      context "selection via pool_team_id param" do
+        let(:other_user) { create(:user) }
+        let!(:pool_team) { create(:pool_team, pool: pool, owner: other_user) }
+
+        subject(:get_index_with_team) do
+          get "/api/pools/#{pool.id}/pool_boxes",
+            params: { pool_team_id: pool_team.id },
+            headers: auth_headers
+        end
+
+        it "marks a player on the specified team as selected" do
           create(:pool_team_player, pool_team: pool_team, league_player: player_a)
-          get_index
+          get_index_with_team
           players = response.parsed_body["boxes"].first["players"]
           expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)
         end
 
-        it "marks a player not on the current team as not selected" do
-          get_index
+        it "does not use the current user's team for selection" do
+          create(:pool_team, pool: pool, owner: user).tap do |current_users_team|
+            create(:pool_team_player, pool_team: current_users_team, league_player: player_b)
+          end
+          create(:pool_team_player, pool_team: pool_team, league_player: player_a)
+          get_index_with_team
           players = response.parsed_body["boxes"].first["players"]
-          expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(false)
+          expect(players.find { |p| p["id"] == player_b.id }["selected"]).to be(false)
+          expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)
         end
-      end
 
-      context "when the current user has no pool team" do
-        it "marks all players as not selected" do
-          get_index
-          players = response.parsed_body["boxes"].first["players"]
-          expect(players.map { |p| p["selected"] }).to all(be(false))
+        it "returns pending_trades scoped to the specified team" do
+          create(:trade_request, :add, :pending, pool_team: pool_team, league_player: player_a)
+          get_index_with_team
+          expect(response.parsed_body["pending_trades"]).to be(true)
         end
       end
 
@@ -203,7 +261,7 @@ RSpec.describe "PoolBoxes", type: :request do
 
       it "passes teams and scope through to the config" do
         expect(BoxGeneration::Config).to receive(:new).with(
-          hash_including(teams: ["MTL", "OTT"], scope: "per_team")
+          hash_including(teams: ["MTL", "OTT"], scope: "per_team"),
         ).and_call_original
         post_generate
       end
