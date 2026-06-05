@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
@@ -6,16 +6,8 @@ import useNotices from "@/hooks/useNotices";
 import BoxSelection from "@c/boxes/BoxSelection";
 import SelectionDetailPanel from "@c/boxes/SelectionDetailPanel";
 import PendingTradesSection from "@c/trade_requests/PendingTradesSection";
+import { useIsDesktop } from "@/hooks/useBreakpoint";
 import getTradingState from "@/utils/tradingState";
-
-const DESKTOP_BREAKPOINT = 1024;
-
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(
-    () => window.innerWidth >= DESKTOP_BREAKPOINT,
-  );
-  return isDesktop;
-};
 
 const PlayerSelection = () => {
   const { poolId, teamId } = useParams();
@@ -24,7 +16,6 @@ const PlayerSelection = () => {
   const { add: addNotice } = useNotices();
   const queryClient = useQueryClient();
   const isDesktop = useIsDesktop();
-  const pendingsSectionRef = useRef(null);
 
   const [detailPanel, setDetailPanel] = useState(null);
 

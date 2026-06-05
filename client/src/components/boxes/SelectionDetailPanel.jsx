@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useDrawerState } from "@/hooks/useDrawerState";
 import TeamBadge from "@c/shared/TeamBadge";
 import TradesPanel from "@c/trade_requests/TradesPanel";
 
