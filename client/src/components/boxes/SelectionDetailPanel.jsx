@@ -6,7 +6,7 @@ const WINDOWS = [
   { key: "season_to_date", label: "Season" },
   { key: "month_to_date", label: "Month" },
   { key: "week_to_date", label: "Week" },
-  { key: "today", label: "Today" },
+  { key: "yesterday", label: "Yesterday" },
 ];
 
 function ComparisonPanel({ boxName, players, selectedPlayerId }) {
