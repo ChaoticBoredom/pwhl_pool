@@ -8,6 +8,7 @@ import CollapsibleStandings from "./CollapsibleStandings";
 import TeamBadge from "@c/shared/TeamBadge";
 import { fmt, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
+import { formatDate } from "@/utils/formatDate";
 
 function groupByBox(players) {
   const boxes = {};
@@ -53,9 +54,9 @@ function groupByBox(players) {
 
 const tenureStr = (tenures) =>
   tenures.map(t => {
-    const from = new Date(t.added_at).toLocaleDateString("default", { month: "short", day: "numeric" });
+    const from = formatDate(t.added_at);
     const to = t.dropped_at
-      ? new Date(t.dropped_at).toLocaleDateString("default", { month: "short", day: "numeric" })
+      ? formatDate(t.dropped_at)
       : "present";
     return `${from} – ${to}`;
   }).join(" · ");

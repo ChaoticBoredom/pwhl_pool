@@ -4,6 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { EditableField } from "@c/shared/EditableField";
 import { DataRow } from "@c/shared/DataRow";
+import { formatDate } from "@/utils/formatDate";
 
 function PoolDetails() {
   const { poolId } = useParams()
@@ -35,7 +36,7 @@ function PoolDetails() {
 
   if (isLoading || !pool) return <div>Loading pool details...</div>
 
-  const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
+  const lastFetchedAt = formatDate(dataUpdatedAt);
 
   return (
     <div>

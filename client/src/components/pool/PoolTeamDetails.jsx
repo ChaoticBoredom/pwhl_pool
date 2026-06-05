@@ -7,6 +7,7 @@ import { EditableField } from "@c/shared/EditableField";
 import { GameData } from "@c/shared/GameData";
 import { PlayerDrawer } from "@c/players/PlayerDrawer";
 import { useDrawerState } from "@/hooks/useDrawerState";
+import { formatDate } from "@/utils/formatDate";
 import getTradingState from "@/utils/tradingState";
 
 import Player from "@c/players/Player";
@@ -60,7 +61,7 @@ function PoolTeamDetails() {
   if (isLoading || !poolTeam) return <div>Loading pool team details...</div>
 
   const isOwner = currentUser && poolTeam?.owner?.id === currentUser;
-  const lastFetchedAt = new Date(dataUpdatedAt).toLocaleTimeString();
+  const lastFetchedAt = formatDate(dataUpdatedAt);
 
   return (
     <div className="selection-container">

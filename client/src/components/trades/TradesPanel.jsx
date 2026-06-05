@@ -1,13 +1,5 @@
 import PendingTradeGroup from "@c/trades/PendingTradeGroup";
-
-function formatDate(isoString) {
-  return new Date(isoString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
+import { formatDateTime } from "@/utils/formatDate";
 
 // Groups requests by request_group_id, then by pool_box.id within each group
 // Sorts box pairs within a group by pool_box.position
@@ -52,7 +44,7 @@ export default function TradesPanel({ requests, boxes, onCancel, isCancelling })
           <div key={group.groupId} className="trades-panel__group">
             <div className="trades-panel__group-header">
               <span className="trades-panel__group-date">
-                Submitted {formatDate(group.requestedAt)}
+                Submitted {formatDateTime(group.requestedAt)}
               </span>
               <button
                 className="btn-primary btn-sm trades-panel__cancel-all"

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
+import { formatDate } from "@/utils/formatDate";
 import { X } from "lucide-react";
 
 const TABS = [
@@ -161,7 +162,7 @@ export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerCha
           {isLeagueMode
             ? `${TABS.find(t => t.key === tab)?.label} total`
             : effectiveClipped && tab === "season_to_date"
-            ? `Season from ${new Date(player.added_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+            ? `Season from ${formatDate(player.added_at, { year: "numeric" })}`
             : effectiveClipped
             ? `${TABS.find(t => t.key === tab)?.label} (pool)`
             : `${TABS.find(t => t.key === tab)?.label} total`
@@ -203,7 +204,7 @@ export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerCha
 
       {!isLeagueMode && effectiveClipped && data && player.dropped_at && (
         <div className="player-drawer-clip-notice">
-          Dropped {new Date(player.dropped_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          Dropped {formatDate(player.dropped_at, { year: "numeric" })}
         </div>
       )}
     </div>
