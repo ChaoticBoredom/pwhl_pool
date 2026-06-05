@@ -22,8 +22,8 @@ const PlayerSelection = () => {
   const { data: boxData } = useQuery({
     queryKey: ["pool_boxes", poolId, teamId],
     queryFn: () =>
-      fetch(`/api/pools/${poolId}/pool_boxes?pool_team_id=${teamId}`, { headers: authHeaders })
-        .then(res => res.json()),
+      fetch(`/api/pools/${poolId}/pool_boxes?pool_team_id=${teamId}`, { headers: authHeaders }).
+        then(res => res.json()),
     enabled: !!poolId && !!teamId,
     staleTime: 0,
     gcTime: 10 * 60 * 1000,
@@ -35,8 +35,8 @@ const PlayerSelection = () => {
   const { data: tradeRequests = [] } = useQuery({
     queryKey: ["trade_requests", teamId],
     queryFn: () =>
-      fetch(`/api/pool_teams/${teamId}/trade_requests?status=pending`, { headers: authHeaders })
-        .then(res => res.json()),
+      fetch(`/api/pool_teams/${teamId}/trade_requests?status=pending`, { headers: authHeaders }).
+        then(res => res.json()),
     enabled: !!teamId && tradingIsPendingApproval,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
@@ -121,10 +121,10 @@ const PlayerSelection = () => {
 
       if (status === 409) {
         const conflicts = body.conflicts ?? [];
-        const names = conflicts
-          .filter(c => c.action === "drop")
-          .map(c => c.league_player.name)
-          .join(", ");
+        const names = conflicts.
+          filter(c => c.action === "drop").
+          map(c => c.league_player.name).
+          join(", ");
 
         addNotice({
           severity: "action",
