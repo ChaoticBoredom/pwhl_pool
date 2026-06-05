@@ -6,7 +6,7 @@ class League::Player < ApplicationRecord
   validates :name, :type, :api_id, presence: true
 
   belongs_to :league
-  belongs_to :current_team, class_name: "League::Team"
+  belongs_to :current_team, class_name: "League::Team", optional: true
 
   private
 
