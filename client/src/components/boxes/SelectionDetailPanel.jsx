@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDrawerState } from "@/hooks/useDrawerState";
 import TeamBadge from "@c/shared/TeamBadge";
-import PendingTradeGroup from "@c/trades/PendingTradeGroup";
+import TradesPanel from "@c/trades/TradesPanel";
 
 const WINDOWS = [
   { key: "season_to_date", label: "Season" },
@@ -77,36 +77,6 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
   );
 }
 
-function TradesPanel({ requests, boxes, onCancelRequest, isCancelling }) {
-  const byBox = requests.reduce((acc, r) => {
-    if (!acc[r.pool_box_id]) acc[r.pool_box_id] = [];
-    acc[r.pool_box_id].push(r);
-    return acc;
-  }, {});
-
-  const boxNameById = boxes.reduce((acc, b) => {
-    acc[b.id] = b.name;
-    return acc;
-  }, {});
-
-  return (
-    <div className="selection-panel">
-      <div className="selection-panel__header">
-        <span className="selection-panel__player-name">Pending Requests</span>
-      </div>
-      {Object.entries(byBox).map(([boxId, boxRequests]) => (
-        <PendingTradeGroup
-          key={boxId}
-          boxName={boxNameById[boxId] ?? "Unknown Box"}
-          requests={boxRequests}
-          onCancel={onCancelRequest}
-          isCancelling={isCancelling}
-        />
-      ))}
-    </div>
-  );
-}
-
 // panel: { type: "comparison", boxName, players, boxId } |
 //        { type: "trades", requests } |
 //        null
@@ -118,8 +88,6 @@ export default function SelectionDetailPanel({
   onCancelRequest,
   isCancelling,
 }) {
-  const { drawerState, updateDrawer } = useDrawerState();
-
   if (!panel) {
     return (
       <div className="selection-panel selection-panel--empty">
@@ -140,12 +108,17 @@ export default function SelectionDetailPanel({
 
   if (panel.type === "trades") {
     return (
-      <TradesPanel
-        requests={tradeRequests}
-        boxes={boxes}
-        onCancelRequest={onCancelRequest}
-        isCancelling={isCancelling}
-      />
+      <div className="selection-panel">
+        <div className="selection-panel__header">
+          <span className="selection-panel__player-name">Pending Requests</span>
+        </div>
+        <TradesPanel
+          requests={tradeRequests}
+          boxes={boxes}
+          onCancel={onCancelRequest}
+          isCancelling={isCancelling}
+        />
+      </div>
     );
   }
 

@@ -3,6 +3,7 @@ import TeamBadge from "@c/shared/TeamBadge";
 export default function PendingTradeGroup({ boxName, requests, onCancel, isCancelling }) {
   const drop = requests.find(r => r.action === "drop");
   const add = requests.find(r => r.action === "add");
+  const poolBoxId = requests[0].pool_box.id;
 
   return (
     <div className="pending-trade-group">
@@ -10,7 +11,7 @@ export default function PendingTradeGroup({ boxName, requests, onCancel, isCance
         <span className="pending-trade-group__box-name">{boxName}</span>
         <button
           className="btn-primary btn-sm"
-          onClick={() => onCancel(requests[0].pool_box_id)}
+          onClick={() => onCancel({ pool_box_id: poolBoxId })}
           disabled={isCancelling}
         >
           Cancel

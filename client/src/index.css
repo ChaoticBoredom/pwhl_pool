@@ -2196,3 +2196,33 @@ input::placeholder { color: var(--placeholder); }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ============================================================
+   TRADES PANEL — group-level structure
+   ============================================================ */
+
+.trades-panel__group {
+  border-bottom: 1px solid var(--border);
+}
+
+.trades-panel__group:last-child { border-bottom: none; }
+
+.trades-panel__group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.trades-panel__group-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.trades-panel__cancel-all { flex-shrink: 0; }

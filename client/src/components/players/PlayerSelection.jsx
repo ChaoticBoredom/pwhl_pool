@@ -34,7 +34,7 @@ const PlayerSelection = () => {
       fetch(`/api/pools/${poolId}/pool_boxes?pool_team_id=${teamId}`, { headers: authHeaders })
         .then(res => res.json()),
     enabled: !!poolId && !!teamId,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
     gcTime: 10 * 60 * 1000,
   });
 
@@ -57,15 +57,6 @@ const PlayerSelection = () => {
       const pid = r.league_player.id;
       if (!acc[pid]) acc[pid] = [];
       acc[pid].push(r);
-      return acc;
-    }, {});
-  }, [tradeRequests]);
-
-  // Group pending requests by box id for the panel
-  const pendingByBox = useMemo(() => {
-    return tradeRequests.reduce((acc, r) => {
-      if (!acc[r.pool_box_id]) acc[r.pool_box_id] = [];
-      acc[r.pool_box_id].push(r);
       return acc;
     }, {});
   }, [tradeRequests]);
@@ -99,7 +90,7 @@ const PlayerSelection = () => {
     mutationFn: ({ confirmReplace } = {}) =>
       fetch(`/api/pool_teams/${teamId}/trade_requests`, {
         method: "POST",
-        headers: { ...authHeaders, "Accept": "application/json", "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           pool_id: poolId,
           new_player_ids: Object.values(selections),
@@ -181,16 +172,15 @@ const PlayerSelection = () => {
   });
 
   const { mutate: cancelRequest, isPending: isCancelling } = useMutation({
-    mutationFn: (poolBoxId) =>
+    mutationFn: (scope) =>
       fetch(`/api/pool_teams/${teamId}/trade_requests/cancel`, {
         method: "POST",
         headers: authHeaders,
-        body: JSON.stringify({ pool_box_id: poolBoxId }),
+        body: JSON.stringify(scope),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trade_requests", teamId], refetchType: "all" });
       queryClient.invalidateQueries({ queryKey: ["pool_boxes", poolId, teamId], refetchType: "all" });
-      setDetailPanel(prev => prev?.type === "trades" ? { ...prev, requests: [] } : prev);
     },
     onError: () => {
       addNotice({ severity: "error", message: "Failed to cancel request. Please try again." });
@@ -201,7 +191,7 @@ const PlayerSelection = () => {
     if (type === "comparison") {
       setDetailPanel({ type: "comparison", boxId: payload.boxId, boxName: payload.boxName, players: payload.players });
     } else if (type === "trades") {
-      setDetailPanel({ type: "trades" });
+      setDetailPanel({ type: "trades", requests: tradeRequests });
     }
   };
 
