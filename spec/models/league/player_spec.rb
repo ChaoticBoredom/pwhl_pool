@@ -8,7 +8,7 @@ RSpec.describe League::Player, type: :model do
   it { should validate_presence_of(:api_id) }
 
   it { should belong_to(:league) }
-  it { should belong_to(:current_team) }
+  it { should belong_to(:current_team).optional }
 
   context "when type is unset" do
     context "when league is 'PWHL'" do

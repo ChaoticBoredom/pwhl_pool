@@ -16,7 +16,7 @@ class League::Player < ApplicationRecord
     self.type = [prefix, suffix].compact.join("::")
   end
 
-  def sync_team_short_code
+  def sync_current_team_short_code
     self.current_team_short_code = current_team&.short_code
   end
 end
