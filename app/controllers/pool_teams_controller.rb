@@ -2,7 +2,7 @@ class PoolTeamsController < ApplicationController
   def show
     id = params[:id]
     @pool_team = Pool::Team.
-      includes(:owner, pool: :league, pool_team_players: [:pool_box, { league_player: :current_team }]).
+      includes(:owner, pool: :league, pool_team_players: [:pool_box, :league_player]).
       find(id)
     @pool = @pool_team.pool
     records = PlayerRecordQuery.new(players: @pool_team.pool_team_players, season_id: @pool.season_id).records

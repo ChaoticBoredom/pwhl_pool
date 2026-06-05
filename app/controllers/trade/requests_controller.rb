@@ -12,7 +12,7 @@ class Trade::RequestsController < ApplicationController
     scope = scope.where(status: params[:status]) if params[:status].in?(VALID_STATUSES)
 
     @trade_requests = scope.
-      includes([:pool_box, { league_player: :current_team }]).
+      includes([:pool_box, :league_player]).
       order(requested_at: :desc)
 
     render :index

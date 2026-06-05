@@ -12,5 +12,5 @@ json.backdated_to trade_request.backdated_to&.iso8601(3)
 json.league_player do
   json.id trade_request.league_player.id
   json.name trade_request.league_player.name
-  json.team_short_code trade_request.league_player.current_team&.short_code
+  json.team_short_code trade_request.league_player.current_team_short_code
 end
