@@ -38,7 +38,6 @@ class BoxGenerationService
   def sort_and_group(scores)
     player_lookup = League::Player.
       where(id: scores.keys).
-      includes(:current_team).
       index_by(&:id)
 
     details = scores.each_with_object({}) do |(id, score), r_hash|
@@ -48,7 +47,7 @@ class BoxGenerationService
         name: player.name,
         position: normalized_position(player.position),
         team_id: player.current_team_id,
-        team_short_code: player.current_team.short_code,
+        team_short_code: player.current_team_short_code,
         rookie: player.rookie?,
         score: score,
       }

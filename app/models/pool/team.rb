@@ -1,5 +1,4 @@
 class Pool::Team < ApplicationRecord
-  # Lets us call `.owner` on the team seamlessly
   belongs_to :owner, class_name: "User", foreign_key: "user_id"
   belongs_to :pool
 
@@ -11,10 +10,10 @@ class Pool::Team < ApplicationRecord
   has_many :league_players, through: :pool_team_players
 
   def current_team
-    pool_team_players.includes(league_player: :current_team).current
+    pool_team_players.includes(:league_player).current
   end
 
   def previous_team
-    pool_team_players.includes(league_player: :current_team).non_current
+    pool_team_players.includes(:league_player).non_current
   end
 end
