@@ -1,6 +1,10 @@
 class Trade::RequestsController < ApplicationController
   before_action :set_pool_team, :set_pool
-  before_action :require_owner, only: [:create, :destroy]
+  before_action :require_owner, only: [:create, :cancel]
+  before_action :validate_cancel_params, only: [:cancel]
+  before_action :load_requests_to_cancel, only: [:cancel]
+
+  CANCEL_SCOPE_PARAMS = %w[id pool_box_id request_group_id].freeze
 
   def index
     @trade_requests = @pool_team.
@@ -40,11 +44,12 @@ class Trade::RequestsController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_content
   end
 
-  def destroy
-    @trade_request = @pool_team.trade_requests.trade_status_pending.find(params[:id])
-    @trade_request.decide!(:cancelled,
-      decided_by: current_user,
-      decided_at: Time.current)
+  def cancel
+    @cancel_requests.each do |tr|
+      tr.decide!(:cancelled,
+        decided_by: current_user,
+        decided_at: Time.current)
+    end
     head :no_content
   rescue ActiveRecord::RecordNotFound
     head :not_found
@@ -62,6 +67,29 @@ class Trade::RequestsController < ApplicationController
 
   def require_owner
     head :forbidden unless current_user == @pool_team.owner
+  end
+
+  def validate_cancel_params
+    provided = params.slice(*CANCEL_SCOPE_PARAMS).keys
+
+    if provided.length.zero?
+      render json: { error: "One of #{CANCEL_SCOPE_PARAMS.to_sentence} is required"}, status: :bad_request
+    elsif provided.length > 1
+      render json: { error: "Only one of #{CANCEL_SCOPE_PARAMS.to_sentence} may be provided" }, status: :bad_request
+    end
+  end
+
+  def load_requests_to_cancel
+    @cancel_requests = case params.slice(*CANCEL_SCOPE_PARAMS).keys.first
+    when "id"
+      @pool_team.trade_requests.trade_status_pending.where(id: params[:id])
+    when "pool_box_id"
+      @pool_team.trade_requests.trade_status_pending.where(pool_box_id: params[:pool_box_id])
+    when "request_group_id"
+      @pool_team.trade_requests.trade_status_pending.where(request_group_id: params[:request_group_id])
+    end
+
+    head :not_found if @cancel_requests.empty?
   end
 
   def original_player_ids

@@ -36,7 +36,11 @@ Rails.application.routes.draw do
       member do
         post :update_roster
       end
-      resources :trade_requests, only: [:create, :index, :destroy], controller: "trade/requests"
+      resources :trade_requests, only: [:create, :index], controller: "trade/requests" do
+        collection do
+          post :cancel
+        end
+      end
     end
 
     namespace :commissioner do
