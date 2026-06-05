@@ -2058,10 +2058,10 @@ input::placeholder { color: var(--placeholder); }
 .comparison-table__header,
 .comparison-table__row {
   display: grid;
-  grid-template-columns: 1fr repeat(4, 64px);
+  grid-template-columns: 1fr repeat(4, 56px);
   align-items: center;
   gap: 0.25rem;
-  padding: 0.375rem 0.75rem;
+  padding: 0.375rem 1rem;
 }
 
 .comparison-table__header {
@@ -2124,3 +2124,75 @@ input::placeholder { color: var(--placeholder); }
 
 .comparison-table__sort-btn:hover { color: var(--text-h); }
 .comparison-table__sort-btn--active { color: var(--accent); }
+
+/* ============================================================
+   PENDING TRADE GROUP — shared by desktop panel and mobile
+   ============================================================ */
+
+.pending-trade-group {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pending-trade-group:last-child { border-bottom: none; }
+
+.pending-trade-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pending-trade-group__box-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pending-trade-group__players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pending-trade-group__player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.pending-trade-group__action {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+}
+
+.pending-trade-group__player--drop .pending-trade-group__action {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.pending-trade-group__player--add .pending-trade-group__action {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.pending-trade-group__name {
+  font-weight: 600;
+  color: var(--text-h);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

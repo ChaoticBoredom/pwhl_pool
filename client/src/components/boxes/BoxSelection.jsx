@@ -25,13 +25,13 @@ const BoxSelection = ({
             onClick={() => onExpandDetails(
               hasPending ? "trades" : "comparison",
               hasPending
-                ? { boxName: box.name, requests: boxRequests }
+                ? { requests: boxRequests }
                 : { boxId: box.id, boxName: box.name, players: box.players },
             )}
             title={hasPending ? "View pending requests" : "Compare players"}
           >
             {hasPending && (
-              <span className="box-selection__pending-count">{boxRequests.length} pending</span>
+              <span className="box-selection__pending-count">pending</span>
             )}
             <ChevronRight size={16} />
           </button>

@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import BoxSelection from "@c/boxes/BoxSelection";
 import SelectionDetailPanel from "@c/boxes/SelectionDetailPanel";
+import PendingTradesSection from "@c/trades/PendingTradesSection";
 import getTradingState from "@/utils/tradingState";
 
 const DESKTOP_BREAKPOINT = 1024;
@@ -43,7 +44,7 @@ const PlayerSelection = () => {
   const { data: tradeRequests = [] } = useQuery({
     queryKey: ["trade_requests", teamId],
     queryFn: () =>
-      fetch(`/api/pool_teams/${teamId}/trade_requests`, { headers: authHeaders })
+      fetch(`/api/pool_teams/${teamId}/trade_requests?status=pending`, { headers: authHeaders })
         .then(res => res.json()),
     enabled: !!teamId && tradingIsPendingApproval,
     staleTime: 30 * 1000,
@@ -180,15 +181,16 @@ const PlayerSelection = () => {
   });
 
   const { mutate: cancelRequest, isPending: isCancelling } = useMutation({
-    mutationFn: (requestId) =>
-      fetch(`/api/pool_teams/${teamId}/trade_requests/${requestId}`, {
-        method: "DELETE",
+    mutationFn: (poolBoxId) =>
+      fetch(`/api/pool_teams/${teamId}/trade_requests/cancel`, {
+        method: "POST",
         headers: authHeaders,
+        body: JSON.stringify({ pool_box_id: poolBoxId }),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["trade_requests", teamId] });
-      queryClient.invalidateQueries({ queryKey: ["pool_boxes", poolId, teamId] });
-      setDetailPanel(null);
+      queryClient.invalidateQueries({ queryKey: ["trade_requests", teamId], refetchType: "all" });
+      queryClient.invalidateQueries({ queryKey: ["pool_boxes", poolId, teamId], refetchType: "all" });
+      setDetailPanel(prev => prev?.type === "trades" ? { ...prev, requests: [] } : prev);
     },
     onError: () => {
       addNotice({ severity: "error", message: "Failed to cancel request. Please try again." });
@@ -199,7 +201,7 @@ const PlayerSelection = () => {
     if (type === "comparison") {
       setDetailPanel({ type: "comparison", boxId: payload.boxId, boxName: payload.boxName, players: payload.players });
     } else if (type === "trades") {
-      setDetailPanel({ type: "trades", boxName: payload.boxName, requests: payload.requests });
+      setDetailPanel({ type: "trades" });
     }
   };
 
@@ -246,7 +248,8 @@ const PlayerSelection = () => {
           <aside className="selection-panel-aside">
             <SelectionDetailPanel
               panel={detailPanel}
-              poolId={poolId}
+              boxes={boxes}
+              tradeRequests={tradeRequests}
               selectedPlayerId={detailPanel?.boxId ? selections[detailPanel.boxId] : null}
               onCancelRequest={cancelRequest}
               isCancelling={isCancelling}
@@ -257,27 +260,12 @@ const PlayerSelection = () => {
 
       {/* Mobile: pending requests section */}
       {!isDesktop && hasPendingTrades && tradeRequests.length > 0 && (
-        <section className="selection-pending" ref={pendingsSectionRef}>
-          <h2 className="selection-pending__title">Pending Requests</h2>
-          {tradeRequests.map(request => (
-            <div key={request.id} className="selection-pending__row">
-              <div className="selection-pending__info">
-                <span className={`selection-pending__action selection-pending__action--${request.action}`}>
-                  {request.action === "add" ? "Adding" : "Dropping"}
-                </span>
-                <span className="selection-pending__name">{request.league_player.name}</span>
-                <span className="selection-pending__team">{request.league_player.team_short_code}</span>
-              </div>
-              <button
-                className="btn-primary btn-sm"
-                onClick={() => cancelRequest(request.id)}
-                disabled={isCancelling}
-              >
-                Cancel
-              </button>
-            </div>
-          ))}
-        </section>
+        <PendingTradesSection
+          tradeRequests={tradeRequests}
+          boxes={boxes}
+          onCancel={cancelRequest}
+          isCancelling={isCancelling}
+        />
       )}
 
       <footer className="selection-footer">

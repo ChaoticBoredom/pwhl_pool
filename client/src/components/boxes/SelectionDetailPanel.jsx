@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { PlayerDrawer } from "@c/players/PlayerDrawer";
-import TeamBadge from "@c/shared/TeamBadge";
 import { useDrawerState } from "@/hooks/useDrawerState";
+import TeamBadge from "@c/shared/TeamBadge";
+import PendingTradeGroup from "@c/trades/PendingTradeGroup";
 
 const WINDOWS = [
   { key: "season_to_date", label: "Season" },
@@ -10,7 +10,7 @@ const WINDOWS = [
   { key: "today", label: "Today" },
 ];
 
-function ComparisonPanel({ boxName, players, selectedPlayerId, onSelect }) {
+function ComparisonPanel({ boxName, players, selectedPlayerId }) {
   const [sortKey, setSortKey] = useState("season_to_date");
   const [sortDir, setSortDir] = useState("desc");
 
@@ -77,10 +77,47 @@ function ComparisonPanel({ boxName, players, selectedPlayerId, onSelect }) {
   );
 }
 
+function TradesPanel({ requests, boxes, onCancelRequest, isCancelling }) {
+  const byBox = requests.reduce((acc, r) => {
+    if (!acc[r.pool_box_id]) acc[r.pool_box_id] = [];
+    acc[r.pool_box_id].push(r);
+    return acc;
+  }, {});
+
+  const boxNameById = boxes.reduce((acc, b) => {
+    acc[b.id] = b.name;
+    return acc;
+  }, {});
+
+  return (
+    <div className="selection-panel">
+      <div className="selection-panel__header">
+        <span className="selection-panel__player-name">Pending Requests</span>
+      </div>
+      {Object.entries(byBox).map(([boxId, boxRequests]) => (
+        <PendingTradeGroup
+          key={boxId}
+          boxName={boxNameById[boxId] ?? "Unknown Box"}
+          requests={boxRequests}
+          onCancel={onCancelRequest}
+          isCancelling={isCancelling}
+        />
+      ))}
+    </div>
+  );
+}
+
 // panel: { type: "comparison", boxName, players, boxId } |
-//        { type: "trades", boxName, requests } |
+//        { type: "trades", requests } |
 //        null
-export default function SelectionDetailPanel({ panel, poolId, selectedPlayerId, onCancelRequest, isCancelling }) {
+export default function SelectionDetailPanel({
+  panel,
+  boxes,
+  tradeRequests,
+  selectedPlayerId,
+  onCancelRequest,
+  isCancelling,
+}) {
   const { drawerState, updateDrawer } = useDrawerState();
 
   if (!panel) {
@@ -102,45 +139,13 @@ export default function SelectionDetailPanel({ panel, poolId, selectedPlayerId, 
   }
 
   if (panel.type === "trades") {
-    const { boxName, requests } = panel;
-    const grouped = requests.reduce((acc, r) => {
-      if (!acc[r.action]) acc[r.action] = [];
-      acc[r.action].push(r);
-      return acc;
-    }, {});
-
     return (
-      <div className="selection-panel">
-        <div className="selection-panel__header">
-          <span className="selection-panel__player-name">{boxName}</span>
-          <span className="selection-panel__subtitle">Pending requests</span>
-        </div>
-
-        {["add", "drop"].map(action => (
-          grouped[action]?.length > 0 && (
-            <div key={action} className="selection-panel__trade-group">
-              <span className="selection-panel__trade-label">
-                {action === "add" ? "Adding" : "Dropping"}
-              </span>
-              {grouped[action].map(request => (
-                <div key={request.id} className="selection-panel__trade-row">
-                  <div className="selection-panel__trade-player">
-                    <span className="player-name">{request.league_player.name}</span>
-                    <TeamBadge shortCode={request.league_player.team_short_code} />
-                  </div>
-                  <button
-                    className="btn-primary btn-sm selection-panel__cancel-btn"
-                    onClick={() => onCancelRequest(request.id)}
-                    disabled={isCancelling}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ))}
-            </div>
-          )
-        ))}
-      </div>
+      <TradesPanel
+        requests={tradeRequests}
+        boxes={boxes}
+        onCancelRequest={onCancelRequest}
+        isCancelling={isCancelling}
+      />
     );
   }
 
