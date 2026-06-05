@@ -38,7 +38,7 @@ const BoxSelection = ({
         )}
       </div>
 
-      <div className="player-list">
+      <div className={`player-list ${hasPending ? "player-list--locked" : ""}`}>
         {box.players.map(player => {
           const isSelected = selectedPlayerId === player.id;
           const playerRequests = pendingByPlayer[player.id] ?? [];
@@ -49,7 +49,7 @@ const BoxSelection = ({
             <DataRow
               key={player.id}
               gridClass={selectionGrid}
-              onClick={() => onSelect(player.id)}
+              onClick={hasPending ? undefined : () => onSelect(player.id)}
             >
               <div className="box-selection__player-row">
                 <Player player={player}>
@@ -58,6 +58,7 @@ const BoxSelection = ({
                     name={`box-${box.id}`}
                     checked={isSelected}
                     onChange={() => onSelect(player.id)}
+                    disabled={hasPending}
                   />
                 </Player>
                 <div className="box-selection__badges">

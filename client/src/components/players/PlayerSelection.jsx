@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import BoxSelection from "@c/boxes/BoxSelection";
 import SelectionDetailPanel from "@c/boxes/SelectionDetailPanel";
-import PendingTradesSection from "@c/trades/PendingTradesSection";
+import PendingTradesSection from "@c/trade_requests/PendingTradesSection";
 import getTradingState from "@/utils/tradingState";
 
 const DESKTOP_BREAKPOINT = 1024;
@@ -61,6 +61,10 @@ const PlayerSelection = () => {
     }, {});
   }, [tradeRequests]);
 
+  const pendingBoxIds = useMemo(() => {
+    return new Set(tradeRequests.map(r => r.pool_box.id));
+  }, [tradeRequests]);
+
   const boxes = useMemo(() => {
     if (!boxData) return [];
     return [...boxData.boxes].sort((a, b) => a.order - b.order);
@@ -80,6 +84,11 @@ const PlayerSelection = () => {
 
   const [rawSelections, setSelections] = useState({});
   const selections = { ...initialSelections, ...rawSelections };
+
+  const allBoxesSelected = Object.keys(selections).length === boxes.length;
+  const hasChanges = boxes.some(box =>
+    !pendingBoxIds.has(box.id) && selections[box.id] !== initialSelections[box.id],
+  );
 
   const invalidateAfterSubmit = () => {
     queryClient.invalidateQueries({ queryKey: ["pool_boxes", poolId, teamId] });
@@ -205,7 +214,7 @@ const PlayerSelection = () => {
     <button
       className={`btn-primary ${extraClass}`}
       onClick={() => submitRoster({})}
-      disabled={isSubmitting || Object.keys(selections).length !== boxes.length}
+      disabled={isSubmitting || !allBoxesSelected || !hasChanges}
     >
       {saveLabel()}
     </button>

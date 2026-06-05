@@ -1,4 +1,4 @@
-import TradesPanel from "@c/trades/TradesPanel";
+import TradesPanel from "./TradesPanel";
 
 export default function PendingTradesSection({ tradeRequests, boxes, onCancel, isCancelling }) {
   if (!tradeRequests.length) return null;

@@ -2226,3 +2226,18 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .trades-panel__cancel-all { flex-shrink: 0; }
+
+/* ============================================================
+   LOCKED BOX — pending trades
+   ============================================================ */
+
+.player-list--locked .player-option,
+.player-list--locked .data-row--content {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.player-list--locked input[type="radio"] {
+  cursor: not-allowed;
+}

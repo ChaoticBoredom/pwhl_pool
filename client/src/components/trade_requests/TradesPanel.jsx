@@ -1,4 +1,4 @@
-import PendingTradeGroup from "@c/trades/PendingTradeGroup";
+import PendingTradeGroup from "./PendingTradeGroup";
 import { formatDateTime } from "@/utils/formatDate";
 
 // Groups requests by request_group_id, then by pool_box.id within each group

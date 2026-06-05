@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDrawerState } from "@/hooks/useDrawerState";
 import TeamBadge from "@c/shared/TeamBadge";
-import TradesPanel from "@c/trades/TradesPanel";
+import TradesPanel from "@c/trade_requests/TradesPanel";
 
 const WINDOWS = [
   { key: "season_to_date", label: "Season" },
