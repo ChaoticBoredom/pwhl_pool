@@ -4,15 +4,15 @@ json.current_team_id @player.current_team_id
 json.current_team_short_code @player.current_team.short_code
 
 json.raw_stats do
-  json.partial! partial: 'players/scores', locals: { scores: @stats[:stats], clipped: @stats[:clipped_stats] }
+  json.partial! partial: "players/scores", locals: { scores: @stats[:stats], clipped: @stats[:clipped_stats] }
 end
 
 json.expanded_pool_scores do
-  json.partial! partial: 'players/scores', locals: { scores: @expanded_scores[:stats], clipped: @expanded_scores[:clipped_stats] }
+  json.partial! partial: "players/scores", locals: { scores: @expanded_scores[:stats], clipped: @expanded_scores[:clipped_stats] }
 end
 
 json.pool_scores do
-  json.partial! partial: 'players/scores', locals: { scores: @scores[:scores], clipped: @scores[:clipped_scores] }
+  json.partial! partial: "players/scores", locals: { scores: @scores[:scores], clipped: @scores[:clipped_scores] }
 end
 
 json.labels do

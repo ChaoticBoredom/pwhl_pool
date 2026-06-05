@@ -9,6 +9,7 @@ RSpec.describe "Trade::Requests", type: :request do
 
   let(:skater_a) { create(:pwhl_skater, league: league) }
   let(:skater_b) { create(:pwhl_skater, league: league) }
+  let(:skater_c) { create(:pwhl_skater, league: league) }
 
   let!(:box) do
     create(:pool_box, pool: pool, league_player_ids: [skater_a.id, skater_b.id])
@@ -60,11 +61,62 @@ RSpec.describe "Trade::Requests", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns all requests" do
+    it "returns all requests when no status filter" do
       get_index
       ids = response.parsed_body.map { |r| r["id"] }
-      expect(ids).to include(pending_request.id)
-      expect(ids).to include(cancelled_request.id)
+      expect(ids).to include(pending_request.id, cancelled_request.id)
+    end
+
+    context "with status=pending" do
+      subject(:get_index_pending) do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "pending" },
+          headers: auth_headers
+      end
+
+      it "returns only pending requests" do
+        get_index_pending
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(pending_request.id)
+        expect(ids).to_not include(cancelled_request.id)
+      end
+
+      it "returns requests with pending status" do
+        get_index_pending
+        statuses = response.parsed_body.map { |r| r["status"] }
+        expect(statuses).to all(eq("pending"))
+      end
+    end
+
+    context "with status=cancelled" do
+      subject(:get_index_cancelled) do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "cancelled" },
+          headers: auth_headers
+      end
+
+      it "returns only cancelled requests" do
+        get_index_cancelled
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(cancelled_request.id)
+        expect(ids).to_not include(pending_request.id)
+      end
+
+      it "returns requests with cancelled status" do
+        get_index_cancelled
+        statuses = response.parsed_body.map { |r| r["status"] }
+        expect(statuses).to all(eq("cancelled"))
+      end
+    end
+
+    context "with an invalid status" do
+      it "falls back to returning all requests" do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "nonsense" },
+          headers: auth_headers
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(pending_request.id, cancelled_request.id)
+      end
     end
   end
 
@@ -133,7 +185,7 @@ RSpec.describe "Trade::Requests", type: :request do
     context "when trading requires approval" do
       before { allow_any_instance_of(Pool).to receive(:trade_policy_result).and_return(:pending_approval) }
 
-      context "with no conflicst" do
+      context "with no conflicts" do
         it "returns 201" do
           post_create
           expect(response).to have_http_status(:created)
@@ -199,8 +251,6 @@ RSpec.describe "Trade::Requests", type: :request do
             expect(conflicting_request.reload).to be_trade_status_cancelled
           end
 
-          # Checking an absolute value instead of `change_by` because there's
-          # already a pending request, to `change_by` would be 1, not 2
           it "creates new trade requests" do
             post_create_replacing
             expect(Trade::Request.trade_status_pending.count).to eq(2)
@@ -210,8 +260,10 @@ RSpec.describe "Trade::Requests", type: :request do
     end
   end
 
-  describe "DELETE /pool_teams/:pool_team_id/trade_requests/:id" do
-    let!(:pending_request) do
+  describe "POST /pool_teams/:pool_team_id/trade_requests/cancel" do
+    let(:group_id) { SecureRandom.uuid }
+
+    let!(:pending_add) do
       create(:trade_request,
         :add,
         :pending,
@@ -219,41 +271,153 @@ RSpec.describe "Trade::Requests", type: :request do
         league_player: skater_b,
         pool_box: box,
         requested_by: user,
+        request_group_id: group_id,
       )
     end
 
-    subject(:delete_request) do
-      delete "/api/pool_teams/#{pool_team.id}/trade_requests/#{pending_request.id}",
+    let!(:pending_drop) do
+      create(:trade_request,
+        :drop,
+        :pending,
+        pool_team: pool_team,
+        league_player: skater_a,
+        pool_box: box,
+        requested_by: user,
+        request_group_id: group_id,
+      )
+    end
+
+    subject(:post_cancel) do
+      post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+        params: { id: pending_add.id }.to_json,
         headers: auth_headers
     end
 
     context "when not the team owner" do
       let(:other_user) { create(:user) }
-      let(:auth_headers) { auth_headers_for(other_user) }
 
       it "returns 403" do
-        delete_request
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: { id: pending_add.id }.to_json,
+          headers: auth_headers_for(other_user)
         expect(response).to have_http_status(:forbidden)
       end
     end
 
-    it "returns 204" do
-      delete_request
-      expect(response).to have_http_status(:no_content)
+    context "with no scope param" do
+      it "returns 400" do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: {}.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it "returns an informative error message" do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: {}.to_json,
+          headers: auth_headers
+        expect(response.parsed_body["error"]).to include("One of", "id", "pool_box_id", "request_group_id")
+      end
     end
 
-    it "cancels the trade request" do
-      delete_request
-      expect(pending_request.reload).to be_trade_status_cancelled
+    context "with multiple scope params" do
+      it "returns 400" do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: { id: pending_add.id, pool_box_id: box.id }.to_json,
+          headers: auth_headers
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it "returns an informative error message" do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: { id: pending_add.id, pool_box_id: box.id }.to_json,
+          headers: auth_headers
+        expect(response.parsed_body["error"]).to include("Only one of")
+      end
     end
 
-    context "when the request is not pending" do
-      [:cancelled, :approved].each do |status|
-        it "returns 404" do
-          pending_request.decide!(status, decided_by: user, decided_at: Time.current)
-          delete_request
-          expect(response).to have_http_status(:not_found)
-        end
+    context "by id" do
+      it "returns 204" do
+        post_cancel
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "cancels only the specified request" do
+        post_cancel
+        expect(pending_add.reload).to be_trade_status_cancelled
+        expect(pending_drop.reload).to be_trade_status_pending
+      end
+
+      it "returns 404 when request is not pending" do
+        pending_add.decide!(:cancelled, decided_by: user, decided_at: Time.current)
+        post_cancel
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "by pool_box_id" do
+      subject(:post_cancel_by_box) do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: { pool_box_id: box.id }.to_json,
+          headers: auth_headers
+      end
+
+      it "returns 204" do
+        post_cancel_by_box
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "cancels all pending requests for the box" do
+        post_cancel_by_box
+        expect(pending_add.reload).to be_trade_status_cancelled
+        expect(pending_drop.reload).to be_trade_status_cancelled
+      end
+
+      it "does not cancel requests for other boxes" do
+        other_box = create(:pool_box, pool: pool, league_player_ids: [skater_c.id])
+        other_request = create(:trade_request,
+          :add,
+          :pending,
+          pool_team: pool_team,
+          league_player: skater_c,
+          pool_box: other_box,
+          requested_by: user,
+        )
+        post_cancel_by_box
+        expect(other_request.reload).to be_trade_status_pending
+      end
+    end
+
+    context "by request_group_id" do
+      subject(:post_cancel_by_group) do
+        post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+          params: { request_group_id: group_id }.to_json,
+          headers: auth_headers
+      end
+
+      it "returns 204" do
+        post_cancel_by_group
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "cancels all requests in the group" do
+        post_cancel_by_group
+        expect(pending_add.reload).to be_trade_status_cancelled
+        expect(pending_drop.reload).to be_trade_status_cancelled
+      end
+
+      it "does not cancel requests from other groups" do
+        other_request = create(:trade_request,
+          :add,
+          :pending,
+          pool_team: pool_team,
+          league_player: skater_c,
+          pool_box: box,
+          requested_by: user,
+          request_group_id: SecureRandom.uuid,
+        )
+        post_cancel_by_group
+        expect(other_request.reload).to be_trade_status_pending
       end
     end
   end

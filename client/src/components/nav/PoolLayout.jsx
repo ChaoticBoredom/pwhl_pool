@@ -7,28 +7,28 @@ import TopBar from "./TopBar";
 import NoticeBar from "@c/shared/NoticeBar";
 import NoticeFloat from "@c/shared/NoticeFloat";
 import NoticeProvider from "@/context/NoticeProvider";
+import { useIsMobile } from "@/hooks/useBreakpoint";
 
 const NAV_COLLAPSED_KEY = "nav_collapsed";
-const MOBILE_BREAKPOINT = 768;
 
 export default function PoolLayout() {
   const { poolId } = useParams();
   const { authHeaders, currentUser, isGod } = useAuth();
 
-  const isMobile = () => window.innerWidth <= MOBILE_BREAKPOINT;
+  const isMobile = useIsMobile();
 
   const [collapsed, setCollapsed] = useState(() => {
-    if (isMobile()) return false;
+    if (isMobile) return false;
     return localStorage.getItem(NAV_COLLAPSED_KEY) === "true";
   });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!isMobile()) localStorage.setItem(NAV_COLLAPSED_KEY, collapsed);
-  }, [collapsed]);
+    if (!isMobile) localStorage.setItem(NAV_COLLAPSED_KEY, collapsed);
+  }, [collapsed, isMobile]);
 
   const handleMenuToggle = () => {
-    if (isMobile()) {
+    if (isMobile) {
       setMobileOpen(o => !o);
     } else {
       setCollapsed(c => !c);

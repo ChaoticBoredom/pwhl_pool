@@ -13,7 +13,7 @@ class Trade::RequestCreationService
     @conflicts ||= Trade::Request.trade_status_pending.where(
       pool_team: @pool_team,
       league_player_id: @adding + @dropping
-    )
+    ).includes(league_player: :current_team)
   end
 
   def call

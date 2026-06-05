@@ -12,4 +12,4 @@ json.clipped_scores do
   json.week_to_date clipped[:week_to_date]
   json.month_to_date clipped[:month_to_date]
   json.season_to_date clipped[:season_to_date]
-end
+end unless clipped.nil?
