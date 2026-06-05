@@ -61,11 +61,62 @@ RSpec.describe "Trade::Requests", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns all requests" do
+    it "returns all requests when no status filter" do
       get_index
       ids = response.parsed_body.map { |r| r["id"] }
-      expect(ids).to include(pending_request.id)
-      expect(ids).to include(cancelled_request.id)
+      expect(ids).to include(pending_request.id, cancelled_request.id)
+    end
+
+    context "with status=pending" do
+      subject(:get_index_pending) do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "pending" },
+          headers: auth_headers
+      end
+
+      it "returns only pending requests" do
+        get_index_pending
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(pending_request.id)
+        expect(ids).to_not include(cancelled_request.id)
+      end
+
+      it "returns requests with pending status" do
+        get_index_pending
+        statuses = response.parsed_body.map { |r| r["status"] }
+        expect(statuses).to all(eq("pending"))
+      end
+    end
+
+    context "with status=cancelled" do
+      subject(:get_index_cancelled) do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "cancelled" },
+          headers: auth_headers
+      end
+
+      it "returns only cancelled requests" do
+        get_index_cancelled
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(cancelled_request.id)
+        expect(ids).to_not include(pending_request.id)
+      end
+
+      it "returns requests with cancelled status" do
+        get_index_cancelled
+        statuses = response.parsed_body.map { |r| r["status"] }
+        expect(statuses).to all(eq("cancelled"))
+      end
+    end
+
+    context "with an invalid status" do
+      it "falls back to returning all requests" do
+        get "/api/pool_teams/#{pool_team.id}/trade_requests",
+          params: { status: "nonsense" },
+          headers: auth_headers
+        ids = response.parsed_body.map { |r| r["id"] }
+        expect(ids).to include(pending_request.id, cancelled_request.id)
+      end
     end
   end
 

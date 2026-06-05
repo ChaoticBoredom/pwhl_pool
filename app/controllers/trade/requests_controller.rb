@@ -4,11 +4,14 @@ class Trade::RequestsController < ApplicationController
   before_action :validate_cancel_params, only: [:cancel]
   before_action :load_requests_to_cancel, only: [:cancel]
 
+  VALID_STATUSES = Trade::Request.statuses.keys.freeze
   CANCEL_SCOPE_PARAMS = %w[id pool_box_id request_group_id].freeze
 
   def index
-    @trade_requests = @pool_team.
-      trade_requests.
+    scope = @pool_team.trade_requests
+    scope = scope.where(status: params[:status]) if params[:status].in?(VALID_STATUSES)
+
+    @trade_requests = scope.
       includes(league_player: :current_team).
       order(requested_at: :desc)
 
@@ -73,7 +76,7 @@ class Trade::RequestsController < ApplicationController
     provided = params.slice(*CANCEL_SCOPE_PARAMS).keys
 
     if provided.length.zero?
-      render json: { error: "One of #{CANCEL_SCOPE_PARAMS.to_sentence} is required"}, status: :bad_request
+      render json: { error: "One of #{CANCEL_SCOPE_PARAMS.to_sentence} is required" }, status: :bad_request
     elsif provided.length > 1
       render json: { error: "Only one of #{CANCEL_SCOPE_PARAMS.to_sentence} may be provided" }, status: :bad_request
     end
