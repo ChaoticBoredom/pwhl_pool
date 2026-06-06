@@ -1,0 +1,18 @@
+json.id @pool.id
+json.name @pool.name
+json.pool_type @pool.pool_type
+json.state @pool.state
+json.season_id @pool.season_id
+json.reference_season_id @pool.reference_season_id
+json.trade_policy @pool.trade_policy
+json.league_id @pool.league_id
+
+json.pool_teams do
+  json.array! @pool.pool_teams do |team|
+    json.id team.id
+    json.team_name team.team_name
+    json.owner team.owner.name
+  end
+end
+
+json.pool_boxes_count @pool.pool_boxes.active.count

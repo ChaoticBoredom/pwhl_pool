@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     end
 
     namespace :commissioner do
-      resources :pools, only: [], path: "" do
+      resources :pools, only: [:update], path: "" do
         member do
           patch :activate
         end

@@ -702,10 +702,10 @@ RSpec.describe "PWHL Pool Integration", type: :request do
     end
   end
 
-  describe "pool_boxes#generate" do
+  describe "commissioner/pool_boxes#generate" do
     it "returns the expected response" do
-      post "/api/pools/#{pool.id}/pool_boxes/generate",
-        headers: auth_headers,
+      post "/api/commissioner/#{pool.id}/pool_boxes/generate",
+        headers: auth_headers_for(pool.admin),
         params: {
           teams: ["BOS"],
           scope: :per_team,

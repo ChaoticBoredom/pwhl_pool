@@ -28,7 +28,11 @@ class PoolsController < ApplicationController
   def meta
     render json: {
       leagues: League.all.map { |l| { id: l.id, name: l.name, short_name: l.short_name } },
-      seasons: [{ name: "2025-26 Regular Season", id: "9" }, { name: "2025-26 Playoffs", id: "10" }],
+      seasons: [
+        { name: "2025-26 Regular Season", id: "8" },
+        { name: "2025-26 Playoffs", id: "9" },
+        # { name: "2026-27 Regular Season", id: "10" }
+      ],
       pool_types: Pool.pool_types.keys,
       trade_policies: Pool.trade_policies.keys,
     }
@@ -40,7 +44,8 @@ class PoolsController < ApplicationController
     if @pool.save
       render :show, status: :created
     else
-      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
+    end
   end
 
   def update
@@ -50,7 +55,7 @@ class PoolsController < ApplicationController
     if @pool.update(pool_name_params)
       render json: { message: "Pool Name updated!" }
     else
-      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
     end
   end
 
