@@ -25,11 +25,10 @@ Rails.application.routes.draw do
       end
     end
     resources :pools do
-      resources :pool_boxes, only: [:index] do
-        collection do
-          post :generate
-        end
+      collection do
+        get :meta
       end
+      resources :pool_boxes, only: [:index]
       resources :pool_scoring, only: [:index]
     end
     resources :pool_teams, only: [:show, :create, :update] do
@@ -44,7 +43,15 @@ Rails.application.routes.draw do
     end
 
     namespace :commissioner do
-      resources :pools, only: [], path: "" do
+      resources :pools, only: [:show, :update], path: "" do
+        member do
+          patch :activate
+        end
+        resources :pool_boxes, only: [:create] do
+          collection do
+            post :generate
+          end
+        end
         resources :trade_requests, only: [:index], controller: "trade/requests" do
           collection do
             patch :update

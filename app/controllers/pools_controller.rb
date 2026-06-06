@@ -25,6 +25,29 @@ class PoolsController < ApplicationController
     render :show
   end
 
+  def meta
+    render json: {
+      leagues: League.all.map { |l| { id: l.id, name: l.name, short_name: l.short_name } },
+      seasons: [
+        { name: "2025-26 Regular Season", id: "8" },
+        { name: "2025-26 Playoffs", id: "9" },
+        # { name: "2026-27 Regular Season", id: "10" }
+      ],
+      pool_types: Pool.pool_types.keys,
+      trade_policies: Pool.trade_policies.keys,
+    }
+  end
+
+  def create
+    @pool = Pool.new(pool_params.merge(admin: current_user))
+
+    if @pool.save
+      render :show, status: :created
+    else
+      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
+    end
+  end
+
   def update
     id = params[:id]
     @pool = Pool.find(id)
@@ -32,11 +55,22 @@ class PoolsController < ApplicationController
     if @pool.update(pool_name_params)
       render json: { message: "Pool Name updated!" }
     else
-      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
     end
   end
 
   private
+
+  def pool_params
+    params.require(:pool).permit(
+      :name,
+      :pool_type,
+      :league_id,
+      :season_id,
+      :reference_season_id,
+      :trade_policy,
+    )
+  end
 
   def pool_name_params
     params.require(:pool).permit(:name)

@@ -47,6 +47,18 @@ RSpec.describe Commissioner::BaseController, type: :controller do
       get :index, params: { pool_id: "bad id" }
       expect(response).to have_http_status(:not_found)
     end
+
+    context "when id is present instead" do
+      it "allows the request through" do
+        get :index, params: { id: pool.id }
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns 404 for a bad id" do
+        get :index, params: { id: "bad id" }
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   context "when unauthenticated" do

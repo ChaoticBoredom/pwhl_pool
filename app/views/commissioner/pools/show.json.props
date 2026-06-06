@@ -1,0 +1,11 @@
+json.partial! partial: "pools/pool_details", locals: { pool: @pool }
+
+json.pool_teams do
+  json.array! @pool.pool_teams do |team|
+    json.id team.id
+    json.team_name team.team_name
+    json.owner team.owner.name
+  end
+end
+
+json.pool_boxes_count @pool.pool_boxes.active.count
