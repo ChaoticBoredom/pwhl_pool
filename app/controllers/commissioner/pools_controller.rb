@@ -27,6 +27,6 @@ class Commissioner::PoolsController < Commissioner::BaseController
   end
 
   def pool_includes
-    {pool_teams: :owner}
+    { pool_teams: :owner }
   end
 end

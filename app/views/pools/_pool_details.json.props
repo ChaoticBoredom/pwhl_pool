@@ -1,0 +1,18 @@
+json.id pool.id
+json.name pool.name
+json.pool_type pool.pool_type
+json.state pool.state
+json.season_id pool.season_id
+json.reference_season_id pool.reference_season_id
+json.trade_policy pool.trade_policy
+
+json.league do
+  json.id pool.league.id
+  json.name pool.league.name
+  json.short_name pool.league.short_name
+end
+
+json.admin do
+  json.id pool.admin.id
+  json.name pool.admin.name
+end

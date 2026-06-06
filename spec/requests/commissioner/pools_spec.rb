@@ -8,6 +8,60 @@ RSpec.describe "Commissioner::Pools", type: :request do
   let(:other_headers) { auth_headers_for(other_user) }
   let(:json) { JSON.parse(response.body) }
 
+  describe "GET /api/commissioner/:pool_id" do
+    it "returns ok for the admin" do
+      get "/api/commissioner/#{pool.id}", headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns pool details" do
+      get "/api/commissioner/#{pool.id}", headers: admin_headers
+
+      expect(json["id"]).to eq(pool.id)
+      expect(json["name"]).to eq(pool.name)
+      expect(json["state"]).to eq("draft")
+      expect(json["trade_policy"]).to eq(pool.trade_policy)
+    end
+
+    it "returns active box count" do
+      create(:pool_box, pool: pool, active: true)
+      create(:pool_box, pool: pool, active: false)
+
+      get "/api/commissioner/#{pool.id}", headers: admin_headers
+
+      expect(json["pool_boxes_count"]).to eq(1)
+    end
+
+    it "returns pool teams with owner names" do
+      owner = create(:user)
+      create(:pool_team, pool: pool, owner: owner, team_name: "Test Team")
+
+      get "/api/commissioner/#{pool.id}", headers: admin_headers
+
+      team = json["pool_teams"].find { |t| t["team_name"] == "Test Team" }
+      expect(team["owner"]).to eq(owner.name)
+    end
+
+    it "is forbidden for non-admins" do
+      get "/api/commissioner/#{pool.id}", headers: other_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "requires authentication" do
+      get "/api/commissioner/#{pool.id}"
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 404 for a missing pool" do
+      get "/api/commissioner/#{SecureRandom.uuid}", headers: admin_headers
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "PATCH /api/commissioner/:pool_id" do
     let(:valid_params) do
       { pool: { name: "Updated Name", trade_policy: "open" } }

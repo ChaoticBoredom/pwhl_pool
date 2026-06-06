@@ -1,19 +1,7 @@
-json.name @pool.name
-json.id @pool.id
-json.pool_type @pool.pool_type
+json.partial! partial: "pools/pool_details", locals: { pool: @pool }
+
 json.trade_state @pool.trade_policy_result
 json.games_active @pool.league.games_active?
-
-json.league do
-  json.id @pool.league.id
-  json.name @pool.league.name
-  json.short_name @pool.league.short_name
-end
-
-json.admin do
-  json.id @pool.admin.id
-  json.name @pool.admin.name
-end
 
 json.pool_teams do
   json.array! @pool.pool_teams do |team|
