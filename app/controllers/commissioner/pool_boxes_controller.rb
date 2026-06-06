@@ -10,7 +10,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   end
 
   def create
-    result = Pool::BoxReplacementService.new(@pool, boxes_params).call
+    result = BoxReplacementService.new(@pool, boxes_params).call
 
     if result.success
       render json: { boxes: @pool.pool_boxes.reload.active }, status: :created
@@ -22,7 +22,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   private
 
   def boxes_params
-    params.requires(:boxes).map do |box|
+    params.require(:boxes).map do |box|
       box.permit(:name, :position, players: [:id])
     end
   end
