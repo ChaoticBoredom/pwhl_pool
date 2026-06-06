@@ -12,7 +12,7 @@ class BoxReplacementService
     elsif @pool.pool_state_active?
       replace_active
     else
-      Result.new(success: false, errors: ["Boxes cannot be replaced on a #{pool.state} pool"])
+      Result.new(success: false, errors: ["Boxes cannot be replaced on a #{@pool.state} pool"])
     end
   end
 
@@ -54,7 +54,7 @@ class BoxReplacementService
   def force_drop_all_players!
     Pool::TeamPlayer.
       joins(:pool_team).
-      where(pool_teams: { pool_id: @pool.id }, dropped_at: nil).
+      where(pool_id: @pool.id, dropped_at: nil).
       each { |ptp| ptp.update!(dropped_at: Time.current) }
   end
 end
