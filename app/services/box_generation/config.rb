@@ -1,4 +1,3 @@
-# app/services/box_generation/config.rb
 module BoxGeneration
   DEFAULT_BOXES = [
     BoxDefinition.new(name: "Forwards Box 1", position: "F", rank: 1, count: 1),
