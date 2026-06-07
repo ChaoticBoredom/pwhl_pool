@@ -1,0 +1,9 @@
+json.array! @pools do |pool|
+  json.id pool.id
+  json.name pool.name
+  json.pool_type pool.pool_type
+  json.state pool.state
+  json.season_id pool.season_id
+  json.season_label @season_labels[pool.season_id] || pool.season_id
+  json.is_admin pool.admin_id == @current_user_id
+end

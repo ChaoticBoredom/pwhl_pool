@@ -1,9 +1,15 @@
 class PoolsController < ApplicationController
   def index
-    @pools = Pool.
-      where(id: current_user.pool_teams.pluck(:pool_id)).
-      or(Pool.where(admin_id: current_user.id))
-    render json: @pools
+    @pools = if current_user.admin?
+      Pool.all
+    else
+      Pool.
+        where(id: current_user.pool_teams.pluck(:pool_id)).
+        or(Pool.where(admin_id: current_user.id))
+    end
+    @current_user_id = current_user.id
+    @season_labels = Pwhl::StatConfig::SEASON_LABELS
+    render :index
   end
 
   def show
@@ -28,11 +34,7 @@ class PoolsController < ApplicationController
   def meta
     render json: {
       leagues: League.all.map { |l| { id: l.id, name: l.name, short_name: l.short_name } },
-      seasons: [
-        { name: "2025-26 Regular Season", id: "8" },
-        { name: "2025-26 Playoffs", id: "9" },
-        # { name: "2026-27 Regular Season", id: "10" }
-      ],
+      seasons: Pwhl::StatConfig::SEASON_LABELS.map { |k, v| { id: k, name: v } },
       pool_types: Pool.pool_types.keys,
       trade_policies: Pool.trade_policies.keys,
     }
@@ -42,6 +44,12 @@ class PoolsController < ApplicationController
     @pool = Pool.new(pool_params.merge(admin: current_user))
 
     if @pool.save
+      @pool.scoring.create(field_name: "goals", roster_type: "skater", value: 2)
+      @pool.scoring.create(field_name: "assists", roster_type: "skater", value: 1)
+      @pool.scoring.create(field_name: "hits", roster_type: "skater", value: 0.5)
+      @pool.scoring.create(field_name: "saves", roster_type: "goalie", value: 0.05)
+      @pool.scoring.create(field_name: "win", roster_type: "goalie", value: 2)
+      @pool.scoring.create(field_name: "shutout", roster_type: "goalie", value: 5)
       render :show, status: :created
     else
       render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content

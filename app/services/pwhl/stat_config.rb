@@ -1,7 +1,12 @@
-# app/services/pwhl/stat_config.rb
-
 module Pwhl
   module StatConfig
+    SEASON_LABELS = {
+      "8" => "2025-26 Regular Season",
+      "9" => "2025-26 Playoffs",
+      # "10" => "2026-27 Regular Season",
+      # "DEMO" => "Demo",
+    }.freeze
+
     POSITION_GROUPS = {
       "F" => ["F", "LW", "RW", "C"],
       "D" => ["D", "LD", "RD"],

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { DEFAULT_BOXES, boxBadgeClass } from "@/utils/boxConfig";
 
 const TEAMS = ["BOS", "MIN", "MTL", "NY", "OTT", "TOR", "SEA", "VAN"];
 const POSITIONS = ["F", "D", "G"];
@@ -12,20 +13,6 @@ const SEASONS = [
   { label: "Pool default", value: null },
   { label: "Regular Season", value: "8" },
   { label: "Playoffs", value: "9" },
-];
-
-const DEFAULT_BOXES = [
-  { name: "Forwards Box 1", position: "F", rookie: false, count: 1 },
-  { name: "Forwards Box 2", position: "F", rookie: false, count: 1 },
-  { name: "Forwards Box 3", position: "F", rookie: false, count: 1 },
-  { name: "Forwards Box 4", position: "F", rookie: false, count: 1 },
-  { name: "Forwards Box 5", position: "F", rookie: false, count: 1 },
-  { name: "Defence Box 1", position: "D", rookie: false, count: 1 },
-  { name: "Defence Box 2", position: "D", rookie: false, count: 1 },
-  { name: "Defence Box 3", position: "D", rookie: false, count: 1 },
-  { name: "Goalies Box 1", position: "G", rookie: null, count: 1 },
-  { name: "Rookie Forwards Box 1", position: "F", rookie: true, count: 1 },
-  { name: "Rookie Defence Box 1", position: "D", rookie: true, count: 1 },
 ];
 
 function deriveRank(boxes, currentIndex) {
@@ -46,16 +33,10 @@ function buildPayloadBoxes(boxes) {
   }));
 }
 
-function positionBadgeClass(position, rookie) {
-  const rookiePrefix = rookie === true ? "rookie-" : "";
-  const positionKey = { "F": "forward", "D": "defense", "G": "goalie" }[position] ?? "forward";
-  return `box-badge box-badge--${rookiePrefix}${positionKey}`;
-}
-
 function BoxConfigRow({ box, index, onChange, onRemove, derivedRank }) {
   return (
     <div className="box-config-row">
-      <span className={positionBadgeClass(box.position, box.rookie)}>
+      <span className={boxBadgeClass(box.position, box.rookie)}>
         {box.rookie === true ? `R${box.position}` : box.position}
       </span>
 
@@ -171,7 +152,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/pools/${poolId}/pool_boxes/generate`, {
+      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes/generate`, {
         method: "POST",
         headers: authHeaders,
         body: JSON.stringify({

@@ -49,6 +49,7 @@ Rails.application.routes.draw do
         end
         resources :pool_boxes, only: [:create] do
           collection do
+            get :default
             post :generate
           end
         end

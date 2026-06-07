@@ -5,6 +5,8 @@ import { Dashboard } from "@c/pool/Dashboard";
 import PoolLayout from "@c/nav/PoolLayout"
 import TopBar from "@c/nav/TopBar";
 
+import CreatePool from "@c/pool/CreatePool";
+
 import AuthForm from "@c/auth/AuthForm";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
 import PoolDetails from "@c/pool/PoolDetails";
@@ -14,6 +16,7 @@ import PlayerSelection from "@c/players/PlayerSelection";
 
 // Commissioner specific paths, lazy load them
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
+const SetupPool = lazy(() => import("@c/pool/SetupPool"));
 const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
 const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
@@ -36,6 +39,7 @@ export function AppRouter() {
         }>
           <Route path="/" element={<Dashboard />}/>
 
+          <Route path="/pools/new" element={<CreatePool />} />
           <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
         </Route>
 
@@ -51,6 +55,15 @@ export function AppRouter() {
           <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
           <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
+
+          <Route
+            path="/pools/:poolId/setup"
+            element={
+              <Suspense fallback={<div className="report-loading">Loading…</div>}>
+                <SetupPool />
+              </Suspense>
+            }
+          />
 
           <Route
             element={

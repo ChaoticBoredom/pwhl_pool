@@ -3,7 +3,7 @@ json.name pool.name
 json.pool_type pool.pool_type
 json.state pool.state
 json.season_id pool.season_id
-json.reference_season_id pool.reference_season_id
+json.display_season_id pool.display_season_id
 json.trade_policy pool.trade_policy
 
 json.league do
