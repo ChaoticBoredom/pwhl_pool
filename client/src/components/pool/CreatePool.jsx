@@ -48,6 +48,7 @@ export default function CreatePool() {
           season_id: form.season_id,
           pool_type: form.pool_type,
           trade_policy: form.trade_policy,
+          league_id: meta.leagues[0]?.id,
           ...(useRefSeason && form.reference_season_id
             ? { reference_season_id: form.reference_season_id }
             : {}),

@@ -51,14 +51,8 @@ export default function SetupPool() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["pool-boxes-generate", poolId],
     queryFn: async () => {
-      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes/generate`, {
-        method: "POST",
+      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes/default`, {
         headers: authHeaders,
-        body: JSON.stringify({
-          scope: "per_team",
-          excluded_player_ids: [],
-          boxes: DEFAULT_BOXES,
-        }),
       });
       if (!res.ok) throw new Error("Failed to generate default boxes");
       return res.json();
@@ -112,7 +106,7 @@ export default function SetupPool() {
       <h1 className="setup-page-title">Review Default Boxes</h1>
       <p className="setup-page-subtitle">
         These are your pool's default player boxes based on last season's rankings.
-        You can adjust them later from the box generator.
+        You can adjust them later when I build that part.
       </p>
 
       {isLoading && <p className="report-loading">Generating boxes…</p>}

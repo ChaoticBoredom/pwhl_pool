@@ -1,4 +1,21 @@
 class Commissioner::PoolBoxesController < Commissioner::BaseController
+  def default
+    cache_key = "pool_boxes/default/#{@pool.league_id}/#{@pool.display_season_id}"
+
+    @result = Rails.cache.fetch(cache_key, expires_in: 3.months) do
+      config = BoxGeneration::Config.new(
+        scope: "per_team",
+        boxes: BoxGeneration::DEFAULT_BOXES,
+        excluded_player_ids: [],
+      )
+      BoxGenerationService.new(@pool, config).call
+    end
+
+    render :generate
+  rescue BoxGenerationService::BoxGenerationError => e
+    render json: { error: e.message }, status: :unprocessable_content
+  end
+
   def generate
     @pool = Pool.includes(:scoring, :league).find(params[:pool_id])
 
