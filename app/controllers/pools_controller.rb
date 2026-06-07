@@ -42,6 +42,12 @@ class PoolsController < ApplicationController
     @pool = Pool.new(pool_params.merge(admin: current_user))
 
     if @pool.save
+      @pool.scoring.create(field_name: "goals", roster_type: "skater", value: 2)
+      @pool.scoring.create(field_name: "assists", roster_type: "skater", value: 1)
+      @pool.scoring.create(field_name: "hits", roster_type: "skater", value: 0.5)
+      @pool.scoring.create(field_name: "saves", roster_type: "goalie", value: 0.05)
+      @pool.scoring.create(field_name: "win", roster_type: "goalie", value: 2)
+      @pool.scoring.create(field_name: "shutout", roster_type: "goalie", value: 5)
       render :show, status: :created
     else
       render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
