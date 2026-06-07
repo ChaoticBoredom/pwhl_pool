@@ -171,7 +171,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/pools/${poolId}/pool_boxes/generate`, {
+      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes/generate`, {
         method: "POST",
         headers: authHeaders,
         body: JSON.stringify({
