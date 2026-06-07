@@ -1,34 +1,54 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 
 export function Dashboard() {
   const { authHeaders } = useAuth();
-  const [pools, setPools] = useState([]);
 
-
-  useEffect(() => {
-    fetch(`/api/pools`, { headers: authHeaders })
-    .then(res => res.json())
-    .then(data => setPools(data))
-    .catch(err => console.log("Fetch error:", err));
-  }, [authHeaders])
+  const { data: pools = [] } = useQuery({
+    queryKey: ["pools"],
+    queryFn: async () => {
+      const res = await fetch("/api/pools", { headers: authHeaders });
+      if (!res.ok) throw new Error("Failed to load pools");
+      return res.json();
+    },
+    staleTime: 30 * 1000,
+  });
 
   return (
-    <div>
-      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Pool List</h1>
+    <div className="app-wrapper">
+      <div className="selection-header">
+        <h1 className="page-title">Your Pools</h1>
+        <Link to="/pools/new" className="btn-primary btn-top">
+          + New Pool
+        </Link>
       </div>
 
-      <ul>
+      <div className="player-list">
         {pools.map((pool) => (
-          <li key={pool.id} style={{ margin: "10px 0"}}>
-            <Link to={`/pools/${pool.id}`} style={{ fontWeight: "bold" }}>
-              {pool.name}
-            </Link>
-          </li>
+          <Link
+            key={pool.id}
+            to={`/pools/${pool.id}`}
+            className="player-option"
+          >
+            <div className="player-display-row">
+              <div className="player-identity-vertical">
+                <span className="player-name">{pool.name}</span>
+                <span className="team-badge" style={{
+                  background: pool.is_admin ? "var(--accent-bg)" : "var(--card-bg)",
+                  color: pool.is_admin ? "var(--accent)" : "var(--text-muted)",
+                }}>
+                  {pool.is_admin ? "Commissioner" : "Member"}
+                </span>
+              </div>
+              <span className="score-display-vertical">
+                <span className="score-label">{pool.state}</span>
+                <span className="score-label">{pool.season_label}</span>
+              </span>
+            </div>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

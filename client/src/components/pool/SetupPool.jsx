@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
-import { DEFAULT_BOXES, boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
+import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
 
 function BoxPreview({ box }) {
   const [open, setOpen] = useState(false);

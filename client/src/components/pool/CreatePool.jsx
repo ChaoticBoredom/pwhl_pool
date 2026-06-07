@@ -13,7 +13,7 @@ const TRADE_POLICY_LABELS = {
 
 const POOL_TYPE_LABELS = {
   box_select: "Box Select",
-  // draft: "Draft",
+  draft: "Draft",
 };
 
 export default function CreatePool() {

@@ -1,9 +1,15 @@
 class PoolsController < ApplicationController
   def index
-    @pools = Pool.
-      where(id: current_user.pool_teams.pluck(:pool_id)).
-      or(Pool.where(admin_id: current_user.id))
-    render json: @pools
+    @pools = if current_user.admin?
+      Pool.all
+    else
+      Pool.
+        where(id: current_user.pool_teams.pluck(:pool_id)).
+        or(Pool.where(admin_id: current_user.id))
+    end
+    @current_user_id = current_user.id
+    @season_labels = Pwhl::StatConfig::SEASON_LABELS
+    render :index
   end
 
   def show
@@ -28,11 +34,7 @@ class PoolsController < ApplicationController
   def meta
     render json: {
       leagues: League.all.map { |l| { id: l.id, name: l.name, short_name: l.short_name } },
-      seasons: [
-        { name: "2025-26 Regular Season", id: "8" },
-        { name: "2025-26 Playoffs", id: "9" },
-        # { name: "2026-27 Regular Season", id: "10" }
-      ],
+      seasons: Pwhl::StatConfig::SEASON_LABELS.map { |k, v| { id: k, name: v } },
       pool_types: Pool.pool_types.keys,
       trade_policies: Pool.trade_policies.keys,
     }
