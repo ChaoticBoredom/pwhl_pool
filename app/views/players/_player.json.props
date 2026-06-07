@@ -1,0 +1,3 @@
+json.set! local_assigns.fetch(:id_field, "id"), player.id
+json.name player.name
+json.current_team_short_code player.current_team_short_code

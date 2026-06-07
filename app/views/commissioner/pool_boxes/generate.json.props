@@ -8,7 +8,7 @@ json.boxes do
         json.id player[:id]
         json.name player[:name]
         json.score player[:score]
-        json.team_short_code player[:team_short_code]
+        json.current_team_short_code player[:team_short_code]
       end
     end
   end

@@ -143,7 +143,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
       [
         ["name", "Laura Stacey"],
         ["score", 71.25],
-        ["team_short_code", "MTL"],
+        ["current_team_short_code", "MTL"],
       ].each do |field, value|
         it "renders player #{field} within each box" do
           post_generate

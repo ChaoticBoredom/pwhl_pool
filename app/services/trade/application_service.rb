@@ -1,5 +1,5 @@
 class Trade::ApplicationService
-  Player = Data.define(:id, :name)
+  Player = Data.define(:id, :name, :current_team_short_code)
   Result = Data.define(:added_players, :dropped_players)
 
   class ApplicationError < StandardError; end
@@ -64,8 +64,8 @@ class Trade::ApplicationService
   end
 
   def players_for(ids)
-    League::Player.where(id: ids).pluck(:id, :name).map do |id, name|
-      Player.new(id: id, name: name)
+    League::Player.where(id: ids).pluck(:id, :name, :current_team_short_code).map do |id, name, code|
+      Player.new(id: id, name: name, current_team_short_code: code)
     end
   end
 end
