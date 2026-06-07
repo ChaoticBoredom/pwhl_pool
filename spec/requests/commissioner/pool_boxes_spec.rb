@@ -9,6 +9,72 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
   let(:other_headers) { auth_headers_for(other_user) }
   let(:json) { JSON.parse(response.body) }
 
+  describe "GET /api/commissioner/:pool_id/pool_boxes/default" do
+    let(:pool) { create(:pool, admin: admin, league: create(:league, :pwhl)) }
+
+    subject(:get_default) do
+      get "/api/commissioner/#{pool.id}/pool_boxes/default",
+        headers: admin_headers
+    end
+
+    it "returns ok" do
+      get_default
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns a boxes array" do
+      get_default
+
+      expect(response.parsed_body["boxes"]).to be_an(Array)
+    end
+
+    it "returns the expected number of boxes" do
+      get_default
+
+      expect(response.parsed_body["boxes"].length).to eq(BoxGeneration::DEFAULT_BOXES.length)
+    end
+
+    it "returns boxes with the expected names" do
+      get_default
+
+      names = response.parsed_body["boxes"].map { |b| b["name"] }
+      expect(names).to match_array(BoxGeneration::DEFAULT_BOXES.map(&:name))
+    end
+
+    it "caches the result" do
+      expect(BoxGenerationService).to receive(:new).once.and_call_original
+
+      get_default
+      get_default
+    end
+
+    it "uses a cache key independent of the pool" do
+      other_pool = create(:pool, admin: create(:user), league: pool.league, season_id: pool.season_id)
+
+      expected_key = "pool_boxes/default/#{pool.league_id}/#{pool.display_season_id}"
+
+      expect(Rails.cache).to receive(:fetch).with(expected_key, anything).at_least(:twice).and_call_original
+
+      get "/api/commissioner/#{pool.id}/pool_boxes/default", headers: admin_headers
+      get "/api/commissioner/#{other_pool.id}/pool_boxes/default",
+        headers: auth_headers_for(other_pool.admin)
+    end
+
+    it "is forbidden for non-admins" do
+      get "/api/commissioner/#{pool.id}/pool_boxes/default",
+        headers: other_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "requires authentication" do
+      get "/api/commissioner/#{pool.id}/pool_boxes/default"
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe "POST /pools/:pool_id/pool_boxes/generate" do
     let(:generate_params) do
       {
