@@ -8,6 +8,8 @@ class League::Player < ApplicationRecord
   belongs_to :league
   belongs_to :current_team, class_name: "League::Team", optional: true
 
+  scope :active, -> { where(active: true) }
+
   private
 
   def sync_sti_type

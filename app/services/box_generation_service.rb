@@ -47,7 +47,7 @@ class BoxGenerationService
         name: player.name,
         position: normalized_position(player.position),
         team_id: player.current_team_id,
-        team_short_code: player.current_team_short_code,
+        current_team_short_code: player.current_team_short_code,
         rookie: player.rookie?,
         score: score,
       }
@@ -74,10 +74,17 @@ class BoxGenerationService
   end
 
   def generate_boxes(sorted)
+    binding.pry
     @config.boxes.each_with_object({}) do |box_def, result|
       players = players_for_box(sorted, box_def)
       result[box_def.name] = players.map do |p|
-        { id: p[:id], name: p[:name], score: p[:score], team_id: p[:team_id], team_short_code: p[:team_short_code] }
+        {
+          id: p[:id],
+          name: p[:name],
+          score: p[:score],
+          team_id: p[:team_id],
+          current_team_short_code: p[:current_team_short_code],
+        }
       end
     end
   end

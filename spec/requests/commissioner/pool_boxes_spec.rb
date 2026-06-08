@@ -11,6 +11,16 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
 
   describe "GET /api/commissioner/:pool_id/pool_boxes/default" do
     let(:pool) { create(:pool, admin: admin, league: create(:league, :pwhl)) }
+    let(:fake_result) do
+      {
+        "Forwards Box 1" => [
+          { id: SecureRandom.uuid, name: "Taylor Heise", score: 76.5, current_team_short_code: "MIN" },
+        ],
+      }
+    end
+    let(:fake_service) { instance_double(BoxGenerationService, call: fake_result) }
+
+    before(:each) { allow(BoxGenerationService).to receive(:new).and_return(fake_service) }
 
     subject(:get_default) do
       get "/api/commissioner/#{pool.id}/pool_boxes/default",
@@ -32,18 +42,18 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
     it "returns the expected number of boxes" do
       get_default
 
-      expect(response.parsed_body["boxes"].length).to eq(BoxGeneration::DEFAULT_BOXES.length)
+      expect(response.parsed_body["boxes"].length).to eq(fake_result.length)
     end
 
     it "returns boxes with the expected names" do
       get_default
 
       names = response.parsed_body["boxes"].map { |b| b["name"] }
-      expect(names).to match_array(BoxGeneration::DEFAULT_BOXES.map(&:name))
+      expect(names).to match_array(fake_result.keys)
     end
 
     it "caches the result" do
-      expect(BoxGenerationService).to receive(:new).once.and_call_original
+      expect(BoxGenerationService).to receive(:new).once.and_return(fake_service)
 
       get_default
       get_default
@@ -93,14 +103,14 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
     let(:fake_result) do
       {
         "Forwards Box 1" => [
-          { id: SecureRandom.uuid, name: "Laura Stacey", score: 71.25, team_short_code: "MTL" },
-          { id: SecureRandom.uuid, name: "Brianne Jenner", score: 72.75, team_short_code: "OTT" },
+          { id: SecureRandom.uuid, name: "Laura Stacey", score: 71.25, current_team_short_code: "MTL" },
+          { id: SecureRandom.uuid, name: "Brianne Jenner", score: 72.75, current_team_short_code: "OTT" },
         ],
         "Defence Box 1" => [
-          { id: SecureRandom.uuid, name: "Maggie Flaherty", score: 40.25, team_short_code: "MTL" },
+          { id: SecureRandom.uuid, name: "Maggie Flaherty", score: 40.25, current_team_short_code: "MTL" },
         ],
         "Goalies Box 1" => [
-          { id: SecureRandom.uuid, name: "Aerin Frankel", score: 85.55, team_short_code: "BOS" },
+          { id: SecureRandom.uuid, name: "Aerin Frankel", score: 85.55, current_team_short_code: "BOS" },
         ],
       }
     end
