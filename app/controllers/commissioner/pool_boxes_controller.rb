@@ -1,8 +1,9 @@
 class Commissioner::PoolBoxesController < Commissioner::BaseController
   def default
-    cache_key = "pool_boxes/default/#{@pool.league_id}/#{@pool.display_season_id}"
+    scoring_version = @pool.scoring.maximum(:updated_at).to_i
+    cache_key = "pool_boxes/default/#{@pool.cache_key_with_version}/#{scoring_version}"
 
-    result = Rails.cache.fetch(cache_key, expires_in: 3.months) do
+    result = Rails.cache.fetch(cache_key, expires_in: 3.hours) do
       boxes = BoxGenerationService.new(@pool, BoxGeneration::Config.new).call
       free_agents = compute_free_agents(boxes)
       { boxes: boxes, free_agents: free_agents }
