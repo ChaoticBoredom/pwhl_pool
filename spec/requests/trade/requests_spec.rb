@@ -156,8 +156,8 @@ RSpec.describe "Trade::Requests", type: :request do
 
       let(:fake_result) do
         Trade::ApplicationService::Result.new(
-          added_players: [Trade::ApplicationService::Player.new(id: skater_b.id, name: skater_b.name)],
-          dropped_players: [Trade::ApplicationService::Player.new(id: skater_a.id, name: skater_a.name)],
+          added_players: [Trade::ApplicationService::Player.new(id: skater_b.id, name: skater_b.name, current_team_short_code: "BOS")],
+          dropped_players: [Trade::ApplicationService::Player.new(id: skater_a.id, name: skater_a.name, current_team_short_code: "VAN")],
         )
       end
 

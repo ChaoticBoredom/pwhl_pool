@@ -2,15 +2,14 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   def default
     cache_key = "pool_boxes/default/#{@pool.league_id}/#{@pool.display_season_id}"
 
-    @result = Rails.cache.fetch(cache_key, expires_in: 3.months) do
-      config = BoxGeneration::Config.new(
-        scope: "per_team",
-        boxes: BoxGeneration::DEFAULT_BOXES,
-        excluded_player_ids: [],
-      )
-      BoxGenerationService.new(@pool, config).call
+    result = Rails.cache.fetch(cache_key, expires_in: 3.months) do
+      boxes = BoxGenerationService.new(@pool, BoxGeneration::Config.new).call
+      free_agents = compute_free_agents(boxes)
+      { boxes: boxes, free_agents: free_agents }
     end
 
+    @result = result[:boxes]
+    @free_agents = result[:free_agents]
     render :generate
   rescue BoxGenerationService::BoxGenerationError => e
     render json: { error: e.message }, status: :unprocessable_content
@@ -21,6 +20,8 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
 
     config = build_config
     @result = BoxGenerationService.new(@pool, config, season_id: params[:season_id].presence).call
+
+    @free_agents = compute_free_agents(@result)
     render :generate
   rescue BoxGenerationService::BoxGenerationError => e
     render json: { error: e.message }, status: :unprocessable_content
@@ -65,5 +66,33 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
         count: b.fetch(:count, 1)
       )
     end
+  end
+
+  def compute_free_agents(boxes)
+    assigned_ids = boxes.values.flatten.map { |p| p[:id] }
+
+    free_agent_players = League::Player.
+      active.
+      where(league: @pool.league).
+      where.not(id: assigned_ids)
+
+    records = PlayerRecordQuery.new(
+      players: free_agent_players,
+      season_id: @pool.display_season_id,
+    ).records
+
+    pss = PlayerScoringService.new(@pool.scoring)
+    summaries = pss.raw_player_summaries(free_agent_players, records)
+
+    free_agent_players.map do |player|
+      {
+        id: player.id,
+        name: player.name,
+        current_team_short_code: player.current_team_short_code,
+        score: summaries.dig(player.id, :scores, :season_to_date) || 0,
+        position: player.position,
+        rookie: player.rookie?,
+      }
+    end.sort_by { |p| -p[:score] }
   end
 end

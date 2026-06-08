@@ -10,9 +10,7 @@ json.boxes do
 
     json.players do
       json.array! box.players do |player|
-        json.id player.id
-        json.name player.name
-        json.current_team_short_code player.current_team_short_code
+        json.partial! partial: "players/player", locals: { player: player }
 
         json.selected @selected_ids.include?(player.id)
 

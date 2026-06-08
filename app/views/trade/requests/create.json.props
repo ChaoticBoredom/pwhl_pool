@@ -2,14 +2,12 @@ json.pending_approval false
 
 json.added_players do
   json.array! @result.added_players do |player|
-    json.id player.id
-    json.name player.name
+    json.partial! partial: "players/player", locals: { player: player }
   end
 end
 
 json.dropped_players do
   json.array! @result.dropped_players do |player|
-    json.id player.id
-    json.name player.name
+    json.partial! partial: "players/player", locals: { player: player }
   end
 end

@@ -1,7 +1,5 @@
-json.id @player.id
-json.name @player.name
+json.partial! partial: "players/player", locals: { player: @player }
 json.current_team_id @player.current_team_id
-json.current_team_short_code @player.current_team_short_code
 
 json.raw_stats do
   json.partial! partial: "players/scores", locals: { scores: @stats[:stats], clipped: @stats[:clipped_stats] }

@@ -1,0 +1,4 @@
+json.partial! partial: "players/player", locals: { player: OpenStruct.new(player) }
+json.score player[:score]
+json.position player[:position]
+json.rookie player[:rookie]
