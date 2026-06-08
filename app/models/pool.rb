@@ -9,10 +9,10 @@ class Pool < ApplicationRecord
   belongs_to :league
   belongs_to :admin, class_name: "User"
 
-  has_many :scoring, class_name: "Pool::Scoring"
-  has_many :pool_teams, class_name: "Pool::Team"
-  has_many :pool_boxes, class_name: "Pool::Box"
-  has_many :trade_windows, class_name: "Trade::Window"
+  has_many :scoring, class_name: "Pool::Scoring", dependent: :destroy
+  has_many :pool_teams, class_name: "Pool::Team", dependent: :destroy
+  has_many :pool_boxes, class_name: "Pool::Box", dependent: :destroy
+  has_many :trade_windows, class_name: "Trade::Window", dependent: :destroy
   has_many :trade_requests, through: :pool_teams, class_name: "Trade::Request"
 
   enum :pool_type, {
