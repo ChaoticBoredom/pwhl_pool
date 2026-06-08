@@ -3,8 +3,8 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import DraggablePlayer from "./DraggablePlayer";
 import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
 
-export default function BoxColumn({ box }) {
-  const { setNodeRef, isOver } = useDroppable({ id: `box:${box.name}` });
+export default function BoxColumn({ box, isOver }) {
+  const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
 
   return (
     <div className={`box-column ${isOver ? "box-column--over" : ""}`}>

@@ -27,11 +27,7 @@ export default function DraggablePlayer({ player }) {
       {...attributes}
       {...listeners}
     >
-      <Player player={player}>
-        <span className="draggable-player__position">
-          {player.rookie ? `R${player.position}` : player.position}
-        </span>
-      </Player>
+      <Player player={player} />
       <div className="score-display-vertical">
         <span className="score-value">{Number(player.score).toFixed(2)}</span>
         <span className="score-label">pts</span>

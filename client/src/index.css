@@ -2475,6 +2475,14 @@ input::placeholder { color: var(--placeholder); }
   opacity: 1;
 }
 
+.draggable-player--compact {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8rem;
+  opacity: 0.9;
+  width: fit-content;
+  min-width: 200px;
+}
+
 .free-agents-panel {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -2515,6 +2523,47 @@ input::placeholder { color: var(--placeholder); }
   gap: 0.5rem;
   padding: 0.625rem 0.875rem;
   border-bottom: 1px solid var(--border);
+}
+
+.free-agents-panel__filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.free-agents-panel__filter-group {
+  display: flex;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.filter-toggle {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--card-bg-elevated);
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.filter-toggle:hover { background: var(--accent-bg); color: var(--accent); }
+.filter-toggle--active { background: var(--accent); color: white; }
+
+.filter-toggle--rookie {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+.filter-toggle--rookie.filter-toggle--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
 }
 
 .free-agents-panel__players {

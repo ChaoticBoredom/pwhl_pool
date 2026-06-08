@@ -2,12 +2,12 @@ import { useState, useCallback } from "react";
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
+  pointerWithin,
   PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { useAuth } from "@/context/AuthContext";
 import BoxColumn from "./BoxColumn";
 import FreeAgentsPanel from "./FreeAgentsPanel";
@@ -30,11 +30,12 @@ export default function BoxEditor({
   );
   const [freeAgents, setFreeAgents] = useState(initialFreeAgents);
   const [activePlayer, setActivePlayer] = useState(null);
+  const [overBoxName, setOverBoxName] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
 
   const sensors = useSensors(useSensor(PointerSensor, {
-    activationConstraint: { distance: 8 },
+    activationConstraint: { distance: 12 },
   }));
 
   const findSource = useCallback((playerId) => {
@@ -58,65 +59,77 @@ export default function BoxEditor({
   };
 
   const handleDragEnd = ({ active, over }) => {
+    setOverBoxName(null);
     setActivePlayer(null);
-    if (!over || active.id === over.id) return;
 
     const source = findSource(active.id);
     if (!source) return;
 
-    const overId = over.id;
-    const isOverFreeAgents = overId === "free-agents";
-    const overBoxIndex = boxes.findIndex(
-      (b) => b.name === overId.replace("box:", "") ||
-        b.players.some((p) => p.id === overId)
-    );
+    const player = source.type === "box"
+      ? boxes[source.index].players.find((p) => p.id === active.id)
+      : freeAgents.find((p) => p.id === active.id);
+
+    if (!player) return;
+
+    const overBoxIndex = over
+      ? boxes.findIndex(
+          (b) => `box:${b.name}` === over.id || b.players.some((p) => p.id === over.id)
+        )
+      : -1;
+
     const isOverBox = overBoxIndex !== -1;
 
-    setBoxes((prevBoxes) => {
-      const next = prevBoxes.map((b) => ({ ...b, players: [...b.players] }));
-
-      // Get the dragged player
-      let player;
-      if (source.type === "box") {
-        player = next[source.index].players.find((p) => p.id === active.id);
-        next[source.index].players = next[source.index].players.filter(
-          (p) => p.id !== active.id
+    if (source.type === "box") {
+      if (isOverBox && overBoxIndex !== source.index) {
+        // Box → different box
+        setBoxes((prev) => {
+          const next = prev.map((b) => ({ ...b, players: [...b.players] }));
+          next[source.index].players = next[source.index].players.filter(
+            (p) => p.id !== active.id
+          );
+          const targetIdx = next[overBoxIndex].players.findIndex((p) => p.id === over.id);
+          if (targetIdx !== -1) {
+            next[overBoxIndex].players.splice(targetIdx, 0, player);
+          } else {
+            next[overBoxIndex].players.push(player);
+          }
+          return next;
+        });
+      } else if (!isOverBox) {
+        // Box → anywhere that isn't a box = free agents
+        setBoxes((prev) => prev.map((b, i) =>
+          i === source.index
+            ? { ...b, players: b.players.filter((p) => p.id !== active.id) }
+            : b
+        ));
+        setFreeAgents((prev) =>
+          [...prev, player].sort((a, b) => b.score - a.score)
         );
-      } else {
-        player = freeAgents.find((p) => p.id === active.id);
       }
-
-      if (isOverBox) {
-        // Check if dropping on a specific player in the target box
-        const targetPlayerIndex = next[overBoxIndex].players.findIndex(
-          (p) => p.id === overId
-        );
-        if (targetPlayerIndex !== -1) {
-          next[overBoxIndex].players.splice(targetPlayerIndex, 0, player);
+    } else if (source.type === "free-agents" && isOverBox) {
+      // Free agents → box
+      setFreeAgents((prev) => prev.filter((p) => p.id !== active.id));
+      setBoxes((prev) => {
+        const next = prev.map((b) => ({ ...b, players: [...b.players] }));
+        const targetIdx = next[overBoxIndex].players.findIndex((p) => p.id === over.id);
+        if (targetIdx !== -1) {
+          next[overBoxIndex].players.splice(targetIdx, 0, player);
         } else {
           next[overBoxIndex].players.push(player);
         }
-      }
-
-      return next;
-    });
-
-    setFreeAgents((prev) => {
-      if (source.type === "free-agents") {
-        if (isOverBox) {
-          return prev.filter((p) => p.id !== active.id);
-        }
-        return prev;
-      } else {
-        // source is box
-        if (isOverFreeAgents) {
-          const player = boxes[source.index].players.find((p) => p.id === active.id);
-          return [...prev, player].sort((a, b) => b.score - a.score);
-        }
-        return prev;
-      }
-    });
+        return next;
+      });
+    }
   };
+
+  const handleDragOver = ({ over }) => {
+    if (!over) { setOverBoxName(null); return; }
+    const overBoxIndex = boxes.findIndex(
+      (b) => `box:${b.name}` === over.id || b.players.some((p) => p.id === over.id)
+    );
+    setOverBoxName(overBoxIndex !== -1 ? boxes[overBoxIndex].name : null);
+  };
+
 
   const postBoxes = useCallback(async () => {
     setError(null);
@@ -157,25 +170,29 @@ export default function BoxEditor({
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={pointerWithin}
+        onDragOver={handleDragOver}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <div className="box-editor__layout">
           <div className="box-editor__boxes">
             {boxes.map((box) => (
-              <BoxColumn key={box.name} box={box} />
+              <BoxColumn key={box.name} box={box} isOver={overBoxName == box.name} />
             ))}
           </div>
 
           <div className="box-editor__sidebar">
-            <FreeAgentsPanel players={freeAgents} />
+            <FreeAgentsPanel
+              players={freeAgents}
+              isDragTarget={activePlayer !== null && overBoxName === null}
+            />
           </div>
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
           {activePlayer && (
-            <div className="draggable-player draggable-player--overlay">
+            <div className="draggable-player draggable-player--overlay draggable-player--compact">
               <Player player={activePlayer} />
             </div>
           )}
