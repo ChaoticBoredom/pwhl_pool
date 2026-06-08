@@ -14,6 +14,7 @@ export default function FreeAgentsPanel({ players }) {
   const [search, setSearch] = useState("");
   const [teamFilter, setTeamFilter] = useState(new Set());
   const [positionFilter, setPositionFilter] = useState(null);
+  const [rookieFilter, setRookieFilter] = useState(null);
   const [sortDesc, setSortDesc] = useState(true);
 
   const toggleTeam = (team) => {
@@ -30,10 +31,11 @@ export default function FreeAgentsPanel({ players }) {
         if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
         if (teamFilter.size > 0 && !teamFilter.has(p.current_team_short_code)) return false;
         if (positionFilter && normalizePosition(p.position) !== positionFilter) return false;
+        if (rookieFilter !== null && p.rookie !== rookieFilter) return false;
         return true;
       })
       .sort((a, b) => sortDesc ? b.score - a.score : a.score - b.score);
-  }, [players, search, teamFilter, positionFilter, sortDesc]);
+  }, [players, search, teamFilter, positionFilter, rookieFilter, sortDesc]);
 
   return (
     <div className={`free-agents-panel ${isOver ? "free-agents-panel--over" : ""}`}>
@@ -86,6 +88,12 @@ export default function FreeAgentsPanel({ players }) {
               {pos}
             </button>
           ))}
+          <button
+            className={`player-drawer-mode-btn ${rookieFilter === true ? "player-drawer-mode-btn--active" : ""}`}
+            onClick={() => setRookieFilter((r) => r === true ? null : true)}
+          >
+            Rookie
+          </button>
         </div>
       </div>
 

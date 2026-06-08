@@ -505,6 +505,31 @@ input::placeholder { color: var(--placeholder); }
   color: var(--text-h);
 }
 
+.player-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.player-position-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.player-rookie-star {
+  font-size: 0.65rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
 .team-badge {
   display: inline-block;
   width: fit-content;
@@ -2364,7 +2389,7 @@ input::placeholder { color: var(--placeholder); }
 
 .box-editor__layout {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 320px;
   gap: 1.5rem;
   align-items: start;
 }

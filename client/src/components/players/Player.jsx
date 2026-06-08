@@ -8,10 +8,18 @@ const Player = ({ player, children }) => {
 
       <div className="player-identity-vertical">
         <span className="player-name">{player.name}</span>
-        <TeamBadge shortCode={player.current_team_short_code} />
+        <div className="player-meta">
+          <TeamBadge shortCode={player.current_team_short_code} />
+          {player.position && (
+            <span className="player-position-badge">{player.position}</span>
+          )}
+          {player.rookie && (
+            <span className="player-rookie-star" title="Rookie">★</span>
+          )}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Player
+export default Player;
