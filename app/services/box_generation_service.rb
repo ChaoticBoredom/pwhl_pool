@@ -83,6 +83,8 @@ class BoxGenerationService
           score: p[:score],
           team_id: p[:team_id],
           current_team_short_code: p[:current_team_short_code],
+          position: p[:position],
+          rookie: p[:rookie],
         }
       end
     end

@@ -5,8 +5,7 @@ json.boxes do
 
     json.players do
       json.array! players do |player|
-        json.partial! partial: "players/player", locals: { player: OpenStruct.new(player) }
-        json.score player[:score]
+        json.partial! partial: "commissioner/pool_boxes/box_player", locals: { player: player }
       end
     end
   end
@@ -14,7 +13,6 @@ end
 
 json.free_agents do
   json.array! @free_agents do |player|
-    json.partial! partial: "players/player", locals: { player: OpenStruct.new(player) }
-    json.score player[:score]
+    json.partial! partial: "commissioner/pool_boxes/box_player", locals: { player: player }
   end
 end

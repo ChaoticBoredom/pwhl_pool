@@ -90,6 +90,8 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
         name: player.name,
         current_team_short_code: player.current_team_short_code,
         score: summaries.dig(player.id, :scores, :season_to_date) || 0,
+        position: player.position,
+        rookie: player.rookie?,
       }
     end.sort_by { |p| -p[:score] }
   end
