@@ -74,10 +74,9 @@ class BoxGenerationService
   end
 
   def generate_boxes(sorted)
-    binding.pry
     @config.boxes.each_with_object({}) do |box_def, result|
       players = players_for_box(sorted, box_def)
-      result[box_def.name] = players.map do |p|
+      result[box_def.name] = players.compact.map do |p|
         {
           id: p[:id],
           name: p[:name],
