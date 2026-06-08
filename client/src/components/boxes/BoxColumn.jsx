@@ -29,7 +29,7 @@ const BoxColumn = forwardRef(({ box, isOver, onRename, onRemove, searchTerm }, r
             inputClassName="box-name-input"
           />
         </span>
-        <span className="box-column__count">{box.players.length}</span>
+        <span className="box-column__count">{box.players.length} Players</span>
         <button
           className="box-remove-btn"
           onClick={() => onRemove(box.name)}

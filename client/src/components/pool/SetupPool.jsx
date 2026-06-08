@@ -77,7 +77,7 @@ export default function SetupPool() {
       <h1 className="setup-page-title">Review Default Boxes</h1>
       <p className="setup-page-subtitle">
         These are your pool's default player boxes based on last season's rankings.
-        You can adjust them later when I build that part.
+        You can adjust them using the drag and drop editor below.
       </p>
 
       {isLoading && <p className="report-loading">Generating boxes…</p>}

@@ -3,12 +3,12 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import DraggablePlayer from "./DraggablePlayer";
 import { POSITION_GROUPS, normalizePosition } from "@/utils/positionUtils";
 import { matchesSearch } from "@/utils/searchUtils";
-import { PWHL_TEAMS } from "@/constants/teams";
+import { PWHL_TEAMS, PWHL_TEAM_CODES } from "@/constants/teams";
 
 const POSITIONS = Object.keys(POSITION_GROUPS);
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
-  const [teamFilter, setTeamFilter] = useState(new Set());
+  const [teamFilter, setTeamFilter] = useState(new Set(PWHL_TEAM_CODES));
   const [positionFilter, setPositionFilter] = useState(null);
   const [rookieFilter, setRookieFilter] = useState(null);
   const [sortDesc, setSortDesc] = useState(true);
@@ -25,7 +25,7 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
     return players
       .filter((p) => {
         if (search && !matchesSearch(p.name, search)) return false;
-        if (teamFilter.size > 0 && !teamFilter.has(p.current_team_short_code)) return false;
+        if (!teamFilter.has(p.current_team_short_code)) return false;
         if (positionFilter && normalizePosition(p.position) !== positionFilter) return false;
         if (rookieFilter !== null && p.rookie !== rookieFilter) return false;
         return true;
@@ -65,21 +65,19 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
         />
 
         <div className="team-toggle-list">
-          {Object.entries(PWHL_TEAMS)
-            .filter(([code]) => code !== "default")
-            .map(([code, team]) => (
-              <button
-                key={code}
-                className={`team-toggle ${teamFilter.has(code) ? "team-toggle--active" : ""}`}
-                style={teamFilter.has(code)
-                  ? { background: team.bg, color: team.text, borderColor: team.bg }
-                  : {}
-                }
-                onClick={() => toggleTeam(code)}
-              >
-                {code}
-              </button>
-            ))}
+          {PWHL_TEAM_CODES.map((code) => (
+            <button
+              key={code}
+              className={`team-toggle ${teamFilter.has(code) ? "team-toggle--active" : ""}`}
+              style={teamFilter.has(code)
+                ? { background: PWHL_TEAMS[code].bg, color: PWHL_TEAMS[code].text, borderColor: PWHL_TEAMS[code].bg }
+                : {}
+              }
+              onClick={() => toggleTeam(code)}
+            >
+              {code}
+            </button>
+          ))}
         </div>
         <div className="free-agents-panel__team-controls">
           <button
