@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -13,12 +13,14 @@ import BoxColumn from "./BoxColumn";
 import FreeAgentsPanel from "./FreeAgentsPanel";
 import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
+import { matchesSearch } from "@/utils/searchUtils";
 
 export default function BoxEditor({
   poolId,
   initialBoxes,
   initialFreeAgents,
   onSave,
+  saveLabel,
 }) {
   const { authHeaders } = useAuth();
 
@@ -31,8 +33,25 @@ export default function BoxEditor({
   const [freeAgents, setFreeAgents] = useState(initialFreeAgents);
   const [activePlayer, setActivePlayer] = useState(null);
   const [overBoxName, setOverBoxName] = useState(null);
+  const [boxCounter, setBoxCounter] = useState(initialBoxes.length + 1);
   const [isSaving, setIsSaving] = useState(false);
+  const [search, setSearch] = useState("");
   const [error, setError] = useState(null);
+  const boxRefs = useRef({});
+
+  useEffect(() => {
+    if (search.length < 3) return;
+
+    const firstMatch = boxes.find((b) => b.players.some((p) => matchesSearch(p.name, search)));
+
+    if (firstMatch && boxRefs.current[firstMatch.name]) {
+      boxRefs.current[firstMatch.name].scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: { distance: 12 },
@@ -130,6 +149,31 @@ export default function BoxEditor({
     setOverBoxName(overBoxIndex !== -1 ? boxes[overBoxIndex].name : null);
   };
 
+  const handleRename = (oldName, newName) => {
+    setBoxes((prev) => prev.map((b) =>
+      b.name === oldName ?  { ...b, name: newName } : b
+    ));
+  };
+
+  const handleAddBox = () => {
+    setBoxes((prev) => [...prev, {
+      name: `Pool Box ${boxCounter}`,
+      position: prev.length + 1,
+      players: [],
+    }]);
+    setBoxCounter((c) => c + 1);
+  };
+
+  const handleRemoveBox = (boxName) => {
+    const box = boxes.find((b) => b.name === boxName);
+    if (box?.players.length > 0) {
+      setFreeAgents((fa) =>
+        [...fa, ...box.players].sort((a, b) => b.score - a.score)
+      );
+    }
+    setBoxes((prev) => prev.filter((b) => b.name !== boxName));
+  };
+
 
   const postBoxes = useCallback(async () => {
     setError(null);
@@ -163,6 +207,7 @@ export default function BoxEditor({
 
   // Call onSave with postBoxes as the argument — parent decides when/whether to call it
   const handleSaveClick = () => onSave(postBoxes);
+  const canSave = boxes.length >= 1 && boxes.every((b) => b.players.length >= 1);
 
   return (
     <div className="box-editor">
@@ -177,8 +222,16 @@ export default function BoxEditor({
       >
         <div className="box-editor__layout">
           <div className="box-editor__boxes">
-            {boxes.map((box) => (
-              <BoxColumn key={box.name} box={box} isOver={overBoxName == box.name} />
+            {boxes.map((box, i) => (
+              <BoxColumn
+                key={`${box.name}-${i}`}
+                ref={(el => boxRefs.current[box.name] = el)}
+                box={box}
+                isOver={overBoxName == box.name}
+                onRename={handleRename}
+                onRemove={handleRemoveBox}
+                searchTerm={search.length >= 3 ? search : ""}
+              />
             ))}
           </div>
 
@@ -186,6 +239,8 @@ export default function BoxEditor({
             <FreeAgentsPanel
               players={freeAgents}
               isDragTarget={activePlayer !== null && overBoxName === null}
+              search={search}
+              onSearchChange={setSearch}
             />
           </div>
         </div>
@@ -200,15 +255,22 @@ export default function BoxEditor({
       </DndContext>
 
       <div className="setup-confirm-bar">
+        <button
+          className="btn-primary btn-sm"
+          onClick={handleAddBox}
+        >
+          + Add Box
+        </button>
         <p className="setup-confirm-meta">
           {boxes.length} boxes · {boxes.reduce((n, b) => n + b.players.length, 0)} players assigned
         </p>
         <button
           className="btn-primary"
           onClick={handleSaveClick}
-          disabled={isSaving}
+          disabled={isSaving || !canSave}
+          title={!canSave ? "Every box needs at least one player" : undefined}
         >
-          {isSaving ? "Saving…" : "Confirm & Activate Pool →"}
+          {isSaving ? "Saving…" : saveLabel ?? "Confirm & Activate Pool →"}
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import Player from "@c/players/Player";
 import TeamBadge from "@c/shared/TeamBadge";
 
-export default function DraggablePlayer({ player }) {
+export default function DraggablePlayer({ player, isMatch }) {
   const {
     attributes,
     listeners,
@@ -23,7 +23,7 @@ export default function DraggablePlayer({ player }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`draggable-player ${isDragging ? "draggable-player--dragging" : ""}`}
+      className={`draggable-player ${isDragging ? "draggable-player--dragging" : ""} ${isMatch ? "draggable-player--match" : ""}`}
       {...attributes}
       {...listeners}
     >

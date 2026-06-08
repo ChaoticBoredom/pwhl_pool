@@ -2451,6 +2451,29 @@ input::placeholder { color: var(--placeholder); }
   margin: 0.5rem;
 }
 
+.box-column--match {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-border);
+}
+
+.free-agents-panel__team-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.free-agents-panel__team-sep {
+  color: var(--text-muted);
+}
+
+/* Override btn-link for inline use */
+.free-agents-panel__team-controls .btn-link {
+  margin: 0;
+  font-size: 0.75rem;
+  padding: 0;
+}
+
 .draggable-player {
   display: flex;
   align-items: center;
@@ -2481,6 +2504,12 @@ input::placeholder { color: var(--placeholder); }
   opacity: 0.9;
   width: fit-content;
   min-width: 200px;
+}
+
+.draggable-player--match {
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent);
+  padding-left: calc(0.875rem - 2px);
 }
 
 .free-agents-panel {
