@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
+import BoxEditor from "@c/boxes/BoxEditor";
 
 function BoxPreview({ box }) {
   const [open, setOpen] = useState(false);
@@ -60,45 +61,15 @@ export default function SetupPool() {
     staleTime: Infinity,
   });
 
-  const confirmMutation = useMutation({
-    mutationFn: async () => {
-      const boxesRes = await fetch(`/api/commissioner/${poolId}/pool_boxes`, {
-        method: "POST",
-        headers: authHeaders,
-        body: JSON.stringify({
-          boxes: data.boxes.map((box, i) => ({
-            name: box.name,
-            position: i + 1,
-            players: box.players.map((p) => ({ id: p.id })),
-          })),
-        }),
-      });
-
-      if (!boxesRes.ok) {
-        const err = await boxesRes.json();
-        throw new Error(err.errors?.join(", ") || "Failed to save boxes");
-      }
-
-      const activateRes = await fetch(`/api/commissioner/${poolId}/activate`, {
-        method: "PATCH",
-        headers: authHeaders,
-      });
-
-      if (!activateRes.ok) {
-        const err = await activateRes.json();
-        throw new Error(err.error || "Failed to activate pool");
-      }
-    },
-    onSuccess: () => {
-      add({ severity: "success", message: "Pool created and activated!" });
-      navigate(`/pools/${poolId}`);
-    },
-    onError: (err) => {
-      add({ severity: "error", message: err.message });
-    },
-  });
-
-  const totalPlayers = data?.boxes?.reduce((n, b) => n + b.players.length, 0) ?? 0;
+  const handleAfterSave = async () => {
+    const res = await fetch(`/api/commissioner/${poolId}/activate`, {
+      method: "PATCH",
+      headers: authHeaders,
+    });
+    if (!res.ok) throw new Error("Failed to activate pool");
+    add({ severity: "success", message: "Pool activated!" });
+    navigate(`/pools/${poolId}`);
+  };
 
   return (
     <div className="app-wrapper">
@@ -106,33 +77,20 @@ export default function SetupPool() {
       <h1 className="setup-page-title">Review Default Boxes</h1>
       <p className="setup-page-subtitle">
         These are your pool's default player boxes based on last season's rankings.
-        You can adjust them later when I build that part.
+        You can adjust them using the drag and drop editor below.
       </p>
 
       {isLoading && <p className="report-loading">Generating boxes…</p>}
       {error && <p className="report-error">{error.message}</p>}
 
       {data && (
-        <>
-          <div className="result-box-list">
-            {data.boxes.map((box) => (
-              <BoxPreview key={box.name} box={box} />
-            ))}
-          </div>
-
-          <div className="setup-confirm-bar">
-            <p className="setup-confirm-meta">
-              {data.boxes.length} boxes · {totalPlayers} players total
-            </p>
-            <button
-              className="btn-primary"
-              onClick={() => confirmMutation.mutate()}
-              disabled={confirmMutation.isPending}
-            >
-              {confirmMutation.isPending ? "Activating…" : "Confirm & Activate Pool →"}
-            </button>
-          </div>
-        </>
+        <BoxEditor
+          poolId={poolId}
+          initialBoxes={data.boxes}
+          initialFreeAgents={data.free_agents}
+          onSave={(postBoxes) => postBoxes().then(handleAfterSave)}
+          saveLabel="Confirm & Activate Pool →"
+        />
       )}
     </div>
   );

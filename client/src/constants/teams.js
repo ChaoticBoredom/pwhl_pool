@@ -9,3 +9,5 @@ export const PWHL_TEAMS = {
   'VAN': { name: 'Vancouver Goldeneyes', bg: '#0F4777', text: '#EEE9D8' },
   'default': { name: 'Unknown Team', bg: '#444', text: '#ccc' },
 }
+
+export const PWHL_TEAM_CODES = Object.keys(PWHL_TEAMS).filter((c) => c !== "default");
