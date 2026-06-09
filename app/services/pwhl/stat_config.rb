@@ -25,6 +25,11 @@ module Pwhl
       ],
     }.with_indifferent_access.freeze
 
+    SCOREABLE_STATS = {
+      goalie: STATS[:goalie] - [:time_on_ice],
+      skater: STATS[:skater] - [:time_on_ice],
+    }.freeze
+
     STAT_LABELS = {
       goals: "Goals",
       assists: "Assists",

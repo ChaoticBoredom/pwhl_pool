@@ -1,17 +1,9 @@
-json.skaters do
-  json.array! @skater_scorings do |scoring|
-    json.id scoring.id
-    json.field_name scoring.field_name
-    json.descriptive scoring.field_name.titleize
-    json.value scoring.value
-  end
-end
-
-json.goalies do
-  json.array! @goalie_scorings do |scoring|
-    json.id scoring.id
-    json.field_name scoring.field_name
-    json.descriptive scoring.field_name.titleize
-    json.value scoring.value
+@scorings_by_roster_type.each_key do |roster_type|
+  json.set! roster_type do
+    json.array! @scorings_by_roster_type[roster_type] do |scoring|
+      json.field_name scoring[:field_name]
+      json.descriptive @stat_config::STAT_LABELS[scoring[:field_name].to_sym] || scoring[:field_name].titleize
+      json.value scoring[:value]
+    end
   end
 end

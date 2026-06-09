@@ -53,6 +53,7 @@ Rails.application.routes.draw do
             post :generate
           end
         end
+        resource :pool_scoring, only: [:update], controller: "pool_scoring"
         resources :trade_requests, only: [:index], controller: "trade/requests" do
           collection do
             patch :update
