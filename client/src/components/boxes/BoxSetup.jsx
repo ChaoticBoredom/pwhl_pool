@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
-import BoxEditor from "@c/boxes/BoxEditor";
+import BoxEditor from "./BoxEditor";
 
 function BoxPreview({ box }) {
   const [open, setOpen] = useState(false);

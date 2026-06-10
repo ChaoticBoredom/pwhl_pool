@@ -3,6 +3,10 @@ class League < ApplicationRecord
 
   has_many :games, class_name: "League::Game"
 
+  STAT_CONFIGS = {
+    "PWHL" => Pwhl::StatConfig,
+  }.freeze
+
   def first_game_today
     Rails.cache.fetch("#{cache_key_with_version}/first_game/#{Time.zone.today}", expires_in: 2.hours) do
       games.where(start_time: Time.current.all_day).minimum(:start_time)
@@ -19,6 +23,8 @@ class League < ApplicationRecord
   end
 
   def stat_config
-    "#{short_name.capitalize}::StatConfig".constantize
+    STAT_CONFIGS.fetch(short_name) do
+      raise KeyError, "No stat config registered for league: #{short_name.inspect}"
+    end
   end
 end
