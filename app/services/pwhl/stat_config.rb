@@ -1,5 +1,25 @@
 module Pwhl
   module StatConfig
+    DEFAULT_SCORING = {
+      goalie: {
+        wins: 2.0,
+        saves: 0.05,
+        shutout: 2.0,
+        penalty_minutes: 0.25,
+        goals: 5.0,
+        assists: 2.0,
+      },
+      skater: {
+        goals: 2.0,
+        assists: 1.0,
+        penalty_minutes: 0.25,
+        shots: 0.25,
+        hits: 0.25,
+        power_play_goals: 1.0,
+        short_handed_goals: 2.0,
+      },
+    }.freeze
+
     SEASON_LABELS = {
       "8" => "2025-26 Regular Season",
       "9" => "2025-26 Playoffs",

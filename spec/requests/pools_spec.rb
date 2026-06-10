@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Pools", type: :request do
   let(:user) { create(:user) }
   let(:admin) { create(:user) }
-  let(:league) { create(:league) }
+  let(:league) { create(:league, :pwhl) }
   let(:headers) { auth_headers_for(user) }
   let(:json) { JSON.parse(response.body) }
 
@@ -206,6 +206,34 @@ RSpec.describe "Pools", type: :request do
 
           expect(json["errors"].join).to match(/#{expected_error_match}/i)
         end
+      end
+    end
+
+    it "seeds default scoring on creation" do
+      expect {
+        post "/api/pools", params: valid_params.to_json, headers: headers
+      }.to change { Pool::Scoring.count }.by(
+        Pwhl::StatConfig::DEFAULT_SCORING.values.sum(&:length)
+      )
+    end
+
+    it "seeds correct skater scoring values" do
+      post "/api/pools", params: valid_params.to_json, headers: headers
+
+      pool = Pool.last
+      Pwhl::StatConfig::DEFAULT_SCORING[:skater].each do |field_name, value|
+        scoring = pool.scoring.find_by(field_name: field_name, roster_type: :skater)
+        expect(scoring&.value).to eq(value), "skater #{field_name} expected #{value}"
+      end
+    end
+
+    it "seeds correct goalie scoring values" do
+      post "/api/pools", params: valid_params.to_json, headers: headers
+
+      pool = Pool.last
+      Pwhl::StatConfig::DEFAULT_SCORING[:goalie].each do |field_name, value|
+        scoring = pool.scoring.find_by(field_name: field_name, roster_type: :goalie)
+        expect(scoring&.value).to eq(value), "goalie #{field_name} expected #{value}"
       end
     end
 

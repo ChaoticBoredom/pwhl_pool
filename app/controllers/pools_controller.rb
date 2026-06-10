@@ -44,12 +44,7 @@ class PoolsController < ApplicationController
     @pool = Pool.new(pool_params.merge(admin: current_user))
 
     if @pool.save
-      @pool.scoring.create(field_name: "goals", roster_type: "skater", value: 2)
-      @pool.scoring.create(field_name: "assists", roster_type: "skater", value: 1)
-      @pool.scoring.create(field_name: "hits", roster_type: "skater", value: 0.5)
-      @pool.scoring.create(field_name: "saves", roster_type: "goalie", value: 0.05)
-      @pool.scoring.create(field_name: "win", roster_type: "goalie", value: 2)
-      @pool.scoring.create(field_name: "shutout", roster_type: "goalie", value: 5)
+      seed_default_scoring
       render :show, status: :created
     else
       render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
@@ -82,6 +77,19 @@ class PoolsController < ApplicationController
 
   def pool_name_params
     params.require(:pool).permit(:name)
+  end
+
+  def seed_default_scoring
+    stat_config = @pool.league.stat_config
+    stat_config::DEFAULT_SCORING.each do |roster_type, fields|
+      fields.each do |field_name, value|
+        @pool.scoring.create!(
+          field_name: field_name,
+          roster_type: roster_type,
+          value: value,
+        )
+      end
+    end
   end
 
   def rank_teams(team_scores)
