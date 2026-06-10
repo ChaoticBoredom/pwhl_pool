@@ -8,7 +8,10 @@ import { normalizePosition } from "@/utils/positionUtils";
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
   const { pool } = usePool();
-  const { teams, teamCodes, positionGroups } = getLeagueConstants(pool?.league?.short_name);
+  const { teams, teamCodes, positionGroups } = useMemo(
+    () => getLeagueConstants(pool?.league?.short_name),
+    [pool?.league?.short_name]
+  );
   const [teamFilter, setTeamFilter] = useState(new Set(teamCodes));
   const [positionFilter, setPositionFilter] = useState(null);
   const [rookieFilter, setRookieFilter] = useState(null);
