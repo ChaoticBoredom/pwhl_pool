@@ -145,7 +145,7 @@ export default function PoolScoring({ setupMode = false }) {
         <div className="setup-confirm-bar">
           <button
             className="btn-secondary btn-sm"
-            onClick={() => {handleCancel}}
+            onClick={handleCancel}
           >
             Cancel
           </button>
