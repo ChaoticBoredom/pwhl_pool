@@ -1,40 +1,39 @@
-import {
-  Trophy, Handshake, Target, Shield, BrickWallShield,
-  Medal, Clock, Zap, Gavel, Swords, Star, HelpCircle,
-} from "lucide-react"
+import { HelpCircle } from "lucide-react";
+import { getLeagueConstants } from "@/constants";
+import { usePool } from "@/context/PoolContext";
 
-const STAT_ICON_MAP = {
-  goals:              Trophy,
-  assists:            Handshake,
-  shots:              Target,
-  hits:               Swords,
-  saves:              Shield,
-  shutout:            BrickWallShield,
-  win:                Medal,
-  penalty_minutes:    Clock,
-  power_play_goals:   Zap,
-  short_handed_goals: Gavel,
-  faceoffs_won:       Star,
-};
-
-function StatCard({ scoring }) {
-  const Icon = STAT_ICON_MAP[scoring.field_name] ?? HelpCircle;
+function StatCard({ scoring, editable, onChange }) {
+  const { pool } = usePool();
+  const { statIconMap } = getLeagueConstants(pool?.league?.short_name);
+  const Icon = statIconMap[scoring.field_name] ?? HelpCircle;
 
   return (
-    <div className="scoring-card">
+    <div className={`scoring-card ${scoring.value == null ? "scoring-card--unconfigured" : ""}`}>
       <div className="scoring-card-header">
         <div className="scoring-card-icon">
           <Icon size={24} strokeWidth={1.5} />
         </div>
       </div>
       <div className="scoring-card-label">{scoring.descriptive}</div>
-      <div className="scoring-card-value">{scoring.value.toFixed(2)}</div>
+      {editable ? (
+        <input
+          className="scoring-card-input"
+          type="number"
+          step="0.05"
+          value={scoring.value ?? ""}
+          placeholder="0"
+          onChange={(e) => onChange(scoring.field_name, scoring.roster_type, e.target.value)}
+        />
+      ) : (
+        <div className="scoring-card-value">
+          {scoring.value != null ? scoring.value.toFixed(2) : "—"}
+        </div>
+      )}
     </div>
   );
 }
 
-
-export function ScoringSection({ title, scorings }) {
+export function ScoringSection({ title, scorings, editable = false, onChange }) {
   if (!scorings?.length) return null;
 
   return (
@@ -42,7 +41,12 @@ export function ScoringSection({ title, scorings }) {
       <div className="scoring-section-title">{title}</div>
       <div className="scoring-card-grid">
         {scorings.map((scoring) => (
-          <StatCard key={scoring.id} scoring={scoring} />
+          <StatCard
+            key={scoring.field_name}
+            scoring={scoring}
+            editable={editable}
+            onChange={onChange}
+          />
         ))}
       </div>
     </div>
