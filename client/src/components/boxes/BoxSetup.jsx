@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
+import LoadingState from "@c/shared/LoadingState";
 import BoxEditor from "./BoxEditor";
 
 function BoxPreview({ box }) {
@@ -80,18 +81,18 @@ export default function SetupPool() {
         You can adjust them using the drag and drop editor below.
       </p>
 
-      {isLoading && <p className="report-loading">Generating boxes…</p>}
-      {error && <p className="report-error">{error.message}</p>}
-
-      {data && (
-        <BoxEditor
-          poolId={poolId}
-          initialBoxes={data.boxes}
-          initialFreeAgents={data.free_agents}
-          onSave={(postBoxes) => postBoxes().then(handleAfterSave)}
-          saveLabel="Confirm & Activate Pool →"
-        />
-      )}
+      {(isLoading || error)
+        ? <LoadingState error={error} message="Generating boxes…" />
+        : data && (
+            <BoxEditor
+              poolId={poolId}
+              initialBoxes={data.boxes}
+              initialFreeAgents={data.free_agents}
+              onSave={(postBoxes) => postBoxes().then(handleAfterSave)}
+              saveLabel="Confirm & Activate Pool →"
+            />
+          )
+      }
     </div>
   );
 }

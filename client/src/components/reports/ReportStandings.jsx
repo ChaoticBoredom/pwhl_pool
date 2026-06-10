@@ -9,6 +9,7 @@ import {
 import ReportNav from "./ReportNav";
 import ReportFilters from "./ReportFilters";
 import ChartTooltip from "@c/shared/ChartTooltip";
+import LoadingState from "@c/shared/LoadingState";
 import CollapsibleStandings from "./CollapsibleStandings";
 import { periodLabel, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
@@ -152,7 +153,7 @@ export default function ReportStandings() {
         placeholder={{ from: bounds.from, to: bounds.to }}
       />
 
-      {isLoading && <div className="report-loading">Loading…</div>}
+      {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
         <div className="rp-full">

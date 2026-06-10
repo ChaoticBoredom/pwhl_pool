@@ -204,6 +204,10 @@ code {
   text-align: center;
 }
 
+.loading-state,
+.loading-state--error { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+.loading-state--error { color: var(--danger-text); }
+
 /* ============================================================
    FORMS & INPUTS
    ============================================================ */
@@ -1375,9 +1379,7 @@ input::placeholder { color: var(--placeholder); }
 .report-tooltip__team   { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .report-tooltip__value  { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0; }
 
-.report-loading,
-.report-error { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
-.report-error { color: var(--danger-text); }
+.report-empty { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
 
 /* ============================================================
    REPORTS — FULL WIDTH CHART LAYOUT

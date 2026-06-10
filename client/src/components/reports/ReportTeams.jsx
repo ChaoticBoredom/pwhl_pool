@@ -6,6 +6,7 @@ import ReportNav from "./ReportNav";
 import ReportFilters from "./ReportFilters";
 import CollapsibleStandings from "./CollapsibleStandings";
 import TeamBadge from "@c/shared/TeamBadge";
+import LoadingState from "@c/shared/LoadingState";
 import { fmt, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
 import { formatDate } from "@/utils/formatDate";
@@ -203,7 +204,7 @@ export default function ReportTeams() {
         placeholder={{ from: bounds.from, to: bounds.to }}
       />
 
-      {isLoading && <div className="report-loading">Loading…</div>}
+      {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
         selectedTeam ? (
