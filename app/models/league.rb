@@ -23,6 +23,8 @@ class League < ApplicationRecord
   end
 
   def stat_config
-    STAT_CONFIGS[short_name]
+    STAT_CONFIGS.fetch(short_name) do
+      raise KeyError, "No stat config registered for league: #{short_name.inspect}"
+    end
   end
 end

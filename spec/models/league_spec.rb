@@ -73,5 +73,10 @@ RSpec.describe League, type: :model do
       league = create(:league, :pwhl)
       expect(league.stat_config).to eq(Pwhl::StatConfig)
     end
+
+    it "raises a KeyError for an unregistered league" do
+      league = create(:league, short_name: "XYZ")
+      expect { league.stat_config }.to raise_error(KeyError, /XYZ/)
+    end
   end
 end
