@@ -1,17 +1,17 @@
 import { useState, useMemo } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DraggablePlayer from "./DraggablePlayer";
-import { POSITION_GROUPS, normalizePosition } from "@/utils/positionUtils";
 import { matchesSearch } from "@/utils/searchUtils";
-import { PWHL_TEAMS, PWHL_TEAM_CODES } from "@/constants/teams";
-
-const POSITIONS = Object.keys(POSITION_GROUPS);
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
+import { normalizePosition } from "@/utils/positionUtils";
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
-  const [teamFilter, setTeamFilter] = useState(new Set(PWHL_TEAM_CODES));
+  const { teams, teamCodes, positionGroups } = useLeagueConstants();
+  const [teamFilter, setTeamFilter] = useState(new Set(teamCodes));
   const [positionFilter, setPositionFilter] = useState(null);
   const [rookieFilter, setRookieFilter] = useState(null);
   const [sortDesc, setSortDesc] = useState(true);
+  const POSITIONS = Object.keys(positionGroups);
 
   const toggleTeam = (team) => {
     setTeamFilter((prev) => {
@@ -22,16 +22,16 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
   };
 
   const filtered = useMemo(() => {
-    return players
-      .filter((p) => {
+    return players.
+      filter((p) => {
         if (search && !matchesSearch(p.name, search)) return false;
         if (!teamFilter.has(p.current_team_short_code)) return false;
-        if (positionFilter && normalizePosition(p.position) !== positionFilter) return false;
+        if (positionFilter && normalizePosition(p.position, positionGroups) !== positionFilter) return false;
         if (rookieFilter !== null && p.rookie !== rookieFilter) return false;
         return true;
-      })
-      .sort((a, b) => sortDesc ? b.score - a.score : a.score - b.score);
-  }, [players, search, teamFilter, positionFilter, rookieFilter, sortDesc]);
+      }).
+      sort((a, b) => sortDesc ? b.score - a.score : a.score - b.score);
+  }, [players, search, teamFilter, positionFilter, rookieFilter, sortDesc, positionGroups]);
 
   return (
     <div className={`free-agents-panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
@@ -65,12 +65,12 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
         />
 
         <div className="team-toggle-list">
-          {PWHL_TEAM_CODES.map((code) => (
+          {teamCodes.map((code) => (
             <button
               key={code}
               className={`team-toggle ${teamFilter.has(code) ? "team-toggle--active" : ""}`}
               style={teamFilter.has(code)
-                ? { background: PWHL_TEAMS[code].bg, color: PWHL_TEAMS[code].text, borderColor: PWHL_TEAMS[code].bg }
+                ? { background: teams[code].bg, color: teams[code].text, borderColor: teams[code].bg }
                 : {}
               }
               onClick={() => toggleTeam(code)}
@@ -82,7 +82,7 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
         <div className="free-agents-panel__team-controls">
           <button
             className="btn-link"
-            onClick={() => setTeamFilter(new Set(Object.keys(PWHL_TEAMS).filter(c => c !== "default")))}
+            onClick={() => setTeamFilter(new Set(Object.keys(teams).filter(c => c !== "default")))}
           >
             All
           </button>

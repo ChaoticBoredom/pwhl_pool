@@ -5,17 +5,17 @@ import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import { ScoringSection } from "./ScoringSection";
 import { usePool } from "@/context/PoolContext";
-import { getLeagueConstants } from "@/constants";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 export default function PoolScoring({ setupMode = false }) {
   const [editing, setEditing] = useState(setupMode);
   const { poolId } = useParams();
   const { authHeaders } = useAuth();
   const { add } = useNotices();
-  const { isCommissioner, pool } = usePool();
+  const { isCommissioner } = usePool();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { rosterTypeLabels } = getLeagueConstants(pool?.league?.short_name);
+  const { rosterTypeLabels } = useLeagueConstants();
 
   const [values, setValues] = useState(null);
 

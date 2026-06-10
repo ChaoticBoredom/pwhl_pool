@@ -1,10 +1,8 @@
 import { HelpCircle } from "lucide-react";
-import { getLeagueConstants } from "@/constants";
-import { usePool } from "@/context/PoolContext";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 function StatCard({ scoring, editable, onChange }) {
-  const { pool } = usePool();
-  const { statIconMap } = getLeagueConstants(pool?.league?.short_name);
+  const { statIconMap } = useLeagueConstants();
   const Icon = statIconMap[scoring.field_name] ?? HelpCircle;
 
   return (
