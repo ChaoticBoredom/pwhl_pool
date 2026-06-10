@@ -1,5 +1,19 @@
 module Pwhl
   module StatConfig
+    DEFAULT_BOXES = [
+      BoxGeneration::BoxDefinition.new(name: "Forwards Box 1", position: "F", rank: 1, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Forwards Box 2", position: "F", rank: 2, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Forwards Box 3", position: "F", rank: 3, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Forwards Box 4", position: "F", rank: 4, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Forwards Box 5", position: "F", rank: 5, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Defence Box 1", position: "D", rank: 1, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Defence Box 2", position: "D", rank: 2, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Defence Box 3", position: "D", rank: 3, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Goalies Box 1", position: "G", rookie: nil, rank: 1, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Rookie Forwards Box 1", position: "F", rookie: true, rank: 1, count: 1),
+      BoxGeneration::BoxDefinition.new(name: "Rookie Defence Box 1", position: "D", rookie: true, rank: 1, count: 1),
+    ].freeze
+
     DEFAULT_SCORING = {
       goalie: {
         wins: 2.0,
