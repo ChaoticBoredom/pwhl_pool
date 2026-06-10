@@ -28,7 +28,7 @@ export default function PoolScoring({ setupMode = false }) {
       if (!res.ok) throw new Error("Failed to load scoring");
       return res.json();
     },
-    staleTime: editing ? 0 : 20 * 60 * 1000,
+    staleTime: 20 * 60 * 1000,
   });
 
   if (data && values === null) {
