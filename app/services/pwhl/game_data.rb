@@ -169,8 +169,8 @@ class Pwhl::GameData
 
     rec.win = data.fetch("win", 0) == "1"
     rec.shutout = data.fetch("shutout", 0) == "1"
-    # What period did the goalie start playing? If at all? Does not exist on the gamebygame
-    rec.game_started = data.fetch("period_start", nil) == "1st"
+    # Was the goalie the starter? Does not exist on the gamebygame
+    rec.game_started = data.fetch("start", nil) == "1"
     rec.saves = data.fetch("saves", 0)
     rec.goals_against = data.fetch("goals_against", 0)
     rec.shots_against = data.fetch("shots_against", 0)

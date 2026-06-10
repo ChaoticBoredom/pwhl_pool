@@ -445,13 +445,13 @@ RSpec.describe Pwhl::GameData do
     end
 
     context "game_started" do
-      it "is true when period_start is '1st'" do
-        result = service.send(:update_goalie_data, rec, { "period_start" => "1st" })
+      it "is true when start is '1'" do
+        result = service.send(:update_goalie_data, rec, { "start" => "1" })
         expect(result.game_started).to be true
       end
 
-      it "is false when period_start is a later period" do
-        result = service.send(:update_goalie_data, rec, { "period_start" => "2nd" })
+      it "is false when start is not '1'" do
+        result = service.send(:update_goalie_data, rec, { "start" => "0" })
         expect(result.game_started).to be false
       end
 
