@@ -12,10 +12,9 @@ export default function PoolScoring({ setupMode = false }) {
   const { poolId } = useParams();
   const { authHeaders } = useAuth();
   const { add } = useNotices();
-  const { isCommissioner } = usePool();
+  const { isCommissioner, pool } = usePool();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { pool } = usePool();
   const { rosterTypeLabels } = getLeagueConstants(pool?.league?.short_name);
 
   const [values, setValues] = useState(null);
