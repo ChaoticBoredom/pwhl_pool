@@ -1,9 +1,7 @@
-import { usePool } from "@/context/PoolContext";
-import { getLeagueConstants } from "@/constants";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 const TeamBadge = ({ shortCode }) => {
-  const { pool } = usePool();
-  const { teams } = getLeagueConstants(pool?.league?.short_name);
+  const { teams } = useLeagueConstants();
   const teamInfo = teams[shortCode] || teams["default"];
 
   return (
