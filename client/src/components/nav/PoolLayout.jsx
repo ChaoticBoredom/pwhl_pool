@@ -48,44 +48,42 @@ export default function PoolLayout() {
 
   return (
     <NoticeProvider>
-      <div className="pool-layout">
-        <TopBar pool={pool} onMenuToggle={handleMenuToggle} />
-        <NoticeBar />
-        <div className="pool-layout__body">
-          <SideNav
-            poolId={poolId}
-            pool={pool}
-            isCommissioner={isCommissioner}
-            collapsed={collapsed}
-            className="side-nav--desktop"
-          />
+      <PoolContext.Provider value={{ pool, isCommissioner }}>
+        <div className="pool-layout">
+          <TopBar pool={pool} onMenuToggle={handleMenuToggle} />
+          <NoticeBar />
+          <div className="pool-layout__body">
+            <SideNav
+              poolId={poolId}
+              isCommissioner={isCommissioner}
+              collapsed={collapsed}
+              className="side-nav--desktop"
+            />
 
-          {mobileOpen && (
-            <>
-              <div
-                className="mobile-nav-overlay"
-                onClick={() => setMobileOpen(false)}
-              />
-              <div className="mobile-nav-drawer">
-                <SideNav
-                  poolId={poolId}
-                  pool={pool}
-                  isCommissioner={isCommissioner}
-                  collapsed={false}
-                  onNavigate={() => setMobileOpen(false)}
+            {mobileOpen && (
+              <>
+                <div
+                  className="mobile-nav-overlay"
+                  onClick={() => setMobileOpen(false)}
                 />
-              </div>
-            </>
-          )}
+                <div className="mobile-nav-drawer">
+                  <SideNav
+                    poolId={poolId}
+                    isCommissioner={isCommissioner}
+                    collapsed={false}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                </div>
+              </>
+            )}
 
-          <PoolContext.Provider value={{ pool, isCommissioner }}>
-            <main className="pool-layout__main">
-              <Outlet />
-            </main>
-          </PoolContext.Provider>
+              <main className="pool-layout__main">
+                <Outlet />
+              </main>
+          </div>
+          <NoticeFloat />
         </div>
-        <NoticeFloat />
-      </div>
+      </PoolContext.Provider>
     </NoticeProvider>
   );
 }
