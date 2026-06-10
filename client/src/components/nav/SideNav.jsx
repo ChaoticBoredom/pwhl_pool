@@ -68,9 +68,9 @@ const ReportsNavExpanded = ({ base, onNavigate, reportsOpen, setReportsOpen }) =
   </div>
 );
 
-export default function SideNav({ poolId, isCommissioner, collapsed, onNavigate, className = "" }) {
+export default function SideNav({ poolId, collapsed, onNavigate, className = "" }) {
   const { currentUser } = useAuth();
-  const { pool } = usePool();
+  const { pool, isCommissioner } = usePool();
   const [reportsOpen, setReportsOpen] = useState(false);
   const base = `/pools/${poolId}`;
 

@@ -55,7 +55,6 @@ export default function PoolLayout() {
           <div className="pool-layout__body">
             <SideNav
               poolId={poolId}
-              isCommissioner={isCommissioner}
               collapsed={collapsed}
               className="side-nav--desktop"
             />
@@ -69,7 +68,6 @@ export default function PoolLayout() {
                 <div className="mobile-nav-drawer">
                   <SideNav
                     poolId={poolId}
-                    isCommissioner={isCommissioner}
                     collapsed={false}
                     onNavigate={() => setMobileOpen(false)}
                   />
