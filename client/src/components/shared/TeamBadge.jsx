@@ -1,7 +1,10 @@
-import { PWHL_TEAMS } from "@/constants/teams";
+import { usePool } from "@/context/PoolContext";
+import { getLeagueConstants } from "@/constants";
 
 const TeamBadge = ({ shortCode }) => {
-  const teamInfo = PWHL_TEAMS[shortCode] || PWHL_TEAMS["default"];
+  const { pool } = usePool();
+  const { teams } = getLeagueConstants(pool?.league?.short_name);
+  const teamInfo = teams[shortCode] || teams["default"];
 
   return (
     <span
