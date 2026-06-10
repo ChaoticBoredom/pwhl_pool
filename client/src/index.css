@@ -964,14 +964,10 @@ input::placeholder { color: var(--placeholder); }
   min-width: 28px;
   text-align: center;
   flex-shrink: 0;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
 }
-
-.box-badge--forward        { background: var(--accent-bg);  color: var(--accent); }
-.box-badge--defense        { background: var(--warning-bg); color: var(--warning-text); }
-.box-badge--goalie         { background: var(--success-bg); color: var(--success-text); }
-.box-badge--rookie-forward { background: var(--accent-bg);  color: var(--accent);       border: 1px solid var(--accent-border); opacity: 0.75; }
-.box-badge--rookie-defense { background: var(--warning-bg); color: var(--warning-text); border: 1px solid var(--warning-text);  opacity: 0.75; }
-.box-badge--rookie-goalie  { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-text);  opacity: 0.75; }
 
 .box-name-input { flex: 1; min-width: 120px; padding: 4px 8px; font-size: 13px; border-radius: 4px; }
 .box-select { font-size: 12px; padding: 3px 4px; }
