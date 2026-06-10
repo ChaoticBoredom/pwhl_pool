@@ -6,6 +6,7 @@ import useNotices from "@/hooks/useNotices";
 import { ScoringSection } from "./ScoringSection";
 import { usePool } from "@/context/PoolContext";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
+import LoadingState from "@c/shared/LoadingState";
 
 export default function PoolScoring({ setupMode = false }) {
   const [editing, setEditing] = useState(setupMode);
@@ -90,8 +91,7 @@ export default function PoolScoring({ setupMode = false }) {
     },
   });
 
-  if (isLoading) return <div className="report-loading">Loading…</div>;
-  if (error) return <div className="report-error">{error.message}</div>;
+  if (isLoading || error) return <LoadingState error={error} />
 
   return (
     <div className="app-wrapper">

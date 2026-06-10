@@ -4,6 +4,7 @@ import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
 import PoolLayout from "@c/nav/PoolLayout"
 import TopBar from "@c/nav/TopBar";
+import LoadingState from "@c/shared/LoadingState";
 
 import CreatePool from "@c/pool/CreatePool";
 
@@ -58,7 +59,7 @@ export function AppRouter() {
 
           <Route
             element={
-              <Suspense fallback={<div className="report-loading">Loading...</div>}>
+              <Suspense fallback={<LoadingState />}>
                 <Outlet />
               </Suspense>
             }

@@ -12,6 +12,7 @@ import ChartTooltip from "@c/shared/ChartTooltip";
 import CollapsibleStandings from "./CollapsibleStandings";
 import { seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap, buildCatColourMap } from "@/utils/colourUtils";
+import LoadingState from "@c/shared/LoadingState";
 
 export default function ReportCategories() {
   const { poolId } = useParams();
@@ -110,7 +111,7 @@ export default function ReportCategories() {
         placeholder={{ from: bounds.from, to: bounds.to }}
       />
 
-      {isLoading && <div className="report-loading">Loading…</div>}
+      {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
         <div className="rp-full">
@@ -158,7 +159,7 @@ export default function ReportCategories() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="report-loading">No category data.</p>
+              <p className="report-empty">No category data.</p>
             )}
           </div>
 

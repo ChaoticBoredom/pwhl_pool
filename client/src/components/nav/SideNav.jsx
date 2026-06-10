@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { usePool } from "@/context/PoolContext";
 import {
   Trophy, Shirt, Star, FileBarChart, BarChart2,
   ArrowLeftRight, Settings, Home,
@@ -67,8 +68,9 @@ const ReportsNavExpanded = ({ base, onNavigate, reportsOpen, setReportsOpen }) =
   </div>
 );
 
-export default function SideNav({ poolId, pool, isCommissioner, collapsed, onNavigate, className = "" }) {
+export default function SideNav({ poolId, collapsed, onNavigate, className = "" }) {
   const { currentUser } = useAuth();
+  const { pool, isCommissioner } = usePool();
   const [reportsOpen, setReportsOpen] = useState(false);
   const base = `/pools/${poolId}`;
 
