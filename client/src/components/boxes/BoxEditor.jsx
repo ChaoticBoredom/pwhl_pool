@@ -14,6 +14,8 @@ import FreeAgentsPanel from "./FreeAgentsPanel";
 import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
 import { matchesSearch } from "@/utils/searchUtils";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
+import { deriveBoxBadge } from "@/utils/boxConfig";
 
 export default function BoxEditor({
   poolId,
@@ -37,6 +39,7 @@ export default function BoxEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState(null);
+  const { positionGroups } = useLeagueConstants();
   const boxRefs = useRef({});
 
   useEffect(() => {
@@ -222,17 +225,19 @@ export default function BoxEditor({
       >
         <div className="box-editor__layout">
           <div className="box-editor__boxes">
-            {boxes.map((box, i) => (
-              <BoxColumn
+            {boxes.map((box, i) => {
+              const { position_type, rookie } = deriveBoxBadge(box.players, positionGroups);
+              return (<BoxColumn
                 key={`${box.name}-${i}`}
                 ref={(el => boxRefs.current[box.name] = el)}
-                box={box}
-                isOver={overBoxName == box.name}
+                box={{ ...box, position_type, rookie }}
+                isOver={overBoxName === box.name}
                 onRename={handleRename}
                 onRemove={handleRemoveBox}
                 searchTerm={search.length >= 3 ? search : ""}
               />
-            ))}
+            );
+          })}
           </div>
 
           <div className="box-editor__sidebar">

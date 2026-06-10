@@ -2,12 +2,14 @@ import { forwardRef } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DraggablePlayer from "./DraggablePlayer";
-import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
+import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxConfig";
 import { EditableField } from "@c/shared/EditableField";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
 
 const BoxColumn = forwardRef(({ box, isOver, onRename, onRemove, searchTerm }, ref) => {
   const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
+  const { positionStyles } = useLeagueConstants();
   const hasMatch = box.players.some((p) => matchesSearch(p.name, searchTerm));
 
   return (
@@ -19,8 +21,10 @@ const BoxColumn = forwardRef(({ box, isOver, onRename, onRemove, searchTerm }, r
       className={`box-column ${isOver ? "box-column--over" : ""} ${hasMatch ? "box-column--match" : ""}`}
     >
       <div className="box-column__header">
-        <span className={`box-badge ${boxBadgeClass(box.name)}`}>
-          {boxBadgeLabel(box.name)}
+        <span
+          className="box-badge"
+          style={boxBadgeStyle(box.position_type, box.rookie, positionStyles)}>
+          {boxBadgeLabel(box.position_type, box.rookie)}
         </span>
         <span className="box-column__name">
           <EditableField
