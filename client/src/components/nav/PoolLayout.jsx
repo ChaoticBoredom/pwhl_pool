@@ -8,6 +8,7 @@ import NoticeBar from "@c/shared/NoticeBar";
 import NoticeFloat from "@c/shared/NoticeFloat";
 import NoticeProvider from "@/context/NoticeProvider";
 import { useIsMobile } from "@/hooks/useBreakpoint";
+import PoolContext from "@/context/PoolContext";
 
 const NAV_COLLAPSED_KEY = "nav_collapsed";
 
@@ -43,7 +44,7 @@ export default function PoolLayout() {
     enabled: !!poolId,
   });
 
-  const isAdmin = pool && (pool.admin.id === currentUser || isGod);
+  const isCommissioner = pool && (pool.admin.id === currentUser || isGod);
 
   return (
     <NoticeProvider>
@@ -54,7 +55,7 @@ export default function PoolLayout() {
           <SideNav
             poolId={poolId}
             pool={pool}
-            isAdmin={isAdmin}
+            isCommissioner={isCommissioner}
             collapsed={collapsed}
             className="side-nav--desktop"
           />
@@ -69,7 +70,7 @@ export default function PoolLayout() {
                 <SideNav
                   poolId={poolId}
                   pool={pool}
-                  isAdmin={isAdmin}
+                  isCommissioner={isCommissioner}
                   collapsed={false}
                   onNavigate={() => setMobileOpen(false)}
                 />
@@ -77,9 +78,11 @@ export default function PoolLayout() {
             </>
           )}
 
-          <main className="pool-layout__main">
-            <Outlet />
-          </main>
+          <PoolContext.Provider value={{ pool, isCommissioner }}>
+            <main className="pool-layout__main">
+              <Outlet />
+            </main>
+          </PoolContext.Provider>
         </div>
         <NoticeFloat />
       </div>
