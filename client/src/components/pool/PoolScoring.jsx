@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
@@ -53,21 +53,6 @@ export default function PoolScoring({ setupMode = false }) {
     }
   }
 
-  const enrichedData = data
-    ? Object.fromEntries(
-        Object.entries(data).map(([rosterType, fields]) => [
-          rosterType,
-          fields.map((f) => ({
-            ...f,
-            roster_type: rosterType,
-            value: editing
-              ? (values?.[`${rosterType}/${f.field_name}`] ?? "")
-              : f.value,
-          })),
-        ])
-      )
-    : null;
-
   const saveMutation = useMutation({
     mutationFn: async () => {
       const scoring = Object.entries(data).flatMap(([rosterType, fields]) =>
@@ -105,7 +90,7 @@ export default function PoolScoring({ setupMode = false }) {
     },
   });
 
-  if (isLoading || !enrichedData) return <div className="report-loading">Loading…</div>;
+  if (isLoading) return <div className="report-loading">Loading…</div>;
   if (error) return <div className="report-error">{error.message}</div>;
 
   return (
@@ -130,11 +115,17 @@ export default function PoolScoring({ setupMode = false }) {
         </div>
       )}
 
-      {Object.entries(enrichedData).map(([rosterType, fields]) => (
+      {data && values && Object.entries(data).map(([rosterType, fields]) => (
         <ScoringSection
           key={rosterType}
           title={rosterTypeLabels[rosterType] ?? rosterType}
-          scorings={editing ? fields : fields.filter((s) => s.value !== null)}
+          scorings={fields.
+            filter((f) => editing || f.value !== null).
+            map((f) => ({
+              ...f,
+              roster_type: rosterType,
+              value: editing ? (values[`${rosterType}/${f.field_name}`] ?? "") : f.value,
+          }))}
           editable={editing}
           onChange={handleChange}
         />
@@ -153,7 +144,7 @@ export default function PoolScoring({ setupMode = false }) {
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
           >
-            {saveMutation.isPending ? "Saving…" : "Save Scoring"}
+            {saveMutation.isPending ? "Saving…" : setupMode ? "Save & Continue →" : "Save Scoring"}
           </button>
         </div>
       )}
