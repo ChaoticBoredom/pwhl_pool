@@ -4,7 +4,9 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
     cache_key = "pool_boxes/default/#{@pool.cache_key_with_version}/#{scoring_version}"
 
     result = Rails.cache.fetch(cache_key, expires_in: 3.hours) do
-      boxes = BoxGenerationService.new(@pool, BoxGeneration::Config.new).call
+      boxes = BoxGenerationService.new(@pool, BoxGeneration::Config.new(
+        boxes: @pool.league.stat_config::DEFAULT_BOXES
+      )).call
       free_agents = compute_free_agents(boxes)
       { boxes: boxes, free_agents: free_agents }
     end
@@ -56,7 +58,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   end
 
   def build_boxes
-    return BoxGeneration::DEFAULT_BOXES unless params[:boxes].present?
+    return @pool.league.stat_config::DEFAULT_BOXES unless params[:boxes].present?
 
     params[:boxes].map do |b|
       BoxGeneration::BoxDefinition.new(

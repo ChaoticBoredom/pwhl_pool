@@ -1,48 +1,9 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
-import { boxBadgeClass, boxBadgeLabel } from "@/utils/boxConfig";
 import LoadingState from "@c/shared/LoadingState";
 import BoxEditor from "./BoxEditor";
-
-function BoxPreview({ box }) {
-  const [open, setOpen] = useState(false);
-  const preview = box.players.map((p) => p.team_short_code).join(" · ");
-
-  return (
-    <div className="result-box">
-      <button className="result-box-header" onClick={() => setOpen((o) => !o)}>
-        <span className={`box-badge ${boxBadgeClass(box.name)}`}>
-          {boxBadgeLabel(box.name)}
-        </span>
-        <span className="result-box-title-group">
-          <span className="result-box-name">{box.name}</span>
-          <span className="result-box-preview">{preview}</span>
-        </span>
-        <span className="result-box-count">{box.players.length} players</span>
-      </button>
-
-      {open && (
-        <div className="result-box-players">
-          {box.players.map((player) => (
-            <div key={player.id} className="setup-player-row">
-              <span className="player-name">{player.name}</span>
-              <span
-                className="team-badge"
-                style={{ background: "var(--accent-bg)", color: "var(--accent)" }}
-              >
-                {player.team_short_code}
-              </span>
-              <span className="setup-player-score">{player.score.toFixed(2)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function SetupPool() {
   const { poolId } = useParams();

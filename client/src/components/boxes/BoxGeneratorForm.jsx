@@ -1,9 +1,8 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { DEFAULT_BOXES, boxBadgeClass } from "@/utils/boxConfig";
+import { boxBadgeStyle } from "@/utils/boxConfig";
+import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
-const TEAMS = ["BOS", "MIN", "MTL", "NY", "OTT", "TOR", "SEA", "VAN"];
-const POSITIONS = ["F", "D", "G"];
 const ROOKIE_OPTIONS = [
   { label: "No", value: false },
   { label: "Yes", value: true },
@@ -33,10 +32,14 @@ function buildPayloadBoxes(boxes) {
   }));
 }
 
-function BoxConfigRow({ box, index, onChange, onRemove, derivedRank }) {
+function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionStyles }) {
+  const POSITIONS = Object.keys(positionStyles);
+
   return (
     <div className="box-config-row">
-      <span className={boxBadgeClass(box.position, box.rookie)}>
+      <span
+        className="box-badge"
+        style={boxBadgeStyle(box.position, box.rookie, positionStyles)}>
         {box.rookie === true ? `R${box.position}` : box.position}
       </span>
 
@@ -85,7 +88,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank }) {
   );
 }
 
-function BoxConfigTable({ boxes, onChange, onRemove }) {
+function BoxConfigTable({ boxes, onChange, onRemove, positionStyles }) {
   return (
     <div className="box-config-table-wrapper">
       <div className="box-config-table-header">
@@ -105,6 +108,7 @@ function BoxConfigTable({ boxes, onChange, onRemove }) {
             onChange={onChange}
             onRemove={onRemove}
             derivedRank={deriveRank(boxes, i)}
+            positionStyles={positionStyles}
           />
         ))}
       </div>
@@ -115,10 +119,11 @@ function BoxConfigTable({ boxes, onChange, onRemove }) {
 const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   const { authHeaders } = useAuth();
 
-  const [teams, setTeams] = useState(new Set(TEAMS));
+  const { teamCodes, defaultBoxes, positionStyles } = useLeagueConstants();
+  const [teams, setTeams] = useState(new Set(teamCodes));
   const [scope, setScope] = useState("per_team");
   const [seasonId, setSeasonId] = useState(null);
-  const [boxes, setBoxes] = useState(DEFAULT_BOXES.map(b => ({ ...b })));
+  const [boxes, setBoxes] = useState(defaultBoxes.map(b => ({ ...b })));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -183,7 +188,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
       <section className="generator-section">
         <h2>Teams</h2>
         <div className="team-toggle-list">
-          {TEAMS.map(code => (
+          {teamCodes.map(code => (
             <button
               key={code}
               onClick={() => toggleTeam(code)}
@@ -236,7 +241,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
           <h2>Boxes</h2>
           <button className="btn-primary btn-sm" onClick={addBox}>+ Add box</button>
         </div>
-        <BoxConfigTable boxes={boxes} onChange={updateBox} onRemove={removeBox} />
+        <BoxConfigTable boxes={boxes} onChange={updateBox} onRemove={removeBox} positionStyles={positionStyles} />
       </section>
 
       <button
