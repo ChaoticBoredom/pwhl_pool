@@ -47,7 +47,7 @@ Rails.application.routes.draw do
         member do
           patch :activate
         end
-        resources :pool_boxes, only: [:create] do
+        resources :pool_boxes, only: [:index, :create, :update] do
           collection do
             get :default
             post :generate

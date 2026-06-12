@@ -1,4 +1,34 @@
 class Commissioner::PoolBoxesController < Commissioner::BaseController
+  def index
+    boxes = @pool.pool_boxes.active.order(:position)
+
+    all_player_ids = boxes.flat_map(&:league_player_ids).uniq
+    all_players = League::Player.
+      where(id: all_player_ids)
+
+    records = PlayerRecordQuery.new(player_ids: all_players, season_id: @pool.display_season_id).records
+    pss = PlayerScoringService.new(@pool.scoring)
+    player_scores = pss.raw_player_summaries(all_players, records)
+    players_by_id = all_players.index_by(&:id)
+
+    @result = boxes.each_with_object({}) do |box, r_hash|
+      r_hash[box.name] = box.league_player_ids.map do |id|
+        player = players_by_id[id]
+        {
+          id: id,
+          name: player.name,
+          current_team_short_code: player.current_team_short_code,
+          position: player.position,
+          rookie: player.rookie?,
+          score: player_scores.dig(id, :scores, :season_to_date) || 0,
+        }
+      end
+    end
+    @free_agents = compute_free_agents(@result)
+
+    render :generate
+  end
+
   def default
     scoring_version = @pool.scoring.maximum(:updated_at).to_i
     cache_key = "pool_boxes/default/#{@pool.cache_key_with_version}/#{scoring_version}"
@@ -39,6 +69,8 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
       render json: { errors: result.errors }, status: :unprocessable_entity
     end
   end
+
+  alias_method :update, :create
 
   private
 
