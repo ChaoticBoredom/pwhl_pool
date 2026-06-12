@@ -47,10 +47,11 @@ Rails.application.routes.draw do
         member do
           patch :activate
         end
-        resources :pool_boxes, only: [:index, :create, :update] do
+        resources :pool_boxes, only: [:index, :create] do
           collection do
             get :default
             post :generate
+            put :update
           end
         end
         resource :pool_scoring, only: [:update], controller: "pool_scoring"

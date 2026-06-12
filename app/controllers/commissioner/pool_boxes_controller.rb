@@ -66,7 +66,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
     if result.success
       render json: { boxes: @pool.pool_boxes.reload.active }, status: :created
     else
-      render json: { errors: result.errors }, status: :unprocessable_entity
+      render json: { errors: result.errors }, status: :unprocessable_content
     end
   end
 
