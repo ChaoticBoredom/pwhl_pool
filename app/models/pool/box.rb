@@ -1,6 +1,10 @@
 class Pool::Box < ApplicationRecord
   validates :name, presence: true
-  validates :name, uniqueness: { scope: :pool_id, message: "all pool box names must be unique" }
+  validates :name, uniqueness: {
+    scope: :pool_id,
+    conditions: -> { where(active: true) },
+    message: "all pool box names must be unique",
+  }
 
   belongs_to :pool
   positioned on: :pool
