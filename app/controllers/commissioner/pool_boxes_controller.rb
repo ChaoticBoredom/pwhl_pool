@@ -12,17 +12,20 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
     players_by_id = all_players.index_by(&:id)
 
     @result = boxes.each_with_object({}) do |box, r_hash|
-      r_hash[box.name] = box.league_player_ids.map do |id|
-        player = players_by_id[id]
-        {
-          id: id,
-          name: player.name,
-          current_team_short_code: player.current_team_short_code,
-          position: player.position,
-          rookie: player.rookie?,
-          score: player_scores.dig(id, :scores, :season_to_date) || 0,
-        }
-      end
+      r_hash[box.name] = {
+        position: box.position,
+        players: box.league_player_ids.map do |id|
+          player = players_by_id[id]
+          {
+            id: id,
+            name: player.name,
+            current_team_short_code: player.current_team_short_code,
+            position: player.position,
+            rookie: player.rookie?,
+            score: player_scores.dig(id, :scores, :season_to_date) || 0,
+          }
+        end,
+      }
     end
     @free_agents = compute_free_agents(@result)
 
@@ -104,7 +107,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   end
 
   def compute_free_agents(boxes)
-    assigned_ids = boxes.values.flatten.map { |p| p[:id] }
+    assigned_ids = boxes.values.flat_map { |v| v[:players].map { |p| p[:id] } }
 
     free_agent_players = League::Player.
       active.

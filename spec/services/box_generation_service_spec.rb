@@ -164,11 +164,11 @@ RSpec.describe BoxGenerationService, type: :service do
     end
 
     it "includes correct ids" do
-      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"].flat_map { |v| v[:id] }).to match_array(["1", "2"])
+      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"][:players].flat_map { |v| v[:id] }).to match_array(["1", "2"])
     end
 
     it "includes correct names" do
-      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"].flat_map { |v| v[:name] }).to match_array(["Alice", "Bob"])
+      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"][:players].flat_map { |v| v[:name] }).to match_array(["Alice", "Bob"])
     end
   end
 
