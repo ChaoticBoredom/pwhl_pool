@@ -45,6 +45,11 @@
   --side-nav-collapsed-width: 56px;
   --top-bar-height: 48px;
 
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-float: 30;
+  --z-overlay: 40;
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
@@ -953,7 +958,7 @@ input::placeholder { color: var(--placeholder); }
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  z-index: 1;
+  z-index: var(--z-sticky);
 }
 
 .box-config-row { background: var(--card-bg-elevated); }
@@ -1063,7 +1068,7 @@ input::placeholder { color: var(--placeholder); }
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-sticky);
   flex-shrink: 0;
   width: 100%;
   box-sizing: border-box;
@@ -1114,7 +1119,7 @@ input::placeholder { color: var(--placeholder); }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-elevated);
-  z-index: 200;
+  z-index: var(--z-dropdown);
   overflow: hidden;
 }
 
@@ -1240,7 +1245,6 @@ input::placeholder { color: var(--placeholder); }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-elevated);
-  z-index: 200;
   padding: 0.25rem 0;
 }
 
@@ -1281,7 +1285,7 @@ input::placeholder { color: var(--placeholder); }
   inset: 0;
   top: var(--top-bar-height);
   background: rgba(0, 0, 0, 0.5);
-  z-index: 200;
+  z-index: var(--z-overlay);
 }
 
 .mobile-nav-drawer {
@@ -1290,7 +1294,7 @@ input::placeholder { color: var(--placeholder); }
   left: 0;
   bottom: 0;
   width: 280px;
-  z-index: 201;
+  z-index: var(--z-overlay);
   animation: slide-in 0.2s ease;
 }
 
@@ -1763,7 +1767,7 @@ input::placeholder { color: var(--placeholder); }
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  z-index: 150;
+  z-index: var(--z-float);
   width: calc(100% - 2.5rem);
   max-width: 480px;
   pointer-events: none;

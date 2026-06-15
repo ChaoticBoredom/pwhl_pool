@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
@@ -52,13 +53,14 @@ const ReportsNavCollapsed = ({ base, onNavigate }) => {
       >
         <FileBarChart size={18} className="side-nav__icon" />
       </div>
-      {top !== null && (
+      {top !== null && createPortal(
         <div className="side-nav__popout" style={{ top }}>
           <span className="side-nav__popout-label">Reports</span>
           <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
           <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
           <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
