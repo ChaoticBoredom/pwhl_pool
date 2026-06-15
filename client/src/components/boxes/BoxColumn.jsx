@@ -7,7 +7,7 @@ import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
 
-const BoxColumn = forwardRef(({ box, isOver, onRename, onRemove, searchTerm }, ref) => {
+const BoxColumn = forwardRef(({ box, isOver, onActions, searchTerm }, ref) => {
   const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
   const { positionStyles } = useLeagueConstants();
   const hasMatch = box.players.some((p) => matchesSearch(p.name, searchTerm));
@@ -29,14 +29,28 @@ const BoxColumn = forwardRef(({ box, isOver, onRename, onRemove, searchTerm }, r
         <span className="box-column__name">
           <EditableField
             value={box.name}
-            onSave={async (newName) => onRename(box.name, newName)}
+            onSave={async (newName) => onActions.rename(box.name, newName)}
             inputClassName="box-name-input"
           />
         </span>
         <span className="box-column__count">{box.players.length} Players</span>
+        <div className="box-column__move">
+          <button
+            className="box-move-btn"
+            onClick={onActions.moveUp}
+            disabled={!onActions.moveUp}
+            aria-label="Move box up"
+          >↑</button>
+          <button
+            className="box-move-btn"
+            onClick={onActions.moveDown}
+            disabled={!onActions.moveDown}
+            aria-label="Move box down"
+          >↓</button>
+        </div>
         <button
           className="box-remove-btn"
-          onClick={() => onRemove(box.name)}
+          onClick={() => onActions.remove(box.name)}
           aria-label="Remove box"
         >×</button>
       </div>

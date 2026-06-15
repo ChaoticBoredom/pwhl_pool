@@ -26,12 +26,7 @@ export default function BoxEditor({
 }) {
   const { authHeaders } = useAuth();
 
-  const [boxes, setBoxes] = useState(() =>
-    initialBoxes.map((box, i) => ({
-      ...box,
-      position: i + 1,
-    }))
-  );
+  const [boxes, setBoxes] = useState(initialBoxes);
   const [freeAgents, setFreeAgents] = useState(initialFreeAgents);
   const [activePlayer, setActivePlayer] = useState(null);
   const [overBoxName, setOverBoxName] = useState(null);
@@ -158,6 +153,26 @@ export default function BoxEditor({
     ));
   };
 
+  const handleMoveUp = (boxName) => {
+    setBoxes((prev) => {
+      const i = prev.findIndex((b) => b.name === boxName);
+      if (i === 0) return prev;
+      const next = [...prev];
+      [next[i - 1], next[i]] = [next[i], next[i - 1]];
+      return next;
+    });
+  };
+
+  const handleMoveDown = (boxName) => {
+    setBoxes((prev) => {
+      const i = prev.findIndex((b) => b.name === boxName);
+      if (i === prev.length - 1) return prev;
+      const next = [...prev];
+      [next[i], next[i + 1]] = [next[i + 1], next[i]];
+      return next;
+    });
+  };
+
   const handleAddBox = () => {
     setBoxes((prev) => [...prev, {
       name: `Pool Box ${boxCounter}`,
@@ -227,17 +242,22 @@ export default function BoxEditor({
           <div className="box-editor__boxes">
             {boxes.map((box, i) => {
               const { position_type, rookie } = deriveBoxBadge(box.players, positionGroups);
-              return (<BoxColumn
-                key={`${box.name}-${i}`}
-                ref={(el => boxRefs.current[box.name] = el)}
-                box={{ ...box, position_type, rookie }}
-                isOver={overBoxName === box.name}
-                onRename={handleRename}
-                onRemove={handleRemoveBox}
-                searchTerm={search.length >= 3 ? search : ""}
-              />
-            );
-          })}
+              return (
+                <BoxColumn
+                  key={`${box.name}-${i}`}
+                  ref={(el) => (boxRefs.current[box.name] = el)}
+                  box={{ ...box, position_type, rookie }}
+                  isOver={overBoxName === box.name}
+                  searchTerm={search.length >= 3 ? search : ""}
+                  onActions={{
+                    rename: handleRename,
+                    remove: handleRemoveBox,
+                    moveUp: i === 0 ? null : () => handleMoveUp(box.name),
+                    moveDown: i === boxes.length - 1 ? null : () => handleMoveDown(box.name),
+                  }}
+                />
+              );
+            })}
           </div>
 
           <div className="box-editor__sidebar">

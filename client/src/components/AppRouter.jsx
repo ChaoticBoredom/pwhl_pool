@@ -18,6 +18,7 @@ import PlayerSelection from "@c/players/PlayerSelection";
 // Commissioner specific paths, lazy load them
 const BoxSetup = lazy(() => import("@c/boxes/BoxSetup"));
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
+const EditBoxes = lazy(() => import("@c/boxes/EditBoxes"));
 const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
 const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
@@ -67,6 +68,7 @@ export function AppRouter() {
             <Route path="/pools/:poolId/boxes/setup" element={<BoxSetup />} />
             <Route path="/pools/:poolId/scoring/setup" element={<PoolScoring setupMode />} />
 
+            <Route path="/pools/:poolId/boxes/edit" element={<EditBoxes />} />
             <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
             <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
             <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />

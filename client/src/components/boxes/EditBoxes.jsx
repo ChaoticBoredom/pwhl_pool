@@ -1,4 +1,4 @@
-import { useState } from  "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
@@ -7,22 +7,21 @@ import useNotices from "@/hooks/useNotices";
 import LoadingState from "@c/shared/LoadingState";
 import BoxEditor from "./BoxEditor";
 
-export default functin EditBoxes() {
+export default function EditBoxes() {
   const { poolId } = useParams();
   const navigate = useNavigate();
   const { authHeaders } = useAuth();
   const { pool } = usePool();
   const { add } = useNotices();
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [pendingSave, setPendingSave] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["pool-boxes-current", poolId],
+    queryKey: ["commissioner-pool-boxes", poolId],
     queryFn: async () => {
-      const res = await fetch(`/api/pools/${poolId}/pool_boxes`, {
+      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes`, {
         headers: authHeaders,
       });
-      it (!res.ok) throw new Error("Failed to load boxes");
+      if (!res.ok) throw new Error("Failed to load boxes");
       return res.json();
     },
     staleTime: Infinity,
@@ -34,58 +33,52 @@ export default functin EditBoxes() {
   };
 
   const handleSave = (postBoxes) => {
-    if (pool.state === "active") {
-      setPendingSave(() => postBoxes);
-      setShowConfirm(true);
-    } else {
+    if (pool.state !== "active") {
       postBoxes().then(handleAfterSave);
+      return;
     }
-  };
 
-  const handleConfirm = () => {
-    setShowConfirm(false);
-    pendingSave().then(handleAfterSave);
+    if (confirmId !== null) return;
+
+    const id = add({
+      severity: "action",
+      dismissable: false,
+      message: "Saving will drop all players from every team in this pool. This cannot be undone.",
+      actions: [
+        {
+          label: "Save and drop all players",
+          onClick: () => {
+            setConfirmId(null);
+            postBoxes().then(handleAfterSave);
+          },
+        },
+        {
+          label: "Cancel",
+          variant: "secondary",
+          onClick: () => setConfirmId(null),
+        },
+      ],
+    });
+
+    setConfirmId(id);
   };
 
   return (
     <div className="app-wrapper">
       <h1 className="setup-page-title">Edit Boxes</h1>
 
-      {pool.state === "active" && (
-        <div className="notice-bar__item notice-bar__item--warning">
-          <span className="notice-bar__icon">⚠</span>
-          <span className="notice-bar__message">
-            Saving changes to an active pool will drop all players from every team.
-            This cannot be undone.
-          </span>
-        </div>
-      )}
-
-      {showConfirm && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Drop all players?</h2>h2>
-            <p>
-              Saving these boxes will immediately drop every player from every team in this pool. This cannot be undone.
-            </p>
-            <div className="modal__actions">
-              <button
-                className="btn-primary"
-                style={{ background: "var(--danger-text)" }}
-                onClick={handleConfirm}
-              >
-                Yes, save and drop all players
-              </button>
-              <button
-                className="btn-link"
-                onClick={() => setShowConfirm(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {(isLoading || error)
+        ? <LoadingState error={error} message="Loading boxes…" />
+        : data && (
+            <BoxEditor
+              poolId={poolId}
+              initialBoxes={data.boxes}
+              initialFreeAgents={data.free_agents}
+              onSave={handleSave}
+              saveLabel="Save Boxes"
+            />
+          )
+      }
     </div>
   );
 }
