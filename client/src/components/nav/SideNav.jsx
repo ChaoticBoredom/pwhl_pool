@@ -8,6 +8,7 @@ import {
   Home, ChevronDown, ChevronRight, ReplaceAll,
 } from "lucide-react";
 
+// eslint-disable-next-line no-unused-vars
 const NavItem = ({ to, icon: Icon, label, collapsed, end = false, onClick }) => (
   <NavLink
     to={to}
