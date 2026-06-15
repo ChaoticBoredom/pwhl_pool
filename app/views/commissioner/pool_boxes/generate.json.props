@@ -1,10 +1,10 @@
 json.boxes do
-  json.array! @result do |(box_name, entry)|
-    json.name box_name
-    json.position entry[:position]
+  json.array! @result do |box|
+    json.name box[:name]
+    json.position box[:position]
 
     json.players do
-      json.array! entry[:players] do |player|
+      json.array! box[:players] do |player|
         json.partial! partial: "commissioner/pool_boxes/box_player", locals: { player: player }
       end
     end

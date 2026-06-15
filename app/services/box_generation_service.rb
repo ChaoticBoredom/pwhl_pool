@@ -74,9 +74,10 @@ class BoxGenerationService
   end
 
   def generate_boxes(sorted)
-    @config.boxes.each_with_object({}).with_index(1) do |(box_def, r_hash), i|
+    @config.boxes.map.with_index(1) do |(box_def), i|
       players = players_for_box(sorted, box_def)
-      r_hash[box_def.name] = {
+      {
+        name: box_def.name,
         position: i,
         players: players.compact.map do |p|
           {
@@ -114,7 +115,7 @@ class BoxGenerationService
   end
 
   def validate_no_duplicates!(box_players)
-    all_ids = box_players.values.flat_map { |v| v[:players].map { |p| p[:id] } }
+    all_ids = box_players.flat_map { |v| v[:players].map { |p| p[:id] } }
     duplicates = all_ids.select { |id| all_ids.count(id) > 1 }.uniq
 
     if duplicates.any?

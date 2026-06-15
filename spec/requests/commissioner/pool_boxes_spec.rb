@@ -225,12 +225,13 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
   describe "GET /api/commissioner/:pool_id/pool_boxes/default" do
     let(:pool) { create(:pool, admin: admin, league: pwhl) }
     let(:fake_result) do
-      {
-        "Forwards Box 1" => {
+      [
+        {
+          name: "Forwards Box 1",
           position: 1,
           players: [{ id: SecureRandom.uuid, name: "Taylor Heise", score: 76.5, current_team_short_code: "MIN" }],
         },
-      }
+      ]
     end
     let(:fake_service) { instance_double(BoxGenerationService, call: fake_result) }
 
@@ -263,7 +264,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
       get_default
 
       names = response.parsed_body["boxes"].map { |b| b["name"] }
-      expect(names).to match_array(fake_result.keys)
+      expect(names).to match_array(fake_result.map { |b| b[:name] })
     end
 
     it "caches the result" do
@@ -303,27 +304,30 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
     end
 
     let(:fake_result) do
-      {
-        "Forwards Box 1" => {
+      [
+        {
+          name: "Forwards Box 1",
           position: 1,
           players: [
             { id: SecureRandom.uuid, name: "Laura Stacey", score: 71.25, current_team_short_code: "MTL" },
             { id: SecureRandom.uuid, name: "Brianne Jenner", score: 72.75, current_team_short_code: "OTT" },
           ],
         },
-        "Defence Box 1" => {
+        {
+          name: "Defence Box 1",
           position: 2,
           players: [
             { id: SecureRandom.uuid, name: "Maggie Flaherty", score: 40.25, current_team_short_code: "MTL" },
           ],
         },
-        "Goalies Box 1" => {
+        {
+          name: "Goalies Box 1",
           position: 3,
           players: [
             { id: SecureRandom.uuid, name: "Aerin Frankel", score: 85.55, current_team_short_code: "BOS" },
           ],
         },
-      }
+      ]
     end
 
     let(:fake_service) { instance_double(BoxGenerationService, call: fake_result) }
