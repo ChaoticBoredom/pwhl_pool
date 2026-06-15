@@ -7,7 +7,7 @@ class Pool::Box < ApplicationRecord
   }
 
   belongs_to :pool
-  positioned on: :pool
+  positioned on: [:pool, :active]
 
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }

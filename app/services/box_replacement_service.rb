@@ -30,7 +30,7 @@ class BoxReplacementService
 
   def replace_active
     Pool::Box.transaction do
-      @pool.pool_boxes.active.each { |pb| pb.update!(active: false) }
+      @pool.pool_boxes.active.each { |pb| pb.update!(active: false, position: :last) }
       create_boxes!
       cancel_pending_trade_requests!
       force_drop_all_players!
