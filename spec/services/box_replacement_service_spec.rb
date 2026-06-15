@@ -149,6 +149,38 @@ RSpec.describe BoxReplacementService do
         expect(already_dropped.reload.dropped_at).to be_within(1.second).of(dropped_at)
       end
 
+      it "auto-cancels pending trade requests" do
+        pending_request = create(:trade_request,
+          :pending,
+          :add,
+          pool_team: pool_team,
+          league_player: players[0],
+          requested_by: pool_team.owner,
+          requested_at: Time.current,
+        )
+
+        service.call
+
+        expect(pending_request.reload.status).to eq("auto_cancelled")
+      end
+
+      it "does not cancel already resolved trade requests" do
+        resolved_request = create(:trade_request,
+          :approved,
+          :add,
+          pool_team: pool_team,
+          league_player: players[1],
+          requested_by: pool_team.owner,
+          requested_at: Time.current,
+          decided_by: admin,
+          decided_at: Time.current,
+        )
+
+        service.call
+
+        expect(resolved_request.reload.status).to eq("approved")
+      end
+
       context "when a box is invalid" do
         let(:boxes_data) do
           [{ name: nil, position: 1, players: [] }]
@@ -164,6 +196,21 @@ RSpec.describe BoxReplacementService do
           service.call
 
           expect(old_box.reload.active).to be(true)
+        end
+
+        it "does not cancel any trade requests" do
+          pending_request = create(:trade_request,
+            :pending,
+            :add,
+            pool_team: pool_team,
+            league_player: players[0],
+            requested_by: pool_team.owner,
+            requested_at: Time.current,
+          )
+
+          service.call
+
+          expect(pending_request.reload.status).to eq("pending")
         end
 
         it "does not drop any players" do

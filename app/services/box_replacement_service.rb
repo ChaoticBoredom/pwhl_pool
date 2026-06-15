@@ -33,6 +33,7 @@ class BoxReplacementService
       @pool.pool_boxes.each { |pb| pb.update!(active: false) }
       create_boxes!
       force_drop_all_players!
+      cancel_pending_trade_requests!
     end
     Result.new(success: true, errors: [])
   rescue ActiveRecord::RecordInvalid => e
@@ -49,6 +50,14 @@ class BoxReplacementService
         active: true,
       )
     end
+  end
+
+  def cancel_pending_trade_requests!
+    Trade::Request.
+      joins(:pool_team).
+      where(pool_teams: { pool_id: @pool.id }).
+      trade_status_pending.
+      each { |tr| tr.decide!(:auto_cancelled) }
   end
 
   def force_drop_all_players!
