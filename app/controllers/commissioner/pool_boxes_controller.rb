@@ -1,4 +1,38 @@
 class Commissioner::PoolBoxesController < Commissioner::BaseController
+  def index
+    boxes = @pool.pool_boxes.active.order(:position)
+
+    all_player_ids = boxes.flat_map(&:league_player_ids).uniq
+    all_players = League::Player.
+      where(id: all_player_ids)
+
+    records = PlayerRecordQuery.new(player_ids: all_players, season_id: @pool.display_season_id).records
+    pss = PlayerScoringService.new(@pool.scoring)
+    player_scores = pss.raw_player_summaries(all_players, records)
+    players_by_id = all_players.index_by(&:id)
+
+    @result = boxes.map do |box|
+      {
+        name: box.name,
+        position: box.position,
+        players: box.league_player_ids.map do |id|
+          player = players_by_id[id]
+          {
+            id: id,
+            name: player.name,
+            current_team_short_code: player.current_team_short_code,
+            position: player.position,
+            rookie: player.rookie?,
+            score: player_scores.dig(id, :scores, :season_to_date) || 0,
+          }
+        end,
+      }
+    end
+    @free_agents = compute_free_agents(@result)
+
+    render :generate
+  end
+
   def default
     scoring_version = @pool.scoring.maximum(:updated_at).to_i
     cache_key = "pool_boxes/default/#{@pool.cache_key_with_version}/#{scoring_version}"
@@ -36,9 +70,11 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
     if result.success
       render json: { boxes: @pool.pool_boxes.reload.active }, status: :created
     else
-      render json: { errors: result.errors }, status: :unprocessable_entity
+      render json: { errors: result.errors }, status: :unprocessable_content
     end
   end
+
+  alias_method :update, :create
 
   private
 
@@ -72,7 +108,7 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
   end
 
   def compute_free_agents(boxes)
-    assigned_ids = boxes.values.flatten.map { |p| p[:id] }
+    assigned_ids = boxes.flat_map { |v| v[:players].map { |p| p[:id] } }
 
     free_agent_players = League::Player.
       active.

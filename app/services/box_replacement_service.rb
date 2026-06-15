@@ -30,8 +30,9 @@ class BoxReplacementService
 
   def replace_active
     Pool::Box.transaction do
-      @pool.pool_boxes.each { |pb| pb.update!(active: false) }
+      @pool.pool_boxes.active.each { |pb| pb.update!(active: false, position: :last) }
       create_boxes!
+      cancel_pending_trade_requests!
       force_drop_all_players!
     end
     Result.new(success: true, errors: [])
@@ -49,6 +50,14 @@ class BoxReplacementService
         active: true,
       )
     end
+  end
+
+  def cancel_pending_trade_requests!
+    Trade::Request.
+      joins(:pool_team).
+      where(pool_teams: { pool_id: @pool.id }).
+      trade_status_pending.
+      each { |tr| tr.decide!(:auto_cancelled) }
   end
 
   def force_drop_all_players!

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_112829) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_15_083137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -82,7 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_112829) do
     t.datetime "updated_at", null: false
     t.index ["league_player_ids"], name: "index_pool_boxes_on_league_player_ids", using: :gin
     t.index ["pool_id"], name: "index_pool_boxes_on_pool_id"
-    t.unique_constraint ["pool_id", "position"], deferrable: :deferred, name: "pool_boxes_pool_id_position_unique"
+    t.unique_constraint ["pool_id", "active", "position"], deferrable: :deferred, name: "pool_boxes_pool_id_active_position_unique"
   end
 
   create_table "pool_scorings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

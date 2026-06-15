@@ -1,22 +1,237 @@
 require "rails_helper"
 
 RSpec.describe "Commissioner::PoolBoxes", type: :request do
+  include_context "pwhl teams"
+
   let(:admin) { create(:user) }
   let(:other_user) { create(:user) }
-  let(:pool) { create(:pool, admin: admin, state: :draft) }
+  let(:pool) { create(:pool, admin: admin, state: :draft, league: pwhl) }
   let(:season_id) { pool.display_season_id }
   let(:admin_headers) { auth_headers_for(admin) }
   let(:other_headers) { auth_headers_for(other_user) }
   let(:json) { JSON.parse(response.body) }
+  let(:boston) { team("1") }
+  let(:minnesota) { team("2") }
 
-  describe "GET /api/commissioner/:pool_id/pool_boxes/default" do
-    let(:pool) { create(:pool, admin: admin, league: create(:league, :pwhl)) }
-    let(:fake_result) do
+  describe "GET /api/commissioner/:pool_id/pool_boxes" do
+    let(:player_1) { create(:pwhl_skater, league: pwhl, name: "Taylor Heise", position: "F", current_team: minnesota) }
+    let(:player_2) { create(:pwhl_skater, league: pwhl, name: "Megan Keller", position: "D", current_team: boston) }
+    let!(:box_1) do
+      create(:pool_box,
+        pool: pool,
+        name: "Forwards Box 1",
+        league_player_ids: [player_1.id]
+      )
+    end
+    let!(:box_2) do
+      create(:pool_box,
+        pool: pool,
+        name: "Defence Box 1",
+        league_player_ids: [player_2.id]
+      )
+    end
+
+    let(:fake_scores) do
       {
-        "Forwards Box 1" => [
-          { id: SecureRandom.uuid, name: "Taylor Heise", score: 76.5, current_team_short_code: "MIN" },
+        player_1.id => { scores: { season_to_date: 76.5 } },
+        player_2.id => { scores: { season_to_date: 66.5 } },
+      }
+    end
+
+    before do
+      allow(PlayerRecordQuery).to receive(:new).and_return(double(records: {}))
+      allow_any_instance_of(PlayerScoringService).to receive(:raw_player_summaries).and_return({
+        player_1.id => { scores: { season_to_date: 76.5 } },
+        player_2.id => { scores: { season_to_date: 66.5 } },
+      })
+      allow_any_instance_of(Commissioner::PoolBoxesController).to receive(:compute_free_agents).and_return([])
+    end
+
+    subject(:get_index) do
+      get "/api/commissioner/#{pool.id}/pool_boxes", headers: admin_headers
+    end
+
+    it "returns ok" do
+      get_index
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns a boxes array" do
+      get_index
+      expect(response.parsed_body["boxes"]).to be_an(Array)
+    end
+
+    it "returns the expected box names" do
+      get_index
+      names = response.parsed_body["boxes"].map { |b| b["name"] }
+      expect(names).to match_array(["Forwards Box 1", "Defence Box 1"])
+    end
+
+    it "returns players within each box" do
+      get_index
+      players = response.parsed_body["boxes"].find { |b| b["name"] == "Forwards Box 1" }["players"]
+      expect(players.length).to eq(1)
+    end
+
+    [
+      ["name", "Taylor Heise"],
+      ["position", "F"],
+      ["current_team_short_code", "MIN"],
+      ["score", 76.5],
+      ["rookie", false],
+    ].each do |field, value|
+      it "renders player #{field}" do
+        get_index
+        player = response.parsed_body["boxes"].find { |b| b["name"] == "Forwards Box 1" }["players"].first
+        expect(player[field]).to eq(value)
+      end
+    end
+
+    it "is forbidden for non-admins" do
+      get "/api/commissioner/#{pool.id}/pool_boxes", headers: other_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "requires authentication" do
+      get "/api/commissioner/#{pool.id}/pool_boxes"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe "POST /api/commissioner/:pool_id/pool_boxes" do
+    let(:player_id_1) { SecureRandom.uuid }
+    let(:player_id_2) { SecureRandom.uuid }
+
+    let(:valid_params) do
+      {
+        boxes: [
+          { name: "Forwards Box 1", position: 1, players: [{ id: player_id_1 }] },
+          { name: "Defence Box 1", position: 2, players: [{ id: player_id_2 }] },
         ],
       }
+    end
+
+    subject(:post_create) do
+      post "/api/commissioner/#{pool.id}/pool_boxes",
+        params: valid_params.to_json,
+        headers: admin_headers
+    end
+
+    context "when the pool is in draft state" do
+      it "returns created" do
+        post_create
+        expect(response).to have_http_status(:created)
+      end
+
+      it "creates the boxes" do
+        expect { post_create }.to change { pool.pool_boxes.active.count }.by(2)
+      end
+
+      it "returns a boxes array" do
+        post_create
+        expect(response.parsed_body["boxes"]).to be_an(Array)
+      end
+    end
+
+    context "when the service fails" do
+      before do
+        allow(BoxReplacementService).to receive(:new).and_return(
+          instance_double(BoxReplacementService, call: BoxReplacementService::Result.new(success: false, errors: ["something went wrong"]))
+        )
+      end
+
+      it "returns unprocessable_content" do
+        post_create
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "returns the errors" do
+        post_create
+        expect(response.parsed_body["errors"]).to eq(["something went wrong"])
+      end
+    end
+
+    it "is forbidden for non-admins" do
+      post "/api/commissioner/#{pool.id}/pool_boxes",
+        params: valid_params.to_json,
+        headers: other_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "requires authentication" do
+      post "/api/commissioner/#{pool.id}/pool_boxes"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe "PUT /api/commissioner/:pool_id/pool_boxes" do
+    let(:player_id_1) { SecureRandom.uuid }
+    let(:player_id_2) { SecureRandom.uuid }
+    let!(:existing_box) { create(:pool_box, pool: pool, name: "Old Box", position: 1) }
+
+    let(:valid_params) do
+      {
+        boxes: [
+          { name: "Forwards Box 1", position: 1, players: [{ id: player_id_1 }] },
+        ],
+      }
+    end
+
+    subject(:put_update) do
+      put "/api/commissioner/#{pool.id}/pool_boxes",
+        params: valid_params.to_json,
+        headers: admin_headers
+    end
+
+    context "when the pool is in draft state" do
+      it "returns created" do
+        put_update
+        expect(response).to have_http_status(:created)
+      end
+
+      it "replaces existing boxes" do
+        put_update
+        expect(pool.pool_boxes.active.map(&:name)).to eq(["Forwards Box 1"])
+      end
+    end
+
+    context "when the pool is active" do
+      let(:pool) { create(:pool, admin: admin, state: :active) }
+
+      it "returns created" do
+        put_update
+        expect(response).to have_http_status(:created)
+      end
+
+      it "deactivates existing boxes" do
+        put_update
+        expect(existing_box.reload.active).to be(false)
+      end
+    end
+
+    it "is forbidden for non-admins" do
+      put "/api/commissioner/#{pool.id}/pool_boxes",
+        params: valid_params.to_json,
+        headers: other_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "requires authentication" do
+      put "/api/commissioner/#{pool.id}/pool_boxes"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe "GET /api/commissioner/:pool_id/pool_boxes/default" do
+    let(:pool) { create(:pool, admin: admin, league: pwhl) }
+    let(:fake_result) do
+      [
+        {
+          name: "Forwards Box 1",
+          position: 1,
+          players: [{ id: SecureRandom.uuid, name: "Taylor Heise", score: 76.5, current_team_short_code: "MIN" }],
+        },
+      ]
     end
     let(:fake_service) { instance_double(BoxGenerationService, call: fake_result) }
 
@@ -49,7 +264,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
       get_default
 
       names = response.parsed_body["boxes"].map { |b| b["name"] }
-      expect(names).to match_array(fake_result.keys)
+      expect(names).to match_array(fake_result.map { |b| b[:name] })
     end
 
     it "caches the result" do
@@ -89,18 +304,30 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
     end
 
     let(:fake_result) do
-      {
-        "Forwards Box 1" => [
-          { id: SecureRandom.uuid, name: "Laura Stacey", score: 71.25, current_team_short_code: "MTL" },
-          { id: SecureRandom.uuid, name: "Brianne Jenner", score: 72.75, current_team_short_code: "OTT" },
-        ],
-        "Defence Box 1" => [
-          { id: SecureRandom.uuid, name: "Maggie Flaherty", score: 40.25, current_team_short_code: "MTL" },
-        ],
-        "Goalies Box 1" => [
-          { id: SecureRandom.uuid, name: "Aerin Frankel", score: 85.55, current_team_short_code: "BOS" },
-        ],
-      }
+      [
+        {
+          name: "Forwards Box 1",
+          position: 1,
+          players: [
+            { id: SecureRandom.uuid, name: "Laura Stacey", score: 71.25, current_team_short_code: "MTL" },
+            { id: SecureRandom.uuid, name: "Brianne Jenner", score: 72.75, current_team_short_code: "OTT" },
+          ],
+        },
+        {
+          name: "Defence Box 1",
+          position: 2,
+          players: [
+            { id: SecureRandom.uuid, name: "Maggie Flaherty", score: 40.25, current_team_short_code: "MTL" },
+          ],
+        },
+        {
+          name: "Goalies Box 1",
+          position: 3,
+          players: [
+            { id: SecureRandom.uuid, name: "Aerin Frankel", score: 85.55, current_team_short_code: "BOS" },
+          ],
+        },
+      ]
     end
 
     let(:fake_service) { instance_double(BoxGenerationService, call: fake_result) }

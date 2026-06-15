@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import {
-  Trophy, Shirt, Star, FileBarChart, BarChart2,
-  ArrowLeftRight, Settings, Home,
-  ChevronDown, ChevronRight,
+  Trophy, Shirt, Star, StarHalf, FileBarChart, BarChart2,
+  Home, ChevronDown, ChevronRight, ReplaceAll,
 } from "lucide-react";
 
 // eslint-disable-next-line no-unused-vars
@@ -32,18 +32,40 @@ const NavSection = ({ label, children, collapsed }) => (
   </div>
 );
 
-const ReportsNavCollapsed = ({ base, onNavigate }) => (
-  <NavLink
-    to={`${base}/reports/standings`}
-    className={({ isActive }) =>
-      `side-nav__item${isActive ? " side-nav__item--active" : ""}`
-    }
-    title="Reports"
-    onClick={onNavigate}
-  >
-    <FileBarChart size={18} className="side-nav__icon" />
-  </NavLink>
-);
+const ReportsNavCollapsed = ({ base, onNavigate }) => {
+  const [top, setTop] = useState(null);
+  const triggerRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (rect) setTop(rect.top);
+  };
+
+  return (
+    <div
+      className="side-nav__popout-wrap"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setTop(null)}
+    >
+      <div
+        ref={triggerRef}
+        className="side-nav__item side-nav__item--popout-trigger"
+        title="Reports"
+      >
+        <FileBarChart size={18} className="side-nav__icon" />
+      </div>
+      {top !== null && createPortal(
+        <div className="side-nav__popout" style={{ top }}>
+          <span className="side-nav__popout-label">Reports</span>
+          <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
+          <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
+          <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+};
 
 const ReportsNavExpanded = ({ base, onNavigate, reportsOpen, setReportsOpen }) => (
   <div className="side-nav__group">
@@ -85,7 +107,7 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
 
         <NavSection label="Pool" collapsed={collapsed}>
           <NavItem to={base} icon={Trophy} label="Standings" collapsed={collapsed} end onClick={onNavigate} />
-          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} onClick={onNavigate} />
+          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} onClick={onNavigate} end />
         </NavSection>
 
         {myTeam && (
@@ -104,11 +126,27 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
           <NavSection label="Commissioner" collapsed={collapsed}>
             {collapsed
               ? <ReportsNavCollapsed base={base} onNavigate={onNavigate} />
-              : <ReportsNavExpanded base={base} onNavigate={onNavigate} reportsOpen={reportsOpen} setReportsOpen={setReportsOpen} />}
-            {/* Coming Soon
-            <NavItem to={`${base}/trades`} icon={ArrowLeftRight} label="Trades" collapsed={collapsed} onClick={onNavigate} />
-            <NavItem to={`${base}/settings`} icon={Settings} label="Pool Settings" collapsed={collapsed} onClick={onNavigate} />
-            */}
+              : <ReportsNavExpanded base={base} onNavigate={onNavigate} reportsOpen={reportsOpen} setReportsOpen={setReportsOpen} />
+            }
+
+            {pool.state !== "completed" && (
+              <>
+                <NavItem
+                  to={`${base}/scoring/edit`}
+                  icon={StarHalf}
+                  label="Edit Scoring"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
+                <NavItem
+                  to={`${base}/boxes/edit`}
+                  icon={ReplaceAll}
+                  label="Edit Boxes"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
+              </>
+            )}
           </NavSection>
         )}
       </div>

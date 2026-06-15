@@ -8,8 +8,8 @@ import { usePool } from "@/context/PoolContext";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import LoadingState from "@c/shared/LoadingState";
 
-export default function PoolScoring({ setupMode = false }) {
-  const [editing, setEditing] = useState(setupMode);
+export default function PoolScoring({ setupMode = false, editMode = false }) {
+  const [editing, setEditing] = useState(setupMode || editMode);
   const { poolId } = useParams();
   const { authHeaders } = useAuth();
   const { add } = useNotices();

@@ -146,8 +146,28 @@ RSpec.describe BoxGenerationService, type: :service do
   end
 
   describe "#generate_boxes" do
-    let(:player1) { { id: "1", name: "Alice", position: "F", rookie: false, score: 10.0, team_id: team("1").id } }
-    let(:player2) { { id: "2", name: "Bob", position: "F", rookie: false, score: 8.0, team_id: team("6").id } }
+    let(:player1) do
+      {
+        id: "1",
+        name: "Alice",
+        position: "F",
+        rookie: false,
+        score: 10.0,
+        team_id: team("1").id,
+        current_team_short_code: "BOS",
+      }
+    end
+    let(:player2) do
+      {
+        id: "2",
+        name: "Bob",
+        position: "F",
+        rookie: true,
+        score: 8.0,
+        team_id: team("6").id,
+        current_team_short_code: "TOR",
+      }
+    end
 
     let(:sorted) do
       {
@@ -159,16 +179,36 @@ RSpec.describe BoxGenerationService, type: :service do
     let(:boxes) { [BoxGeneration::BoxDefinition.new(name: "Forwards Box 1", position: "F", rank: 1, count: 1)] }
     let(:config) { BoxGeneration::Config.new(boxes: boxes) }
 
-    it "keys result by box name" do
-      expect(service.send(:generate_boxes, sorted).keys).to eq(["Forwards Box 1"])
+    it "includes box name" do
+      expect(service.send(:generate_boxes, sorted).first[:name]).to eq("Forwards Box 1")
+    end
+
+    it "includes position" do
+      expect(service.send(:generate_boxes, sorted).first[:position]).to eq(1)
     end
 
     it "includes correct ids" do
-      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"].flat_map { |v| v[:id] }).to match_array(["1", "2"])
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:id] }).to match_array(["1", "2"])
     end
 
     it "includes correct names" do
-      expect(service.send(:generate_boxes, sorted)["Forwards Box 1"].flat_map { |v| v[:name] }).to match_array(["Alice", "Bob"])
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:name] }).to match_array(["Alice", "Bob"])
+    end
+
+    it "includes player score" do
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:score] }).to match_array([10.0, 8.0])
+    end
+
+    it "includes player position" do
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:position] }).to match_array(["F", "F"])
+    end
+
+    it "includes player rookie status" do
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:rookie] }).to match_array([true, false])
+    end
+
+    it "includes player current_team_short_code" do
+      expect(service.send(:generate_boxes, sorted).first[:players].map { |v| v[:current_team_short_code] }).to match_array(["TOR", "BOS"])
     end
   end
 
