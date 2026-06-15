@@ -127,20 +127,25 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
               ? <ReportsNavCollapsed base={base} onNavigate={onNavigate} />
               : <ReportsNavExpanded base={base} onNavigate={onNavigate} reportsOpen={reportsOpen} setReportsOpen={setReportsOpen} />
             }
-            <NavItem
-              to={`${base}/scoring/edit`}
-              icon={StarHalf}
-              label="Edit Scoring"
-              collapsed={collapsed}
-              onClick={onNavigate}
-            />
-            <NavItem
-              to={`${base}/boxes/edit`}
-              icon={ReplaceAll}
-              label="Edit Boxes"
-              collapsed={collapsed}
-              onClick={onNavigate}
-            />
+
+            {pool.state !== "completed" && (
+              <>
+                <NavItem
+                  to={`${base}/scoring/edit`}
+                  icon={StarHalf}
+                  label="Edit Scoring"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
+                <NavItem
+                  to={`${base}/boxes/edit`}
+                  icon={ReplaceAll}
+                  label="Edit Boxes"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
+              </>
+            )}
           </NavSection>
         )}
       </div>

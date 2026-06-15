@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
@@ -14,6 +14,12 @@ export default function EditBoxes() {
   const { pool } = usePool();
   const { add } = useNotices();
   const [confirmId, setConfirmId] = useState(null);
+
+  useEffect(() => {
+    if (pool.state === "completed") {
+      navigate(`/pools/${poolId}`, { replace: true });
+    }
+  }, [pool.state, poolId, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["commissioner-pool-boxes", poolId],
