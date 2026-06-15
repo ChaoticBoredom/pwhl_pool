@@ -30,10 +30,10 @@ class BoxReplacementService
 
   def replace_active
     Pool::Box.transaction do
-      @pool.pool_boxes.each { |pb| pb.update!(active: false) }
+      @pool.pool_boxes.active.each { |pb| pb.update!(active: false) }
       create_boxes!
-      force_drop_all_players!
       cancel_pending_trade_requests!
+      force_drop_all_players!
     end
     Result.new(success: true, errors: [])
   rescue ActiveRecord::RecordInvalid => e
