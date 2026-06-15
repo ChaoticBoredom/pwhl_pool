@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import {
-  Trophy, Shirt, Star, FileBarChart, BarChart2,
+  Trophy, Shirt, Star, StarHalf, FileBarChart, BarChart2,
   Home, ChevronDown, ChevronRight, ReplaceAll,
 } from "lucide-react";
 
@@ -104,7 +104,7 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
 
         <NavSection label="Pool" collapsed={collapsed}>
           <NavItem to={base} icon={Trophy} label="Standings" collapsed={collapsed} end onClick={onNavigate} />
-          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} onClick={onNavigate} />
+          <NavItem to={`${base}/scoring`} icon={Star} label="Scoring" collapsed={collapsed} onClick={onNavigate} end />
         </NavSection>
 
         {myTeam && (
@@ -125,6 +125,13 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
               ? <ReportsNavCollapsed base={base} onNavigate={onNavigate} />
               : <ReportsNavExpanded base={base} onNavigate={onNavigate} reportsOpen={reportsOpen} setReportsOpen={setReportsOpen} />
             }
+            <NavItem
+              to={`${base}/scoring/edit`}
+              icon={StarHalf}
+              label="Edit Scoring"
+              collapsed={collapsed}
+              onClick={onNavigate}
+            />
             <NavItem
               to={`${base}/boxes/edit`}
               icon={ReplaceAll}
