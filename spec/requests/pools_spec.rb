@@ -7,6 +7,80 @@ RSpec.describe "Pools", type: :request do
   let(:headers) { auth_headers_for(user) }
   let(:json) { JSON.parse(response.body) }
 
+  describe "GET /api/pools" do
+    it "returns pools the user is a member of" do
+      pool = create(:pool, admin: admin, league: league)
+      create(:pool_team, pool: pool, owner: user)
+
+      get "/api/pools", headers: headers
+
+      expect(json.map { |p| p["id"] }).to include(pool.id)
+    end
+
+    it "returns pools the user administers" do
+      pool = create(:pool, admin: user, league: league)
+
+      get "/api/pools", headers: headers
+
+      expect(json.map { |p| p["id"] }).to include(pool.id)
+    end
+
+    it "does not return pools the user has no relation to" do
+      other_user = create(:user)
+      pool = create(:pool, admin: other_user, league: league)
+
+      get "/api/pools", headers: headers
+
+      expect(json.map { |p| p["id"] }).to_not include(pool.id)
+    end
+
+    it "returns scoring_count for each pool" do
+      pool = create(:pool, admin: user, league: league)
+      create(:pool_scoring, :skater, :goals, pool: pool)
+      create(:pool_scoring, :goalie, :wins, pool: pool)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["scoring_count"]).to eq(2)
+    end
+
+    it "returns 0 for scoring_count when pool has no scoring" do
+      pool = create(:pool, admin: user, league: league)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["scoring_count"]).to eq(0)
+    end
+
+    it "returns box_count for each pool" do
+      pool = create(:pool, admin: user, league: league)
+      create(:pool_box, pool: pool)
+      create(:pool_box, pool: pool)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["box_count"]).to eq(2)
+    end
+
+    it "returns 0 for box_count when pool has no boxes" do
+      pool = create(:pool, admin: user, league: league)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["box_count"]).to eq(0)
+    end
+
+    it "requires authentication" do
+      get "/api/pools"
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe "GET /api/pools/:id" do
     let(:pool) { create(:pool, admin: admin, league: league) }
     let(:pool_team) { create(:pool_team, pool: pool, owner: user) }
@@ -58,62 +132,6 @@ RSpec.describe "Pools", type: :request do
 
     it "requires authentication" do
       get "/api/pools/#{pool.id}"
-
-      expect(response).to have_http_status(:unauthorized)
-    end
-  end
-
-  describe "GET /api/pools" do
-    it "returns pools the user is a member of" do
-      pool = create(:pool, admin: admin, league: league)
-      create(:pool_team, pool: pool, owner: user)
-
-      get "/api/pools", headers: headers
-
-      expect(json.map { |p| p["id"] }).to include(pool.id)
-    end
-
-    it "returns pools the user administers" do
-      pool = create(:pool, admin: user, league: league)
-
-      get "/api/pools", headers: headers
-
-      expect(json.map { |p| p["id"] }).to include(pool.id)
-    end
-
-    it "does not return pools the user has no relation to" do
-      other_user = create(:user)
-      pool = create(:pool, admin: other_user, league: league)
-
-      get "/api/pools", headers: headers
-
-      expect(json.map { |p| p["id"] }).to_not include(pool.id)
-    end
-
-    it "returns scoring_count for each pool" do
-      pool = create(:pool, admin: user, league: league)
-      create(:pool_scoring, :skater, :goals, pool: pool)
-      create(:pool_scoring, :goalie, :wins, pool: pool)
-
-      get "/api/pools", headers: headers
-
-      pool_json = json.find { |p| p["id"] == pool.id }
-      expect(pool_json["scoring_count"]).to eq(2)
-    end
-
-    it "returns box_count for each pool" do
-      pool = create(:pool, admin: user, league: league)
-      create(:pool_box, pool: pool)
-      create(:pool_box, pool: pool)
-
-      get "/api/pools", headers: headers
-
-      pool_json = json.find { |p| p["id"] == pool.id }
-      expect(pool_json["box_count"]).to eq(2)
-    end
-
-    it "requires authentication" do
-      get "/api/pools"
 
       expect(response).to have_http_status(:unauthorized)
     end
