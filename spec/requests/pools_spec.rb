@@ -90,6 +90,28 @@ RSpec.describe "Pools", type: :request do
       expect(json.map { |p| p["id"] }).to_not include(pool.id)
     end
 
+    it "returns scoring_count for each pool" do
+      pool = create(:pool, admin: user, league: league)
+      create(:pool_scoring, :skater, :goals, pool: pool)
+      create(:pool_scoring, :goalie, :wins, pool: pool)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["scoring_count"]).to eq(2)
+    end
+
+    it "returns box_count for each pool" do
+      pool = create(:pool, admin: user, league: league)
+      create(:pool_box, pool: pool)
+      create(:pool_box, pool: pool)
+
+      get "/api/pools", headers: headers
+
+      pool_json = json.find { |p| p["id"] == pool.id }
+      expect(pool_json["box_count"]).to eq(2)
+    end
+
     it "requires authentication" do
       get "/api/pools"
 

@@ -6,4 +6,6 @@ json.array! @pools do |pool|
   json.season_id pool.season_id
   json.season_label @season_labels[pool.season_id] || pool.season_id
   json.is_admin pool.admin_id == @current_user_id
+  json.scoring_count @scoring_counts[pool.id]
+  json.box_count @box_counts[pool.id]
 end
