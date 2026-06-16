@@ -144,13 +144,22 @@ RSpec.describe "Pools", type: :request do
     it "returns pool_types" do
       get "/api/pools/meta", headers: headers
 
-      expect(json["pool_types"]).to match_array(Pool.pool_types.keys)
+      expect(json["pool_types"]).to eq([
+        { "value" => "box_select", "label" => "Box Select" },
+        { "value" => "draft", "label" => "Draft" },
+      ])
     end
 
     it "returns trade_policies" do
       get "/api/pools/meta", headers: headers
 
-      expect(json["trade_policies"]).to match_array(Pool.trade_policies.keys)
+      expect(json["trade_policies"]).to eq([
+        { "value" => "disabled", "label" => "Disabled" },
+        { "value" => "open", "label" => "Open" },
+        { "value" => "approval_required", "label" => "Approval Required" },
+        { "value" => "windowed", "label" => "Windowed" },
+        { "value" => "windowed_overflow", "label" => "Windowed Overflow" },
+      ])
     end
 
     it "requires authentication" do
