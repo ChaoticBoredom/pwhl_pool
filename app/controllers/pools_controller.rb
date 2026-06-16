@@ -55,17 +55,6 @@ class PoolsController < ApplicationController
     end
   end
 
-  def update
-    id = params[:id]
-    @pool = Pool.find(id)
-
-    if @pool.update(pool_name_params)
-      render json: { message: "Pool Name updated!" }
-    else
-      render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
-    end
-  end
-
   private
 
   def pool_params
@@ -77,10 +66,6 @@ class PoolsController < ApplicationController
       :reference_season_id,
       :trade_policy,
     )
-  end
-
-  def pool_name_params
-    params.require(:pool).permit(:name)
   end
 
   def seed_default_scoring
