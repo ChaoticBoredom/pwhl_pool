@@ -113,7 +113,8 @@ class Commissioner::PoolBoxesController < Commissioner::BaseController
     free_agent_players = League::Player.
       active.
       where(league: @pool.league).
-      where.not(id: assigned_ids)
+      where.not(id: assigned_ids).
+      to_a
 
     records = PlayerRecordQuery.new(
       players: free_agent_players,

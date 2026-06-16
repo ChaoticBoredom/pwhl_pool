@@ -17,14 +17,33 @@ class PlayerRecordQuery
   private
 
   def historical_records
-    @player_ids.flat_map do |player_id|
-      Rails.cache.fetch(player_cache_key(player_id)) do
-        fetch_records_for_range(..1.day.ago.end_of_day, player_ids: player_id).map do |r|
+    cached = {}
+    uncached_ids = []
+
+    @player_ids.each do |player_id|
+      value = Rails.cache.read(player_cache_key(player_id))
+      if value
+        cached[player_id] = value
+      else
+        uncached_ids << player_id
+      end
+    end
+
+    if uncached_ids.any?
+      fetched = fetch_records_for_range(..1.day.ago.end_of_day, player_ids: uncached_ids).
+        group_by(&:league_player_id)
+
+      uncached_ids.each do |player_id|
+        records = (fetched[player_id] || []).map do |r|
           r.attributes.merge("_class" => r.class.name)
         end
-      end.map do |cached|
-        cached["_class"].constantize.instantiate(cached.except("_class"))
+        Rails.cache.write(player_cache_key(player_id), records)
+        cached[player_id] = records
       end
+    end
+
+    cached.values.flatten.map do |record|
+      record["_class"].constantize.instantiate(record.except("_class"))
     end
   end
 

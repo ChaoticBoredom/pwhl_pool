@@ -268,14 +268,21 @@ RSpec.describe PlayerRecordQuery do
     context "caching" do
       let(:skater) { create(:pwhl_skater, league: league) }
 
-      it "passes historical records through Rails.cache.fetch" do
+      before(:each) do
         create(:pwhl_skater_stat,
           league: league,
           league_player: skater,
           league_game: create_game(start_time: 1.day.ago))
+      end
 
-        expect(Rails.cache).to receive(:fetch).and_call_original
+      it "writes historical records to cache on first call" do
+        expect(Rails.cache).to receive(:write).at_least(:once)
+        build_query(player_ids: [skater.id]).records
+      end
 
+      it "reads from cache on subsequent calls without writing" do
+        allow(Rails.cache).to receive(:read).and_return([])
+        expect(Rails.cache).to_not receive(:write)
         build_query(player_ids: [skater.id]).records
       end
     end
