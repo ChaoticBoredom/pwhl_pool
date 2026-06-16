@@ -11,7 +11,9 @@ class PoolsController < ApplicationController
     @season_labels = Pwhl::StatConfig::SEASON_LABELS
 
     @box_counts = Pool::Box.active.where(pool: @pools).group(:pool_id).count
+    @box_counts.default = 0
     @scoring_counts = Pool::Scoring.where(pool: @pools).group(:pool_id).count
+    @scoring_counts.default = 0
 
     render :index
   end
