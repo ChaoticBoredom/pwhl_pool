@@ -9,6 +9,23 @@ import { ScoringSection } from "@c/pool/ScoringSection";
 import { DraftBox } from "@c/boxes/BoxDraft";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
+const ReviewSection = ({ title, editPath, children }) => (
+  <div className="setup-review__section">
+    <div className="setup-review__section-header">
+      <h2 className="setup-review__section-title">{title}</h2>
+      <Link to={editPath} className="btn-primary btn-sm">Edit</Link>
+    </div>
+    {children}
+  </div>
+);
+
+const ReviewField = ({ label, value }) => (
+  <div className="setup-review__field">
+    <span className="setup-review__label">{label}</span>
+    <span className="setup-review__value">{value}</span>
+  </div>
+);
+
 export default function ReviewSetup() {
   const { poolId } = useParams();
   const navigate = useNavigate();
@@ -78,44 +95,25 @@ export default function ReviewSetup() {
 
   return (
     <div className="app-wrapper">
-      <StepBadge step={4} total={4} />
+      <StepBadge label="New Pool" step={4} total={4} />
       <h1 className="setup-page-title">Review & Activate</h1>
       <p className="setup-page-subtitle">
         Review your pool settings before activating. You can go back and make changes at any time.
       </p>
 
-      <div className="setup-review__section">
-        <div className="setup-review__section-header">
-          <h2 className="setup-review__section-title">Pool Settings</h2>
-          <Link to={`/pools/${poolId}/edit`} className="btn-primary btn-sm">Edit</Link>
-        </div>
+      <ReviewSection title="Pool Settings" editPath={`/pools/${poolId}/edit`}>
         <div className="setup-review__fields">
-          <div className="setup-review__field">
-            <span className="setup-review__label">Name</span>
-            <span className="setup-review__value">{pool.name}</span>
-          </div>
-          <div className="setup-review__field">
-            <span className="setup-review__label">Season</span>
-            <span className="setup-review__value">{seasonLabel(pool.season_id)}</span>
-          </div>
+          <ReviewField label="Name" value={pool.name} />
+          <ReviewField label="Season" value={seasonLabel(pool.season_id)} />
           {pool.reference_season_id && (
-            <div className="setup-review__field">
-              <span className="setup-review__label">Reference Season</span>
-              <span className="setup-review__value">{seasonLabel(pool.reference_season_id)}</span>
-            </div>
+            <ReviewField label="Reference Season" value={seasonLabel(pool.reference_season_id)} />
           )}
-          <div className="setup-review__field">
-            <span className="setup-review__label">Trade Policy</span>
-            <span className="setup-review__value">{tradePolicyLabel(pool.trade_policy)}</span>
-          </div>
+          <ReviewField label="Trade Policy" value={tradePolicyLabel(pool.trade_policy)} />
         </div>
-      </div>
+      </ReviewSection>
 
-      <div className="setup-review__section">
-        <div className="setup-review__section-header">
-          <h2 className="setup-review__section-title">Scoring</h2>
-          <Link to={`/pools/${poolId}/scoring/edit`} className="btn-primary btn-sm">Edit</Link>
-        </div>
+      
+      <ReviewSection title="Scoring" editPath={`/pools/${poolId}/scoring/edit`}>
         {scoring && Object.entries(scoring).map(([rosterType, fields]) => (
           <ScoringSection
             key={rosterType}
@@ -125,17 +123,13 @@ export default function ReviewSetup() {
             onChange={() => {}}
           />
         ))}
-      </div>
+      </ReviewSection>
 
-      <div className="setup-review__section">
-        <div className="setup-review__section-header">
-          <h2 className="setup-review__section-title">Boxes</h2>
-          <Link to={`/pools/${poolId}/boxes/edit`} className="btn-primary btn-sm">Edit</Link>
-        </div>
+      <ReviewSection title="Boxes" editPath={`/pools/${poolId}/boxes/edit`}>
         {boxes?.boxes?.map((box) => (
           <DraftBox key={box.name} box={box} />
         ))}
-      </div>
+      </ReviewSection>
 
       <div className="setup-confirm-bar">
         <p className="setup-confirm-meta">

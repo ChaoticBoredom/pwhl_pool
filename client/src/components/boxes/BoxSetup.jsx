@@ -28,7 +28,7 @@ export default function SetupPool() {
 
   return (
     <div className="app-wrapper">
-      <StepBadge label={"New Pool"} step={3} total={4} /> 
+      <StepBadge label="New Pool" step={3} total={4} /> 
       <h1 className="setup-page-title">Review Default Boxes</h1>
       <p className="setup-page-subtitle">
         These are your pool's default player boxes based on last season's rankings.

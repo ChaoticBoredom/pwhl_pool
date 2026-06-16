@@ -98,7 +98,7 @@ export default function PoolScoring({ setupMode = false, editMode = false }) {
     <div className="app-wrapper">
       {setupMode ? (
         <>
-          <StepBadge label={"New Pool"} step={2} total={4} />
+          <StepBadge label="New Pool" step={2} total={4} />
           <h1 className="setup-page-title">Configure Scoring</h1>
           <p className="setup-page-subtitle">
             Set point values for each stat. Leave blank or set to 0 to disable.
