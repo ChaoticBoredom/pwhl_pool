@@ -23,7 +23,7 @@ export default function SetupPool() {
   });
 
   const handleAfterSave = async () => {
-    navigate(`/pools/${poolId}/setup/review`);
+    navigate(`/pools/${poolId}/setup`);
   };
 
   return (

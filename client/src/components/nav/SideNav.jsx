@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import {
   Trophy, Shirt, Star, StarHalf, FileBarChart, BarChart2,
-  Home, ChevronDown, ChevronRight, ReplaceAll,
+  Home, ChevronDown, ChevronRight, ReplaceAll, SquarePen,
 } from "lucide-react";
 
 // eslint-disable-next-line no-unused-vars
@@ -131,6 +131,13 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
 
             {pool.state !== "completed" && (
               <>
+                <NavItem
+                  to={`${base}/edit`}
+                  icon={SquarePen}
+                  label="Edit Pool"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
                 <NavItem
                   to={`${base}/scoring/edit`}
                   icon={StarHalf}
