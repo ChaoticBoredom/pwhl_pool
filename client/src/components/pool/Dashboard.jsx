@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 function setupPath(pool) {
   if (pool.scoring_count === 0) return `/pools/${pool.id}/scoring/setup`;
   if (pool.box_count === 0) return `/pools/${pool.id}/boxes/setup`;
-  return `/pools/${pool.id}/review/setup`;
+  return `/pools/${pool.id}/setup`;
 }
 
 export function Dashboard() {

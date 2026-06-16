@@ -69,7 +69,7 @@ export function AppRouter() {
           >
             <Route path="/pools/:poolId/boxes/setup" element={<BoxSetup />} />
             <Route path="/pools/:poolId/scoring/setup" element={<PoolScoring setupMode />} />
-            <Route path="/pools/:poolId/review/setup" element={<ReviewSetup />} />
+            <Route path="/pools/:poolId/setup" element={<ReviewSetup />} />
 
             <Route path="/pools/:poolId/edit" element={<PoolSettings />} />
             <Route path="/pools/:poolId/boxes/edit" element={<EditBoxes />} />
