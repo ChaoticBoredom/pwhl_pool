@@ -89,7 +89,7 @@ export default function ReviewSetup() {
     meta?.seasons?.find((s) => s.id === id)?.name ?? id;
 
   const tradePolicyLabel = (policy) =>
-    policy?.replace(/_/g, " ");
+    meta?.trade_policies?.find((p) => p.value === pool.trade_policy)?.label ?? pool.trade_policy;
 
   if (scoringLoading || boxesLoading) return <LoadingState message="Loading review…" />;
 

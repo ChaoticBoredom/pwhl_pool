@@ -39,8 +39,8 @@ class PoolsController < ApplicationController
     render json: {
       leagues: League.all.map { |l| { id: l.id, name: l.name, short_name: l.short_name } },
       seasons: Pwhl::StatConfig::SEASON_LABELS.map { |k, v| { id: k, name: v } },
-      pool_types: Pool.pool_types.keys,
-      trade_policies: Pool.trade_policies.keys,
+      pool_types: Pool.pool_types.keys.map { |k| { value: k, label: k.to_s.titleize } },
+      trade_policies: Pool.trade_policies.keys.map { |k| { value: k, label: k.to_s.titleize } },
     }
   end
 

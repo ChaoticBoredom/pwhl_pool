@@ -6,6 +6,26 @@ import { usePool } from "@/context/PoolContext";
 import useNotices from "@/hooks/useNotices";
 import LoadingState from "@c/shared/LoadingState";
 
+const SettingsCard = ({ title, children }) => (
+  <div className="scoring-card">
+    <span className="scoring-section-title">{title}</span>
+    {children}
+  </div>
+);
+
+const RadioOption = ({ name, value, checked, onChange, label }) => (
+  <label className="radio-option">
+    <input
+      type="radio"
+      name={name}
+      value={value}
+      checked={checked}
+      onChange={onChange}
+    />
+    <span>{label}</span>
+  </label>
+);
+
 export default function PoolSettings() {
   const { poolId } = useParams();
   const navigate = useNavigate();
@@ -72,59 +92,48 @@ export default function PoolSettings() {
           />
         </div>
 
-        <div className="scoring-card">
-          <span className="scoring-section-title">Trade Policy</span>
+        <SettingsCard title="Trade Policy">
           <div className="stack">
-            {meta?.trade_policies?.map((policy) => (
-              <label key={policy} className="radio-option">
-                <input
-                  type="radio"
-                  name="trade_policy"
-                  value={policy}
-                  checked={values.trade_policy === policy}
-                  onChange={() => setValues((v) => ({ ...v, trade_policy: policy }))}
-                />
-                <span className="player-name" style={{ textTransform: "capitalize" }}>
-                  {policy.replace(/_/g, " ")}
-                </span>
-              </label>
+            {meta?.trade_policies?.map(({ value, label }) => (
+              <RadioOption
+                key={value}
+                value={value}
+                checked={values.trade_policy === value}
+                onChange={() => setValues((v) => ({ ...v, trade_policy: value}))}
+                label={label}
+              />
             ))}
           </div>
-        </div>
+        </SettingsCard>
 
-        <div className="scoring-card">
-          <span className="scoring-section-title">Reference Season</span>
+        <SettingsCard title="Reference Season">
           <p className="setup-page-subtitle">
             Use stats from a previous season to rank players for box generation.
             Leave blank to use the current season.
           </p>
           <div className="stack">
-            <label className="radio-option">
-              <input
-                type="radio"
-                name="reference_season_id"
-                value=""
-                checked={!values.reference_season_id}
-                onChange={() => setValues((v) => ({ ...v, reference_season_id: "" }))}
-              />
-              <span className="player-name">None (use current season)</span>
-            </label>
-            {meta?.seasons
-              ?.filter((s) => s.id !== pool.season_id)
-              ?.map((season) => (
-                <label key={season.id} className="radio-option">
-                  <input
-                    type="radio"
-                    name="reference_season_id"
-                    value={season.id}
-                    checked={values.reference_season_id === season.id}
-                    onChange={() => setValues((v) => ({ ...v, reference_season_id: season.id }))}
-                  />
-                  <span className="player-name">{season.name}</span>
-                </label>
-              ))}
+            <RadioOption
+              name="reference_season_id"
+              value=""
+              checked={!values.reference_season_id}
+              onChange={() => setValues((v) => ({ ...v, reference_season_id: "" }))}
+              label="None (use current season)"
+            />
+            {meta?.season?.
+              filter((s) => s.id !== pool.season_id)?.
+              map((season) => (
+                <RadioOption
+                  key={season.id}
+                  name="reference_season_id"
+                  value={season.id}
+                  checked={values.reference_season_id === season.id}
+                  onChange={() => SetValues((v) => ({ ...v, reference_season_id: season.id }))}
+                  label={season.name}
+                />
+              ))
+            }
           </div>
-        </div>
+        </SettingsCard>
       </div>
 
       <div className="setup-confirm-bar">
