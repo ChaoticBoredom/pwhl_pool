@@ -1,9 +1,17 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 
+function setupPath(pool) {
+  if (pool.scoring_count === 0) return `/pools/${pool.id}/scoring/setup`;
+  if (pool.box_count === 0) return `/pools/${pool.id}/boxes/setup`;
+  return `/pools/${pool.id}/review/setup`;
+}
+
 export function Dashboard() {
   const { authHeaders } = useAuth();
+  const [copiedId, setCopiedId] = useState(null);
 
   const { data: pools = [] } = useQuery({
     queryKey: ["pools"],
@@ -14,6 +22,16 @@ export function Dashboard() {
     },
     staleTime: 30 * 1000,
   });
+
+  const handleCopyInvite = (e, poolId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(`${window.location.origin}/pools/${poolId}/invite`);
+    setCopiedId(poolId);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const navigate = useNavigate();
 
   return (
     <div className="app-wrapper">
@@ -26,10 +44,10 @@ export function Dashboard() {
 
       <div className="player-list">
         {pools.map((pool) => (
-          <Link
+          <div
             key={pool.id}
-            to={`/pools/${pool.id}`}
             className="player-option"
+            onClick={() => navigate(`/pools/${pool.id}`)}
           >
             <div className="player-display-row">
               <div className="player-identity-vertical">
@@ -41,12 +59,29 @@ export function Dashboard() {
                   {pool.is_admin ? "Commissioner" : "Member"}
                 </span>
               </div>
-              <span className="score-display-vertical">
+              <div className="score-display-vertical">
                 <span className="score-label">{pool.state}</span>
                 <span className="score-label">{pool.season_label}</span>
-              </span>
+                {pool.is_admin && pool.state === "draft" && (
+                  <Link
+                    to={setupPath(pool)}
+                    className="btn-primary btn-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Continue Setup →
+                  </Link>
+                )}
+                {pool.is_admin && pool.state === "active" && (
+                  <button
+                    className="btn-primary btn-sm"
+                    onClick={(e) => handleCopyInvite(e, pool.id)}
+                  >
+                    {copiedId === pool.id ? "Copied!" : "Copy Invite Link"}
+                  </button>
+                )}
+              </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

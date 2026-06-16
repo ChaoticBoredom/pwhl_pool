@@ -7,6 +7,7 @@ import { ScoringSection } from "./ScoringSection";
 import { usePool } from "@/context/PoolContext";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import LoadingState from "@c/shared/LoadingState";
+import StepBadge from "@c/shared/StepBadge";
 
 export default function PoolScoring({ setupMode = false, editMode = false }) {
   const [editing, setEditing] = useState(setupMode || editMode);
@@ -97,7 +98,7 @@ export default function PoolScoring({ setupMode = false, editMode = false }) {
     <div className="app-wrapper">
       {setupMode ? (
         <>
-          <div className="setup-step-badge">New Pool — Step 2 of 3</div>
+          <StepBadge label={"New Pool"} step={2} total={4} />
           <h1 className="setup-page-title">Configure Scoring</h1>
           <p className="setup-page-subtitle">
             Set point values for each stat. Leave blank or set to 0 to disable.
