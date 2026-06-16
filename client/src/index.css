@@ -39,6 +39,7 @@
   --info-text: #3b82f6;
   --info-border: rgba(59, 130, 246, 0.3);
   --action-bg: rgba(249, 115, 22, 0.25);
+  --action-notice-bg: rgba(249, 115, 22, 0.85);
   --action-text: #ea6c00;
   --action-border: rgba(249, 115, 22, 0.5);
 
@@ -95,6 +96,7 @@
     --info-bg: rgba(59, 130, 246, 0.15);
     --info-text: #60a5fa;
     --info-border: rgba(59, 130, 246, 0.4);
+    --action-notice-bg: rgba(249, 115, 22, 0.92);
     --action-text: #fb923c;
     --action-border: rgba(249, 115, 22, 0.4);
   }
@@ -240,6 +242,28 @@ input::placeholder { color: var(--placeholder); }
   color: #fff;
 }
 
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--card-bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.radio-option:has(input:checked) {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.radio-option:hover { background: var(--accent-bg); border-color: var(--accent-border); }
+
+.radio-option input[type="radio"] { flex-shrink: 0; }
+.radio-option span { font-size: 0.875rem; color: var(--text-h); }
+
 /* ============================================================
    BUTTONS
    ============================================================ */
@@ -287,6 +311,8 @@ input::placeholder { color: var(--placeholder); }
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
 }
+
+.btn-secondary.btn-sm { padding: 6px 16px; font-size: 13px; }
 
 .btn-secondary:hover:not(:disabled) {
   background: var(--accent-bg);
@@ -1792,7 +1818,7 @@ input::placeholder { color: var(--placeholder); }
 
 .notice-float__item--action {
   border-color: var(--action-border);
-  background: var(--action-bg);
+  background: var(--action-notice-bg);
 }
 
 .notice-float__icon-wrap {
@@ -2457,6 +2483,54 @@ input::placeholder { color: var(--placeholder); }
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
+}
+
+.setup-review__section {
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.setup-review__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.setup-review__section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.setup-review__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setup-review__field {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.setup-review__label {
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.setup-review__value {
+  color: var(--text-h);
+  text-transform: capitalize;
 }
 
 /* ============================================================

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import TeamBadge from "@c/shared/TeamBadge";
 
-function DraftBox({ box }) {
+export function DraftBox({ box }) {
   const [open, setOpen] = useState(false);
   const players = box.players || [];
   const preview = players.slice(0, 3);

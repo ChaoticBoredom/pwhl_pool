@@ -3,19 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import LoadingState from "@c/shared/LoadingState";
+import StepBadge from "@c/shared/StepBadge";
 
-const TRADE_POLICY_LABELS = {
-  disabled: "Disabled — no trading",
-  open: "Open — always allowed",
-  approval_required: "Approval Required — commissioner must approve",
-  windowed: "Windowed — during trade windows only",
-  windowed_overflow: "Windowed with Overflow — pending approval outside windows",
-};
-
-const POOL_TYPE_LABELS = {
-  box_select: "Box Select",
-  draft: "Draft",
-};
+const FormField = ({ label, htmlFor, children }) => (
+  <div className="form-field">
+    <label className="form-label" htmlFor={htmlFor}>{label}</label>
+    {children}
+  </div>
+);
 
 export default function CreatePool() {
   const navigate = useNavigate();
@@ -100,15 +95,14 @@ export default function CreatePool() {
   return (
     <div className="create-pool-page">
       <div className="create-pool-form">
-        <div className="setup-step-badge">New Pool — Step 1 of 2</div>
+        <StepBadge label="New Pool" step={1} total={4} />
         <h2>Create Pool</h2>
         <p className="setup-page-subtitle">
           Set up the basics. You'll review boxes on the next step.
         </p>
 
         <div className="stack">
-          <div className="form-field">
-            <label className="form-label" htmlFor="pool-name">Pool Name</label>
+          <FormField label="Pool Name" htmlFor="pool-name">
             <input
               id="pool-name"
               className="form-input"
@@ -116,37 +110,34 @@ export default function CreatePool() {
               autoFocus
               {...field("name")}
             />
-          </div>
+          </FormField>
 
-          <div className="form-field">
-            <label className="form-label" htmlFor="season">Season</label>
+          <FormField label="Season" htmlFor="season">
             <select id="season" className="form-select" {...field("season_id")}>
               <option value="">Select a season…</option>
               {meta?.seasons?.map((s) => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
-          </div>
+          </FormField>
 
           {meta?.pool_types?.length > 1 && (
-            <div className="form-field">
-              <label className="form-label" htmlFor="pool-type">Pool Type</label>
+            <FormField label="Pool Type" htmlFor="pool-type">
               <select id="pool-type" className="form-select" {...field("pool_type")}>
-                {meta.pool_types.map((pt) => (
-                  <option key={pt} value={pt}>{POOL_TYPE_LABELS[pt] ?? pt}</option>
+                {meta.pool_types.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
                 ))}
               </select>
-            </div>
+            </FormField>
           )}
 
-          <div className="form-field">
-            <label className="form-label" htmlFor="trade-policy">Trade Policy</label>
+          <FormField label="Trade Policy" htmlFor="trade-policy">
             <select id="trade-policy" className="form-select" {...field("trade_policy")}>
-              {meta?.trade_policies?.map((tp) => (
-                <option key={tp} value={tp}>{TRADE_POLICY_LABELS[tp] ?? tp}</option>
+              {meta?.trade_policies?.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
               ))}
             </select>
-          </div>
+          </FormField>
 
           <label className="form-toggle-row">
             <input
@@ -160,15 +151,8 @@ export default function CreatePool() {
           </label>
 
           {useRefSeason && (
-            <div className="form-field">
-              <label className="form-label" htmlFor="ref-season">
-                Reference Season
-              </label>
-              <select
-                id="ref-season"
-                className="form-select"
-                {...field("reference_season_id")}
-              >
+            <FormField label="Reference Season" htmlFor="ref-season">
+              <select id="ref-season" className="form-select" {...field("reference_season_id")}>
                 <option value="">Select a reference season…</option>
                 {meta?.seasons
                   ?.filter((s) => s.id !== form.season_id)
@@ -179,7 +163,7 @@ export default function CreatePool() {
               <span className="helper-text">
                 Player scores shown during selection will use this season's data.
               </span>
-            </div>
+            </FormField>
           )}
 
           {errorMsg && (
@@ -191,7 +175,7 @@ export default function CreatePool() {
             onClick={() => createMutation.mutate()}
             disabled={!canSubmit}
           >
-            {createMutation.isPending ? "Creating…" : "Continue to Box Setup →"}
+            {createMutation.isPending ? "Creating…" : "Continue to Scoring Setup →"}
           </button>
         </div>
       </div>

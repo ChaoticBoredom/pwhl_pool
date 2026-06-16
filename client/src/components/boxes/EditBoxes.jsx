@@ -14,6 +14,7 @@ export default function EditBoxes() {
   const { pool } = usePool();
   const { add } = useNotices();
   const [confirmId, setConfirmId] = useState(null);
+  const [usingDefaults, setUsingDefaults] = useState(false);
 
   useEffect(() => {
     if (pool.state === "completed") {
@@ -32,6 +33,40 @@ export default function EditBoxes() {
     },
     staleTime: Infinity,
   });
+
+  const { data: defaultData, isLoading: defaultsLoading, refetch: fetchDefaults } = useQuery({
+    queryKey: ["pool-boxes-generate", poolId],
+    queryFn: async () => {
+      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes/default`, {
+        headers: authHeaders,
+      });
+      if (!res.ok) throw new Error("Failed to load default boxes");
+      return res.json();
+    },
+    staleTime: Infinity,
+    enabled: false,
+  });
+
+  const handleReset = () => {
+    add({
+      severity: "action",
+      dismissable: false,
+      message: "Reset to defaults? Your current box configuration will be replaced in the editor. Your saved boxes won't change until you hit Save.",
+      actions: [
+        {
+          label: "Reset to Defaults",
+          onClick: () => {
+            fetchDefaults().then(() => setUsingDefaults(true));
+          },
+        },
+        {
+          label: "Cancel",
+          variant: "secondary",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
 
   const handleAfterSave = () => {
     add({ severity: "success", message: "Boxes updated." });
@@ -69,17 +104,30 @@ export default function EditBoxes() {
     setConfirmId(id);
   };
 
+  const activeData = usingDefaults ? defaultData : data;
+  const loading = isLoading || (usingDefaults && defaultsLoading);
+
   return (
     <div className="app-wrapper">
-      <h1 className="setup-page-title">Edit Boxes</h1>
+      <div className="selection-header">
+        <h1 className="setup-page-title">Edit Boxes</h1>
+        <button
+          className="btn-secondary btn-sm"
+          onClick={handleReset}
+          disabled={defaultsLoading}
+        >
+          {defaultsLoading ? "Loading…" : "Reset to Defaults"}
+        </button>
+      </div>
 
-      {(isLoading || error)
+      {(loading || error)
         ? <LoadingState error={error} message="Loading boxes…" />
-        : data && (
+        : activeData && (
             <BoxEditor
+              key={usingDefaults ? "defaults" : "current"}
               poolId={poolId}
-              initialBoxes={data.boxes}
-              initialFreeAgents={data.free_agents}
+              initialBoxes={activeData.boxes}
+              initialFreeAgents={activeData.free_agents}
               onSave={handleSave}
               saveLabel="Save Boxes"
             />
