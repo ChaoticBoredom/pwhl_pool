@@ -24,7 +24,7 @@ Rails.application.routes.draw do
         get :team_player
       end
     end
-    resources :pools do
+    resources :pools, only: [:index, :show, :create] do
       collection do
         get :meta
       end
@@ -32,9 +32,6 @@ Rails.application.routes.draw do
       resources :pool_scoring, only: [:index]
     end
     resources :pool_teams, only: [:show, :create, :update] do
-      member do
-        post :update_roster
-      end
       resources :trade_requests, only: [:create, :index], controller: "trade/requests" do
         collection do
           post :cancel
