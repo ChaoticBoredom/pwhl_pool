@@ -127,7 +127,7 @@ export default function PoolSettings() {
                   name="reference_season_id"
                   value={season.id}
                   checked={values.reference_season_id === season.id}
-                  onChange={() => SetValues((v) => ({ ...v, reference_season_id: season.id }))}
+                  onChange={() => setValues((v) => ({ ...v, reference_season_id: season.id }))}
                   label={season.name}
                 />
               ))
