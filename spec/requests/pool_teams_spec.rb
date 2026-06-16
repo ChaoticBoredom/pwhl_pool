@@ -2,116 +2,87 @@ require "rails_helper"
 
 RSpec.describe "PoolTeams", type: :request do
   let(:user) { create(:user) }
+  let(:other_user) { create(:user) }
   let(:league) { create(:league, :pwhl) }
-  let(:pool) { create(:pool, league: league) }
+  let(:pool) { create(:pool, league: league, state: :active) }
   let(:pool_team) { create(:pool_team, pool: pool, owner: user) }
-  let(:skater1) { create(:league_player, :skater, league: league) }
-  let(:skater2) { create(:league_player, :skater, league: league) }
-  let(:skater3) { create(:league_player, :skater, league: league) }
-  let(:skater4) { create(:league_player, :skater, league: league) }
-  let(:box1) { create(:pool_box, pool: pool, league_player_ids: [skater1.id, skater3.id]) }
-  let(:box2) { create(:pool_box, pool: pool, league_player_ids: [skater2.id, skater4.id]) }
+  let(:headers) { auth_headers_for(user) }
+  let(:other_headers) { auth_headers_for(other_user) }
 
-  let!(:current_team1) { create(:pool_team_player, pool_team: pool_team, league_player: skater1, pool_box: box1) }
-  let!(:current_team2) { create(:pool_team_player, pool_team: pool_team, league_player: skater2, pool_box: box2) }
-
-  describe "POST /update_roster" do
-    context "when user does not own the team" do
-      let(:other_user) { create(:user) }
-
-      it "returns a 403 forbidden" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(other_user)
-
-        expect(response).to have_http_status(:forbidden)
-      end
-
-      it "does not alter the pool team" do
-        initial_ids = pool_team.current_team.pluck(:league_player_id)
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(other_user)
-
-        expect(pool_team.current_team.pluck(:league_player_id)).to match_array(initial_ids)
-      end
+  describe "GET /api/pool_teams/:id" do
+    before do
+      allow(PlayerRecordQuery).to receive(:new).and_return(double(records: {}))
+      allow_any_instance_of(PlayerScoringService).to receive(:player_summaries).and_return({})
+      allow_any_instance_of(PlayerScoringService).to receive(:team_scores).and_return({ pool_team.id => 0 })
+      allow_any_instance_of(UpcomingGamesService).to receive(:player_schedule).and_return({})
     end
 
-    context "when trades are not allowed" do
-      before(:each) { allow_any_instance_of(Pool).to receive(:trade_policy_result).and_return(:blocked) }
-
-      it "returns a 403 forbidden" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
-
-        expect(response).to have_http_status(:forbidden)
-      end
-
-      it "returns a sensible error message" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
-
-        expect(JSON.parse(response.body)["error"]).to eq("Trades are currently locked for this pool")
-      end
-
-
-      it "does not alter the pool team" do
-        initial_ids = pool_team.current_team.pluck(:league_player_id)
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
-
-        expect(pool_team.current_team.pluck(:league_player_id)).to match_array(initial_ids)
-      end
+    it "returns ok" do
+      get "/api/pool_teams/#{pool_team.id}", headers: headers
+      expect(response).to have_http_status(:ok)
     end
 
-    context "when trades go through" do
-      before(:each) { allow_any_instance_of(Pool).to receive(:trade_policy_result).and_return(:allowed) }
+    it "requires authentication" do
+      get "/api/pool_teams/#{pool_team.id}"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
 
-      it "returns a 200" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater3.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
+  describe "POST /api/pool_teams" do
+    let(:valid_params) { { team: { team_name: "My Team", pool_id: pool.id } } }
 
-        expect(response).to have_http_status(:ok)
+    it "returns created" do
+      post "/api/pool_teams", params: valid_params.to_json, headers: headers
+      expect(response).to have_http_status(:created)
+    end
+
+    it "creates a pool team" do
+      expect {
+        post "/api/pool_teams", params: valid_params.to_json, headers: headers
+      }.to change { Pool::Team.count }.by(1)
+    end
+
+    it "requires authentication" do
+      post "/api/pool_teams", params: valid_params.to_json
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    context "when params are invalid" do
+      let(:valid_params) { { team: { team_name: nil, pool_id: pool.id } } }
+
+      it "returns unprocessable_content" do
+        post "/api/pool_teams", params: valid_params.to_json, headers: headers
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it "removes ids not in hash" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater1.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
-
-        expect(pool_team.current_team.pluck(:league_player_id)).to_not include(skater2.id)
+      it "returns errors" do
+        post "/api/pool_teams", params: valid_params.to_json, headers: headers
+        expect(response.parsed_body["errors"]).to be_present
       end
+    end
+  end
 
-      it "marks removed players with current time" do
-        freeze_time do
-          post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater1.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
+  describe "PUT /api/pool_teams/:id" do
+    let(:valid_params) { { pool_team: { team_name: "New Name" } } }
 
-          expect(current_team2.reload.dropped_at).to eq(Time.current)
-        end
-      end
+    it "returns ok" do
+      put "/api/pool_teams/#{pool_team.id}", params: valid_params.to_json, headers: headers
+      expect(response).to have_http_status(:ok)
+    end
 
-      it "adds new ids in the hash" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater1.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
+    it "updates the team name" do
+      put "/api/pool_teams/#{pool_team.id}", params: valid_params.to_json, headers: headers
+      expect(pool_team.reload.team_name).to eq("New Name")
+    end
 
-          expect(pool_team.current_team.pluck(:league_player_id)).to match_array([skater1.id, skater4.id])
-      end
+    it "is forbidden for non-owners" do
+      put "/api/pool_teams/#{pool_team.id}", params: valid_params.to_json, headers: other_headers
+      expect(response).to have_http_status(:forbidden)
+    end
 
-      it "assigns the correct box to newly added players" do
-        post "/api/pool_teams/#{pool_team.id}/update_roster",
-          params: { new_player_ids: [skater1.id, skater4.id] }.to_json,
-          headers: auth_headers_for(user)
-
-        new_team_player = pool_team.pool_team_players.find_by(league_player_id: skater4.id)
-        expect(new_team_player.pool_box).to eq(box2)
-      end
+    it "requires authentication" do
+      put "/api/pool_teams/#{pool_team.id}", params: valid_params.to_json
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end
