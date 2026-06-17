@@ -293,6 +293,17 @@ RSpec.describe "Trade::Requests", type: :request do
         headers: auth_headers
     end
 
+   context "when the pool is completed" do
+    before(:each) { pool.update!(state: :completed) }
+
+    it "returns forbidden" do
+      post "/api/pool_teams/#{pool_team.id}/trade_requests/cancel",
+        params: { id: pending_add.id }.to_json,
+        headers: auth_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
     context "when not the team owner" do
       let(:other_user) { create(:user) }
 

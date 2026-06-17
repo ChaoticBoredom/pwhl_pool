@@ -18,6 +18,13 @@ class PoolTeamsController < ApplicationController
   end
 
   def create
+    @pool = Pool.find(team_params[:pool_id])
+
+    if @pool.pool_state_completed?
+      render json: { error: "Pool is completed" }, status: :forbidden
+      return
+    end
+
     @team = Current.user.pool_teams.new(team_params)
 
     if @team.save

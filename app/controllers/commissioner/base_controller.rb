@@ -1,5 +1,6 @@
 class Commissioner::BaseController < ApplicationController
   before_action :require_pool
+  before_action :require_editable_pool, only: [:create, :update]
   before_action :require_commissioner
   rescue_from ActiveRecord::RecordInvalid, with: :render_invalid
 
@@ -9,6 +10,10 @@ class Commissioner::BaseController < ApplicationController
     @pool = Pool.includes(pool_includes).find(params[:pool_id] || params[:id])
   rescue ActiveRecord::RecordNotFound
     head :not_found
+  end
+
+  def require_editable_pool
+    render json: { error: "Pool is completed" }, status: :forbidden if @pool.pool_state_completed?
   end
 
   def pool_includes

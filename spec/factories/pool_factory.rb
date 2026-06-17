@@ -6,5 +6,9 @@ FactoryBot.define do
     pool_type { 100 }
     season_id { "2024-2025" }
     state { :active }
+
+    trait :completed do
+      state { :completed }
+    end
   end
 end

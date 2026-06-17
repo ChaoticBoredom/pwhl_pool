@@ -5,6 +5,14 @@ RSpec.describe Commissioner::BaseController, type: :controller do
     def index
       render json: { ok: true }
     end
+
+    def update
+      render json: { ok: true }
+    end
+
+    def create
+      render json: { ok: true }
+    end
   end
 
   let(:league) { create(:league, :pwhl) }
@@ -58,6 +66,28 @@ RSpec.describe Commissioner::BaseController, type: :controller do
         get :index, params: { id: "bad id" }
         expect(response).to have_http_status(:not_found)
       end
+    end
+  end
+
+  context "when the pool is completed" do
+    let(:pool) { create(:pool, :completed, admin: commissioner) }
+    before { request.headers.merge!(auth_headers_for(commissioner)) }
+
+    it "allows index through" do
+      get :index, params: { pool_id: pool.id }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns forbidden on create" do
+      post :create, params: { pool_id: pool.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # Update expects path/:id, so that needs to be set instead of
+    # pool_id
+    it "returns forbidden on update" do
+      post :update, params: { id: pool.id }
+      expect(response).to have_http_status(:forbidden)
     end
   end
 

@@ -1,5 +1,6 @@
 class Trade::RequestsController < ApplicationController
   before_action :set_pool_team, :set_pool
+  before_action :require_editable_pool, only: [:create, :cancel]
   before_action :require_owner, only: [:create, :cancel]
   before_action :validate_cancel_params, only: [:cancel]
   before_action :load_requests_to_cancel, only: [:cancel]
@@ -66,6 +67,10 @@ class Trade::RequestsController < ApplicationController
 
   def set_pool
     @pool = @pool_team.pool
+  end
+
+  def require_editable_pool
+    render json: { error: "Pool is completed" }, status: :forbidden if @pool.pool_state_completed?
   end
 
   def require_owner
