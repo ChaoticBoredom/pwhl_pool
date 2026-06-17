@@ -36,7 +36,7 @@ export default function SetupPool() {
       </p>
 
       {(isLoading || error)
-        ? <LoadingState error={error} message="Generating boxes…" />
+        ? <LoadingState error={error} message="Generating boxes..." />
         : data && (
             <BoxEditor
               poolId={poolId}

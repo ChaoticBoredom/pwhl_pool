@@ -145,7 +145,7 @@ export default function PoolScoring({ setupMode = false, editMode = false }) {
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
           >
-            {saveMutation.isPending ? "Saving…" : setupMode ? "Save & Continue →" : "Save Scoring"}
+            {saveMutation.isPending ? "Saving..." : setupMode ? "Save & Continue →" : "Save Scoring"}
           </button>
         </div>
       )}

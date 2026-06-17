@@ -91,7 +91,7 @@ export default function ReviewSetup() {
   const tradePolicyLabel = (policy) =>
     meta?.trade_policies?.find((p) => p.value === policy)?.label ?? policy;
 
-  if (scoringLoading || boxesLoading) return <LoadingState message="Loading review…" />;
+  if (scoringLoading || boxesLoading) return <LoadingState message="Loading review..." />;
 
   return (
     <div className="app-wrapper">
@@ -140,7 +140,7 @@ export default function ReviewSetup() {
           onClick={() => activateMutation.mutate()}
           disabled={activateMutation.isPending}
         >
-          {activateMutation.isPending ? "Activating…" : "Activate Pool →"}
+          {activateMutation.isPending ? "Activating..." : "Activate Pool →"}
         </button>
       </div>
     </div>

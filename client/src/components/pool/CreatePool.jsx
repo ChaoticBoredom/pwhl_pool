@@ -114,7 +114,7 @@ export default function CreatePool() {
 
           <FormField label="Season" htmlFor="season">
             <select id="season" className="form-select" {...field("season_id")}>
-              <option value="">Select a season…</option>
+              <option value="">Select a season...</option>
               {meta?.seasons?.map((s) => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
@@ -153,7 +153,7 @@ export default function CreatePool() {
           {useRefSeason && (
             <FormField label="Reference Season" htmlFor="ref-season">
               <select id="ref-season" className="form-select" {...field("reference_season_id")}>
-                <option value="">Select a reference season…</option>
+                <option value="">Select a reference season...</option>
                 {meta?.seasons
                   ?.filter((s) => s.id !== form.season_id)
                   .map((s) => (
@@ -175,7 +175,7 @@ export default function CreatePool() {
             onClick={() => createMutation.mutate()}
             disabled={!canSubmit}
           >
-            {createMutation.isPending ? "Creating…" : "Continue to Scoring Setup →"}
+            {createMutation.isPending ? "Creating..." : "Continue to Scoring Setup →"}
           </button>
         </div>
       </div>

@@ -295,7 +295,7 @@ export default function BoxEditor({
           disabled={isSaving || !canSave}
           title={!canSave ? "Every box needs at least one player" : undefined}
         >
-          {isSaving ? "Saving…" : saveLabel ?? "Confirm & Activate Pool →"}
+          {isSaving ? "Saving..." : saveLabel ?? "Confirm & Activate Pool →"}
         </button>
       </div>
     </div>

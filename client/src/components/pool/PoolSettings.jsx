@@ -75,7 +75,7 @@ export default function PoolSettings() {
     },
   });
 
-  if (isLoading) return <LoadingState message="Loading settings…" />;
+  if (isLoading) return <LoadingState message="Loading settings..." />;
 
   return (
     <div className="app-wrapper">
@@ -148,7 +148,7 @@ export default function PoolSettings() {
           onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending || !values.name.trim()}
         >
-          {saveMutation.isPending ? "Saving…" : "Save Settings"}
+          {saveMutation.isPending ? "Saving..." : "Save Settings"}
         </button>
       </div>
     </div>

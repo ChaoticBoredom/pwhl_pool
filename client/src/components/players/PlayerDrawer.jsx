@@ -171,7 +171,7 @@ export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerCha
       </div>
 
       <div>
-        {isLoading && <div className="player-drawer-loading">Loading stats…</div>}
+        {isLoading && <div className="player-drawer-loading">Loading stats...</div>}
         {isError && <div className="player-drawer-error">Could not load stats</div>}
 
         {!isLoading && !isError && relevantFields.length === 0 && (
