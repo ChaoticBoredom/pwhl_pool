@@ -50,7 +50,6 @@ class PoolsController < ApplicationController
     @pool = Pool.new(pool_params.merge(admin: current_user))
 
     if @pool.save
-      seed_default_scoring
       render :show, status: :created
     else
       render json: { errors: @pool.errors.full_messages }, status: :unprocessable_content
@@ -68,19 +67,6 @@ class PoolsController < ApplicationController
       :reference_season_id,
       :trade_policy,
     )
-  end
-
-  def seed_default_scoring
-    stat_config = @pool.league.stat_config
-    stat_config::DEFAULT_SCORING.each do |roster_type, fields|
-      fields.each do |field_name, value|
-        @pool.scoring.create!(
-          field_name: field_name,
-          roster_type: roster_type,
-          value: value,
-        )
-      end
-    end
   end
 
   def rank_teams(team_scores)
