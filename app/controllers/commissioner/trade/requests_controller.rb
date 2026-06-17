@@ -51,8 +51,6 @@ class Commissioner::Trade::RequestsController < Commissioner::BaseController
     else
       render json: { error: "Invalid status: #{params[:status]}" }, status: :unprocessable_content
     end
-  rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.message }, status: :unprocessable_content
   end
 
   private
