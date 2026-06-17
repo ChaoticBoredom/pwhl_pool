@@ -12,7 +12,7 @@ RSpec.describe "PoolScoring#index", type: :request do
     let!(:goalie_wins) { create(:pool_scoring, :goalie, :wins, pool: pool) }
 
     it "groups the skater rows under the skater roster type" do
-      get pool_pool_scoring_index_path(pool), headers: headers
+      get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       skater_field_names = response.parsed_body["skater"].
         select { |f| f["id"].present? }.
@@ -22,7 +22,7 @@ RSpec.describe "PoolScoring#index", type: :request do
     end
 
     it "groups the goalie rows under the goalie roster type" do
-      get pool_pool_scoring_index_path(pool), headers: headers
+      get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       goalie_field_names = response.parsed_body["goalie"].
         select { |f| f["id"].present? }.
@@ -32,7 +32,7 @@ RSpec.describe "PoolScoring#index", type: :request do
     end
 
     it "returns the persisted row's id and value rather than the default" do
-      get pool_pool_scoring_index_path(pool), headers: headers
+      get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       skater_goals_field = response.parsed_body["skater"].find { |f| f["field_name"] == "goals" }
 
@@ -70,7 +70,7 @@ RSpec.describe "PoolScoring#index", type: :request do
       ["goalie", "game_started", 0.0],
     ].each do |roster_type, field_name, default_value|
       it "returns #{default_value} for #{roster_type}/#{field_name}" do
-        get pool_pool_scoring_index_path(pool), headers: headers
+        get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
         field = response.parsed_body[roster_type].find { |f| f["field_name"] == field_name }
 
@@ -79,7 +79,7 @@ RSpec.describe "PoolScoring#index", type: :request do
     end
 
     it "returns a nil id since no row has been created yet" do
-      get pool_pool_scoring_index_path(pool), headers: headers
+      get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       skater_goals_field = response.parsed_body["skater"].find { |f| f["field_name"] == "goals" }
 
