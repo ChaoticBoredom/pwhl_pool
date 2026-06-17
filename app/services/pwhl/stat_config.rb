@@ -16,7 +16,7 @@ module Pwhl
 
     DEFAULT_SCORING = {
       goalie: {
-        wins: 2.0,
+        win: 2.0,
         saves: 0.05,
         shutout: 2.0,
         penalty_minutes: 0.25,
