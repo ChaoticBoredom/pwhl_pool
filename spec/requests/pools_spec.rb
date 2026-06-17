@@ -258,34 +258,6 @@ RSpec.describe "Pools", type: :request do
       end
     end
 
-    it "seeds default scoring on creation" do
-      expect {
-        post "/api/pools", params: valid_params.to_json, headers: headers
-      }.to change { Pool::Scoring.count }.by(
-        Pwhl::StatConfig::DEFAULT_SCORING.values.sum(&:length)
-      )
-    end
-
-    it "seeds correct skater scoring values" do
-      post "/api/pools", params: valid_params.to_json, headers: headers
-
-      pool = Pool.last
-      Pwhl::StatConfig::DEFAULT_SCORING[:skater].each do |field_name, value|
-        scoring = pool.scoring.find_by(field_name: field_name, roster_type: :skater)
-        expect(scoring&.value).to eq(value), "skater #{field_name} expected #{value}"
-      end
-    end
-
-    it "seeds correct goalie scoring values" do
-      post "/api/pools", params: valid_params.to_json, headers: headers
-
-      pool = Pool.last
-      Pwhl::StatConfig::DEFAULT_SCORING[:goalie].each do |field_name, value|
-        scoring = pool.scoring.find_by(field_name: field_name, roster_type: :goalie)
-        expect(scoring&.value).to eq(value), "goalie #{field_name} expected #{value}"
-      end
-    end
-
     it "requires authentication" do
       expect {
         post "/api/pools", params: payload

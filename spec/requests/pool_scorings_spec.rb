@@ -15,7 +15,6 @@ RSpec.describe "PoolScoring#index", type: :request do
       get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       skater_field_names = response.parsed_body["skater"].
-        select { |f| f["id"].present? }.
         map { |f| f["field_name"] }
 
       expect(skater_field_names).to match_array(["goals", "assists"])
@@ -25,7 +24,6 @@ RSpec.describe "PoolScoring#index", type: :request do
       get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       goalie_field_names = response.parsed_body["goalie"].
-        select { |f| f["id"].present? }.
         map { |f| f["field_name"] }
 
       expect(goalie_field_names).to match_array(["win"])
@@ -84,6 +82,26 @@ RSpec.describe "PoolScoring#index", type: :request do
       skater_goals_field = response.parsed_body["skater"].find { |f| f["field_name"] == "goals" }
 
       expect(skater_goals_field["id"]).to be_nil
+    end
+  end
+
+  context "when some scoring exists but not all fields" do
+    let!(:goals) { create(:pool_scoring, :skater, :goals, pool: pool) }
+
+    it "does not include fields that have no row" do
+      get pool_pool_scoring_index_path(pool), headers: headers
+
+      skater_hits = response.parsed_body["skater"].find { |f| f["field_name"] == "hits" }
+
+      expect(skater_hits).to be_nil
+    end
+
+    it "still returns the field that does have a row" do
+      get pool_pool_scoring_index_path(pool), headers: headers
+
+      skater_goals_field = response.parsed_body["skater"].find { |f| f["field_name"] == "goals" }
+
+      expect(skater_goals_field["id"]).to eq(goals.id)
     end
   end
 end
