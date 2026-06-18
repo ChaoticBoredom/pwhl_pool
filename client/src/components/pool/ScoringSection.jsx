@@ -6,7 +6,7 @@ function StatCard({ scoring, editable, onChange }) {
   const Icon = statIconMap[scoring.field_name] ?? HelpCircle;
 
   return (
-    <div className={`scoring-card ${scoring.value == null ? "scoring-card--unconfigured" : ""}`}>
+    <div className={`scoring-card ${!scoring.value ? "scoring-card--unconfigured" : ""}`}>
       <div className="scoring-card-header">
         <div className="scoring-card-icon">
           <Icon size={24} strokeWidth={1.5} />
@@ -18,7 +18,7 @@ function StatCard({ scoring, editable, onChange }) {
           className="scoring-card-input"
           type="number"
           step="0.05"
-          value={scoring.value ?? ""}
+          value={scoring.value}
           placeholder="0"
           onChange={(e) => onChange(scoring.field_name, scoring.roster_type, e.target.value)}
         />
