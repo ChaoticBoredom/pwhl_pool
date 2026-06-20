@@ -46,6 +46,7 @@ export default function ScoringEditor({ poolId, data, editable, onSave, onCancel
   });
 
   const handleSaveClick = () => onSave(() => saveMutation.mutateAsync());
+  const canSave = Object.values(values).some((v) => Number(v) !== 0);
 
   return (
     <>
@@ -67,7 +68,12 @@ export default function ScoringEditor({ poolId, data, editable, onSave, onCancel
       {editable && (
         <div className="setup-confirm-bar">
           <button className="btn-secondary btn-sm" onClick={onCancel}>Cancel</button>
-          <button className="btn-primary" onClick={handleSaveClick} disabled={saveMutation.isPending}>
+          <button
+            className="btn-primary"
+            onClick={handleSaveClick}
+            disabled={saveMutation.isPending || !canSave}
+            title={!canSave ? "Must have at least one non-zero scoring" : undefined}
+          >
             {saveMutation.isPending ? "Saving..." : saveLabel ?? "Save Scoring"}
           </button>
         </div>
