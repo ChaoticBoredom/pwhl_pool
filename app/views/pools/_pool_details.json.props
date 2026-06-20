@@ -6,6 +6,9 @@ json.season_id pool.season_id
 json.reference_season_id pool.reference_season_id
 json.trade_policy pool.trade_policy
 
+json.pool_boxes_count pool.active_box_count
+json.pool_scoring_count pool.configured_scoring_count
+
 json.league do
   json.id pool.league.id
   json.name pool.league.name

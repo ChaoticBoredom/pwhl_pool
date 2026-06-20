@@ -7,5 +7,3 @@ json.pool_teams do
     json.owner team.owner.name
   end
 end
-
-json.pool_boxes_count @pool.pool_boxes.active.count
