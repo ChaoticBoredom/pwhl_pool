@@ -19,18 +19,18 @@ import { deriveBoxBadge } from "@/utils/boxConfig";
 
 export default function BoxEditor({
   poolId,
-  initialBoxes,
-  initialFreeAgents,
+  data,
   onSave,
   saveLabel,
 }) {
   const { authHeaders } = useAuth();
+  console.log(data)
 
-  const [boxes, setBoxes] = useState(initialBoxes);
-  const [freeAgents, setFreeAgents] = useState(initialFreeAgents);
+  const [boxes, setBoxes] = useState(data.boxes);
+  const [freeAgents, setFreeAgents] = useState(data.free_agents);
   const [activePlayer, setActivePlayer] = useState(null);
   const [overBoxName, setOverBoxName] = useState(null);
-  const [boxCounter, setBoxCounter] = useState(initialBoxes.length + 1);
+  const [boxCounter, setBoxCounter] = useState(data.boxes.length + 1);
   const [isSaving, setIsSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState(null);

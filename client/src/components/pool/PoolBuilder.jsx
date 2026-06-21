@@ -4,11 +4,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePool } from "@/context/PoolContext";
 import StepBadge from "@c/shared/StepBadge";
 import LoadingState from "@c/shared/LoadingState";
-import ScoringEditor from "@c/scoring/ScoringEditor";
+import ScoringEditor from "@c/pool/ScoringEditor";
 import BoxEditor from "@c/boxes/BoxEditor";
 import { useScoringIndex } from "@/hooks/useScoring";
-import { useBoxesIndex } from "@/hooks/useBoxes";
-import PoolReview from "./PoolReview";
+import { useBoxesDefault } from "@/hooks/useBoxes";
+import ReviewSetup from "./ReviewSetup";
 
 const STEPS = [
   {
@@ -22,13 +22,13 @@ const STEPS = [
     key: "boxes",
     label: "Configure Boxes",
     Component: BoxEditor,
-    useStepData: useBoxesIndex,
+    useStepData: useBoxesDefault,
     isComplete: (pool) => pool.pool_boxes_count > 0,
   },
   {
     key: "review",
     label: "Review & Activate",
-    Component: PoolReview,
+    Component: ReviewSetup,
     useStepData: () => ({ data: null, isLoading: false, error: null }),
     isComplete: () => false,
   },
