@@ -15,7 +15,7 @@ class PoolScoringController < ApplicationController
           next if scoring.nil? && scorings_by_field.any?
 
           value = scoring&.value || @stat_config::DEFAULT_SCORING.dig(roster, field.to_sym) || 0.0
-          { id: scoring&.id, field_name: field.to_s, value: value }
+          { id: scoring&.id, field_name: field.to_s, roster_type: roster.to_s, value: value }
         end,
       ]
     end

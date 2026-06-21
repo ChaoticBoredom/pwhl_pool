@@ -2,6 +2,7 @@
   json.set! roster_type do
     json.array! @scorings_by_roster_type[roster_type] do |scoring|
       json.id scoring[:id]
+      json.roster_type scoring[:roster_type]
       json.field_name scoring[:field_name]
       json.descriptive @stat_config::STAT_LABELS[scoring[:field_name].to_sym] || scoring[:field_name].titleize
       json.value scoring[:value]
