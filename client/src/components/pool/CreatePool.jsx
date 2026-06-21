@@ -65,7 +65,7 @@ export default function CreatePool() {
       return res.json();
     },
     onSuccess: (data) => {
-      navigate(`/pools/${data.id}/scoring/setup`);
+      navigate(`/pools/${data.id}/setup`);
     },
     onError: (err) => {
       setErrorMsg(err.message);

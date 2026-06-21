@@ -15,30 +15,35 @@ const STEPS = [
     key: "scoring",
     label: "Configure Scoring",
     Component: ScoringEditor,
-    useStepData: useScoringIndex,
     isComplete: (pool) => pool.pool_scoring_count > 0,
   },
   {
     key: "boxes",
     label: "Configure Boxes",
     Component: BoxEditor,
-    useStepData: useBoxesDefault,
     isComplete: (pool) => pool.pool_boxes_count > 0,
   },
   {
     key: "review",
     label: "Review & Activate",
     Component: ReviewSetup,
-    useStepData: () => ({ data: null, isLoading: false, error: null }),
     isComplete: () => false,
   },
 ];
+
 
 export default function PoolBuilder() {
   const { poolId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { pool } = usePool();
+
+  const rawStep = pool ? STEPS.findIndex((s) => !s.isComplete(pool)) : -1;
+  const step = rawStep === -1 ? STEPS.length - 1 : rawStep;
+
+  const scoringStepData = useScoringIndex(poolId, { enabled: step === 0 });
+  const boxesStepData = useBoxesDefault(poolId, { enabled: step === 1 });
+  const reviewStepData = { data: null, isLoading: false, error: null };
 
   useEffect(() => {
     if (pool && pool.state !== "draft") {
@@ -50,11 +55,9 @@ export default function PoolBuilder() {
 
   if (!pool) return <LoadingState />;
 
-  const rawStep = STEPS.findIndex((s) => !s.isComplete(pool));
-  const step = rawStep === -1 ? STEPS.length - 1 : rawStep;
   const current = STEPS[step];
-
-  const { data, isLoading, error } = current.useStepData(poolId);
+  const allStepData = [scoringStepData, boxesStepData, reviewStepData];
+  const { data, isLoading, error } = allStepData[step];
 
   if (isLoading || error) return <LoadingState error={error} />;
 
