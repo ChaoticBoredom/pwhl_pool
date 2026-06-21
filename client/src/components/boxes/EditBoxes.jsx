@@ -126,8 +126,7 @@ export default function EditBoxes() {
             <BoxEditor
               key={usingDefaults ? "defaults" : "current"}
               poolId={poolId}
-              initialBoxes={activeData.boxes}
-              initialFreeAgents={activeData.free_agents}
+              data={activeData}
               onSave={handleSave}
               saveLabel="Save Boxes"
             />

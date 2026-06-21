@@ -40,8 +40,7 @@ export default function SetupPool() {
         : data && (
             <BoxEditor
               poolId={poolId}
-              initialBoxes={data.boxes}
-              initialFreeAgents={data.free_agents}
+              data={data}
               onSave={(postBoxes) => postBoxes().then(handleAfterSave)}
               saveLabel="Save & Continue →"
             />

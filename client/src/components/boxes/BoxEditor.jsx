@@ -24,7 +24,6 @@ export default function BoxEditor({
   saveLabel,
 }) {
   const { authHeaders } = useAuth();
-  console.log(data)
 
   const [boxes, setBoxes] = useState(data.boxes);
   const [freeAgents, setFreeAgents] = useState(data.free_agents);
