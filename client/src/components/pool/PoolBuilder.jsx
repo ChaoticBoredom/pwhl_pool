@@ -7,8 +7,9 @@ import LoadingState from "@c/shared/LoadingState";
 import ScoringEditor from "@c/pool/ScoringEditor";
 import BoxEditor from "@c/boxes/BoxEditor";
 import { useScoringIndex } from "@/hooks/useScoring";
-import { useBoxesDefault } from "@/hooks/useBoxes";
+import { useBoxesDefault, useBoxesIndex } from "@/hooks/useBoxes";
 import ReviewSetup from "./ReviewSetup";
+import useNotices from "@/hooks/useNotices";
 
 const STEPS = [
   {
@@ -37,17 +38,29 @@ export default function PoolBuilder() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { pool } = usePool();
+  const { add } = useNotices();
 
-  const rawStep = pool ? STEPS.findIndex((s) => !s.isComplete(pool)) : -1;
-  const step = rawStep === -1 ? STEPS.length - 1 : rawStep;
+  const rawStep = pool ? STEPS.findIndex((s) => !s.isComplete(pool)) : null;
+  const step = rawStep === null ? null : (rawStep === -1 ? STEPS.length - 1 : rawStep);
 
-  const scoringStepData = useScoringIndex(poolId, { enabled: step === 0 });
+  console.log(pool);
+  console.log(step, rawStep);
+
+  // Fetch scoring data on step 0, and step 2 (ScoringSetup and Review)
+  const scoringStepData = useScoringIndex(poolId, { enabled: [0, 2].includes(step) });
+  // Fetch default boxes on step 1
   const boxesStepData = useBoxesDefault(poolId, { enabled: step === 1 });
-  const reviewStepData = { data: null, isLoading: false, error: null };
+  // Fetch created boxes on step 2
+  const boxesReviewData = useBoxesIndex(poolId, { enabled: step === 2 });
+  const reviewStepData = {
+    data: {scoring: scoringStepData.data, boxes: boxesReviewData.data },
+    isLoading: scoringStepData.isLoading || boxesReviewData.isLoading,
+    error: scoringStepData.error || boxesReviewData.error,
+  };
 
   useEffect(() => {
     if (pool && pool.state !== "draft") {
-      navigate(`/pools/${poolId}`, { replace: true });
+      navigate(`/pools/${poolId}/invite`, { replace: true });
     }
   }, [pool, poolId, navigate]);
 
@@ -62,11 +75,11 @@ export default function PoolBuilder() {
   if (isLoading || error) return <LoadingState error={error} />;
 
   const handleSave = (save) => {
-    save().then(() => {
-      queryClient.removeQueries({ queryKey: ["pool", poolId] });
+    save().then(async () => {
+      await queryClient.refetchQueries({ queryKey: ["pool", poolId] });
 
       if (step === STEPS.length - 1) {
-        navigate(`/pools/${poolId}/invite`);
+        add({ severity: "success", message: "Pool activated! Share the invite link to get started."});
       }
     });
   };
