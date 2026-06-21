@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 
-export function useBoxesIndex(poolId) {
+export function useBoxesIndex(poolId, { enabled = true } = {}) {
   const { authHeaders } = useAuth();
 
   return useQuery({
@@ -14,6 +14,7 @@ export function useBoxesIndex(poolId) {
       return res.json();
     },
     staleTime: Infinity,
+    enabled,
   });
 }
 

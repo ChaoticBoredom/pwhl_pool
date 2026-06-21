@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 
-export function useScoringIndex(poolId) {
+export function useScoringIndex(poolId, { enabled = true } = {}) {
   const { authHeaders } = useAuth();
 
   return useQuery({
@@ -14,5 +14,6 @@ export function useScoringIndex(poolId) {
       return res.json();
     },
     staleTime: Infinity,
+    enabled,
   });
 }
