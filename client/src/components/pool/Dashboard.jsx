@@ -3,12 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 
-function setupPath(pool) {
-  if (pool.scoring_count === 0) return `/pools/${pool.id}/scoring/setup`;
-  if (pool.box_count === 0) return `/pools/${pool.id}/boxes/setup`;
-  return `/pools/${pool.id}/setup`;
-}
-
 export function Dashboard() {
   const { authHeaders } = useAuth();
   const [copiedId, setCopiedId] = useState(null);
@@ -64,7 +58,7 @@ export function Dashboard() {
                 <span className="score-label">{pool.season_label}</span>
                 {pool.is_admin && pool.state === "draft" && (
                   <Link
-                    to={setupPath(pool)}
+                    to={`/pools/${pool.id}/setup`}
                     className="btn-primary btn-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
