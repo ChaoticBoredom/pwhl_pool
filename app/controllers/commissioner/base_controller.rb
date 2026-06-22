@@ -1,6 +1,8 @@
 class Commissioner::BaseController < ApplicationController
   before_action :require_pool
+  before_action :require_editable_pool, only: [:create, :update]
   before_action :require_commissioner
+  rescue_from ActiveRecord::RecordInvalid, with: :render_invalid
 
   private
 
@@ -10,11 +12,19 @@ class Commissioner::BaseController < ApplicationController
     head :not_found
   end
 
+  def require_editable_pool
+    render json: { error: "Pool is completed" }, status: :forbidden if @pool.pool_state_completed?
+  end
+
   def pool_includes
     []
   end
 
   def require_commissioner
     head :forbidden unless current_user == @pool.admin || current_user&.admin?
+  end
+
+  def render_invalid(exception)
+    render json: { errors: exception.message }, status: :unprocessable_content
   end
 end

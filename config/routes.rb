@@ -51,7 +51,11 @@ Rails.application.routes.draw do
             put :update
           end
         end
-        resource :pool_scoring, only: [:update], controller: "pool_scoring"
+        resource :pool_scoring, only: [:create], controller: "pool_scoring" do
+          collection do
+            put :update
+          end
+        end
         resources :trade_requests, only: [:index], controller: "trade/requests" do
           collection do
             patch :update

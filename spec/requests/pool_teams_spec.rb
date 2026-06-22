@@ -60,6 +60,20 @@ RSpec.describe "PoolTeams", type: :request do
         expect(response.parsed_body["errors"]).to be_present
       end
     end
+
+    context "when pool is 'completed'" do
+      before(:each) { pool.update(state: :completed) }
+
+      it "returns forbidden" do
+        post "/api/pool_teams", params: valid_params.to_json, headers: headers
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "returns a message about pool being complete" do
+        post "/api/pool_teams", params: valid_params.to_json, headers: headers
+        expect(response.parsed_body["error"]).to match(/Pool is completed/)
+      end
+    end
   end
 
   describe "PUT /api/pool_teams/:id" do
