@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { boxBadgeStyle } from "@/utils/boxConfig";
+import { boxBadgeStyle } from "@/utils/boxBadgeUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 const ROOKIE_OPTIONS = [

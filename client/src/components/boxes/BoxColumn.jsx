@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DraggablePlayer from "./DraggablePlayer";
-import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxConfig";
+import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
 import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";

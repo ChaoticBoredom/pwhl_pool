@@ -15,7 +15,7 @@ import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
 import { matchesSearch } from "@/utils/searchUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
-import { deriveBoxBadge } from "@/utils/boxConfig";
+import { deriveBoxBadge } from "@/utils/boxBadgeUtils";
 
 export default function BoxEditor({
   poolId,
