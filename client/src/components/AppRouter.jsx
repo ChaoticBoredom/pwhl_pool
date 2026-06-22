@@ -46,7 +46,6 @@ export function AppRouter() {
           <Route path="/" element={<Dashboard />}/>
 
           <Route path="/pools/new" element={<CreatePool />} />
-          <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
         </Route>
 
         <Route path="/pools/:poolId" element={<PoolLayout />}>
@@ -58,6 +57,7 @@ export function AppRouter() {
           )}
 
           <Route path="/pools/:poolId" element={<PoolDetails />} />
+          <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
           <Route path="/pools/:poolId/scoring" element={<ScoringView />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
           <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />

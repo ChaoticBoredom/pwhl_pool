@@ -43,9 +43,6 @@ export default function PoolBuilder() {
   const rawStep = pool ? STEPS.findIndex((s) => !s.isComplete(pool)) : null;
   const step = rawStep === null ? null : (rawStep === -1 ? STEPS.length - 1 : rawStep);
 
-  console.log(pool);
-  console.log(step, rawStep);
-
   // Fetch scoring data on step 0, and step 2 (ScoringSetup and Review)
   const scoringStepData = useScoringIndex(poolId, { enabled: [0, 2].includes(step) });
   // Fetch default boxes on step 1
