@@ -15,7 +15,7 @@ export default function CreatePool() {
       <div className="create-pool-form">
         <h2>Create Pool</h2>
         <p className="setup-page-subtitle">
-          Set up the basics. You'll review boxes on the next step.
+          Set up the basics. You'll setup scoring next.
         </p>
 
         <PoolSettingsEditor
