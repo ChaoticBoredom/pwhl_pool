@@ -74,4 +74,4 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
       </SortableContext>
     </div>
   );
-})
+});
