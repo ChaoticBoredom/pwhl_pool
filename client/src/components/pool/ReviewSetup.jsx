@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import LoadingState from "@c/shared/LoadingState";
 import { ScoringSection } from "@c/pool/ScoringSection";
-import { DraftBox } from "@c/boxes/BoxDraft";
+import BoxPreview from "@c/boxes/BoxPreview";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 const ReviewSection = ({ title, editPath, children }) => (
@@ -94,7 +94,7 @@ export default function ReviewSetup({
 
       <ReviewSection title="Boxes" editPath={`/pools/${poolId}/boxes/edit`}>
         {boxes?.boxes?.map((box) => (
-          <DraftBox key={box.name} box={box} />
+          <BoxPreview key={box.name} box={box} />
         ))}
       </ReviewSection>
 

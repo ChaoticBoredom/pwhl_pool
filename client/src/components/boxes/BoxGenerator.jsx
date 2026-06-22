@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import BoxGeneratorForm from "./BoxGeneratorForm";
-import BoxDraft from "./BoxDraft";
+import BoxPreview from "./BoxPreview";
 
-const BoxGenerator = () => {
+export default function BoxGenerator() {
   const { poolId } = useParams();
   const [draft, setDraft] = useState(null);
 
@@ -16,14 +16,21 @@ const BoxGenerator = () => {
       <BoxGeneratorForm poolId={poolId} onGenerated={setDraft} />
 
       {draft && (
-        <BoxDraft
-          boxes={draft.boxes || []}
-          usingReferenceSeason={draft.using_reference_season}
-          onSave={null}
-        />
+        <section className="generator-section generator-results">
+          <div className="generator-section-header">
+            <h2>Results</h2>
+            {/* This is not a field on the API response right now... */}
+            {draft.using_reference_season && (
+              <span className="reference-season-badge">reference season</span>
+            )}
+            {/* TODO: save action not yet wired up — this generator flow is preview-only for now */}
+            <button className="btn-primary btn-sm" disabled>Save boxes</button>
+          </div>
+          <div className="result-box-list">
+            {draft.boxes?.map((box) => <BoxPreview key={box.name} box={box} />)}
+          </div>
+        </section>
       )}
     </div>
   );
-};
-
-export default BoxGenerator;
+}
