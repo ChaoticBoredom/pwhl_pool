@@ -8,7 +8,7 @@ import ScoringEditor from "@c/pool/ScoringEditor";
 import BoxEditor from "@c/boxes/BoxEditor";
 import { useScoringIndex } from "@/hooks/useScoring";
 import { useBoxesDefault, useBoxesIndex } from "@/hooks/useBoxes";
-import ReviewSetup from "./ReviewSetup";
+import PoolSetupReview from "./PoolSetupReview";
 import useNotices from "@/hooks/useNotices";
 
 const STEPS = [
@@ -27,7 +27,7 @@ const STEPS = [
   {
     key: "review",
     label: "Review & Activate",
-    Component: ReviewSetup,
+    Component: PoolSetupReview,
     isComplete: () => false,
   },
 ];

@@ -17,7 +17,6 @@ import PlayerSelection from "@c/players/PlayerSelection";
 
 // Commissioner specific paths, lazy load them
 const PoolBuilder = lazy(() => import("@c/pool/PoolBuilder"));
-const ReviewSetup = lazy(() => import("@c/pool/ReviewSetup"));
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
 const EditBoxes = lazy(() => import("@c/boxes/EditBoxes"));
 const PoolSettingsConfig = lazy(() => import("@c/pool/PoolSettingsConfig"));
