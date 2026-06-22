@@ -7,7 +7,7 @@ import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
 
-const BoxColumn = forwardRef(({ box, isOver, onActions, searchTerm }, ref) => {
+export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTerm }, ref) {
   const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
   const { positionStyles } = useLeagueConstants();
   const hasMatch = box.players.some((p) => matchesSearch(p.name, searchTerm));
@@ -75,5 +75,3 @@ const BoxColumn = forwardRef(({ box, isOver, onActions, searchTerm }, ref) => {
     </div>
   );
 })
-
-export default BoxColumn;

@@ -9,7 +9,7 @@ import {
 } from "@dnd-kit/core";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { useAuth } from "@/context/AuthContext";
-import BoxColumn from "./BoxColumn";
+import BoxRoster from "./BoxRoster";
 import FreeAgentsPanel from "./FreeAgentsPanel";
 import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
@@ -241,7 +241,7 @@ export default function BoxEditor({
             {boxes.map((box, i) => {
               const { position_type, rookie } = deriveBoxBadge(box.players, positionGroups);
               return (
-                <BoxColumn
+                <BoxRoster
                   key={`${box.name}-${i}`}
                   ref={(el) => (boxRefs.current[box.name] = el)}
                   box={{ ...box, position_type, rookie }}
