@@ -9,7 +9,7 @@ import PendingTradesSection from "@c/trade_requests/PendingTradesSection";
 import { useIsDesktop } from "@/hooks/useBreakpoint";
 import getTradingState from "@/utils/tradingState";
 
-const PlayerSelection = () => {
+export default function TeamSelection() {
   const { poolId, teamId } = useParams();
   const { authHeaders } = useAuth();
   const navigate = useNavigate();
@@ -267,5 +267,3 @@ const PlayerSelection = () => {
     </div>
   );
 };
-
-export default PlayerSelection;

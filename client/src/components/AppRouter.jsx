@@ -13,7 +13,7 @@ import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
 import PoolDetails from "@c/pool/PoolDetails";
 import ScoringView from "@c/pool/ScoringView";
 import PoolTeamDetails from "@c/pool/PoolTeamDetails";
-import PlayerSelection from "@c/players/PlayerSelection";
+import TeamSelection from "@c/players/TeamSelection";
 
 // Commissioner specific paths, lazy load them
 const PoolBuilder = lazy(() => import("@c/pool/PoolBuilder"));
@@ -58,7 +58,7 @@ export function AppRouter() {
           <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
           <Route path="/pools/:poolId/scoring" element={<ScoringView />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
-          <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
+          <Route path="/pools/:poolId/teams/:teamId/select" element={<TeamSelection />} />
 
           <Route
             element={
