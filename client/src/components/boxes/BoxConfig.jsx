@@ -7,7 +7,7 @@ import useNotices from "@/hooks/useNotices";
 import LoadingState from "@c/shared/LoadingState";
 import BoxEditor from "./BoxEditor";
 
-export default function EditBoxes() {
+export default function BoxConfig() {
   const { poolId } = useParams();
   const navigate = useNavigate();
   const { authHeaders } = useAuth();
