@@ -191,7 +191,6 @@ export default function BoxEditor({
     setBoxes((prev) => prev.filter((b) => b.name !== boxName));
   };
 
-
   const postBoxes = useCallback(async () => {
     setError(null);
     setIsSaving(true);
