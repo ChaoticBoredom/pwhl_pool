@@ -53,7 +53,7 @@ group :development, :test do
 
   gem "factory_bot_rails"
   gem "faker"
-  gem "shoulda-matchers", "~> 7.0"
+  gem "shoulda-matchers", "~> 8.0"
 
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false

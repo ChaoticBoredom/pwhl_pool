@@ -364,8 +364,8 @@ GEM
       ffi (~> 1.12)
       logger
     securerandom (0.4.1)
-    shoulda-matchers (7.0.1)
-      activesupport (>= 7.1)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     sidekiq (8.1.6)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
@@ -447,7 +447,7 @@ DEPENDENCIES
   redis
   rspec-rails (~> 8.0.4)
   rubocop-rails-omakase
-  shoulda-matchers (~> 7.0)
+  shoulda-matchers (~> 8.0)
   sidekiq (~> 8.1)
   sidekiq-cron (~> 2.3)
   thruster
