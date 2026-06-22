@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import LoadingState from "@c/shared/LoadingState";
-import StepBadge from "@c/shared/StepBadge";
 import { ScoringSection } from "@c/pool/ScoringSection";
 import { DraftBox } from "@c/boxes/BoxDraft";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
