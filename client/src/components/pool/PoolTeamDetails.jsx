@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { DataRow } from "@c/shared/DataRow";
 import { EditableField } from "@c/shared/EditableField";
 import { GameData } from "@c/shared/GameData";
-import { PlayerDrawer } from "@c/players/PlayerDrawer";
+import { PlayerStatsDrawer } from "@c/players/PlayerStatsDrawer";
 import { useDrawerState } from "@/hooks/useDrawerState";
 import { formatDate } from "@/utils/formatDate";
 import getTradingState from "@/utils/tradingState";
@@ -117,7 +117,7 @@ function PoolTeamDetails() {
                 <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
               </DataRow>
               <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
-                <PlayerDrawer
+                <PlayerStatsDrawer
                   player={player}
                   isOpen={isOpen}
                   onClose={() => toggleDrawer(player.id)}

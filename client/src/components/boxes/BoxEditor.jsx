@@ -9,13 +9,13 @@ import {
 } from "@dnd-kit/core";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { useAuth } from "@/context/AuthContext";
-import BoxColumn from "./BoxColumn";
+import BoxRoster from "./BoxRoster";
 import FreeAgentsPanel from "./FreeAgentsPanel";
 import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
 import { matchesSearch } from "@/utils/searchUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
-import { deriveBoxBadge } from "@/utils/boxConfig";
+import { deriveBoxBadge } from "@/utils/boxBadgeUtils";
 
 export default function BoxEditor({
   poolId,
@@ -191,7 +191,6 @@ export default function BoxEditor({
     setBoxes((prev) => prev.filter((b) => b.name !== boxName));
   };
 
-
   const postBoxes = useCallback(async () => {
     setError(null);
     setIsSaving(true);
@@ -242,7 +241,7 @@ export default function BoxEditor({
             {boxes.map((box, i) => {
               const { position_type, rookie } = deriveBoxBadge(box.players, positionGroups);
               return (
-                <BoxColumn
+                <BoxRoster
                   key={`${box.name}-${i}`}
                   ref={(el) => (boxRefs.current[box.name] = el)}
                   box={{ ...box, position_type, rookie }}

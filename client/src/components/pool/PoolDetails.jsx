@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { EditableField } from "@c/shared/EditableField";
 import { DataRow } from "@c/shared/DataRow";
 import { formatDate } from "@/utils/formatDate";
 

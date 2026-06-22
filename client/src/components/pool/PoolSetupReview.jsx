@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import LoadingState from "@c/shared/LoadingState";
+import PoolSettingsEditor from "./PoolSettingsEditor";
 import { ScoringSection } from "@c/pool/ScoringSection";
-import { DraftBox } from "@c/boxes/BoxDraft";
+import BoxPreview from "@c/boxes/BoxPreview";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 const ReviewSection = ({ title, editPath, children }) => (
@@ -14,13 +15,6 @@ const ReviewSection = ({ title, editPath, children }) => (
       <Link to={editPath} className="btn-primary btn-sm">Edit</Link>
     </div>
     {children}
-  </div>
-);
-
-const ReviewField = ({ label, value }) => (
-  <div className="setup-review__field">
-    <span className="setup-review__label">{label}</span>
-    <span className="setup-review__value">{value}</span>
   </div>
 );
 
@@ -35,16 +29,6 @@ export default function ReviewSetup({
   const { rosterTypeLabels } = useLeagueConstants();
   const { scoring, boxes } = data;
 
-  const { data: meta } = useQuery({
-    queryKey: ["pools-meta"],
-    queryFn: async () => {
-      const res = await fetch("/api/pools/meta", { headers: authHeaders });
-      if (!res.ok) throw new Error("Failed to load meta");
-      return res.json();
-    },
-    staleTime: Infinity,
-  });
-
   const activateMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch(`/api/commissioner/${poolId}/activate`, {
@@ -57,12 +41,6 @@ export default function ReviewSetup({
 
   const handleActivateClick = () => onSave(() => activateMutation.mutateAsync());
 
-  const seasonLabel = (id) =>
-    meta?.seasons?.find((s) => s.id === id)?.name ?? id;
-
-  const tradePolicyLabel = (policy) =>
-    meta?.trade_policies?.find((p) => p.value === policy)?.label ?? policy;
-
   return (
     <div className="app-wrapper">
       <p className="setup-page-subtitle">
@@ -70,14 +48,11 @@ export default function ReviewSetup({
       </p>
 
       <ReviewSection title="Pool Settings" editPath={`/pools/${poolId}/edit`}>
-        <div className="setup-review__fields">
-          <ReviewField label="Name" value={pool.name} />
-          <ReviewField label="Season" value={seasonLabel(pool.season_id)} />
-          {pool.reference_season_id && (
-            <ReviewField label="Reference Season" value={seasonLabel(pool.reference_season_id)} />
-          )}
-          <ReviewField label="Trade Policy" value={tradePolicyLabel(pool.trade_policy)} />
-        </div>
+        <PoolSettingsEditor
+          poolId={poolId}
+          data={pool}
+          mode="viewing"
+        />
       </ReviewSection>
 
       
@@ -94,7 +69,7 @@ export default function ReviewSetup({
 
       <ReviewSection title="Boxes" editPath={`/pools/${poolId}/boxes/edit`}>
         {boxes?.boxes?.map((box) => (
-          <DraftBox key={box.name} box={box} />
+          <BoxPreview key={box.name} box={box} />
         ))}
       </ReviewSection>
 

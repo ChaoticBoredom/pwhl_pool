@@ -2,12 +2,12 @@ import { forwardRef } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DraggablePlayer from "./DraggablePlayer";
-import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxConfig";
+import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
 import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
 
-const BoxColumn = forwardRef(({ box, isOver, onActions, searchTerm }, ref) => {
+export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTerm }, ref) {
   const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
   const { positionStyles } = useLeagueConstants();
   const hasMatch = box.players.some((p) => matchesSearch(p.name, searchTerm));
@@ -74,6 +74,4 @@ const BoxColumn = forwardRef(({ box, isOver, onActions, searchTerm }, ref) => {
       </SortableContext>
     </div>
   );
-})
-
-export default BoxColumn;
+});
