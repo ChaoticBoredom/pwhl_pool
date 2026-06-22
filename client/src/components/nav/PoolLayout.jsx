@@ -51,7 +51,6 @@ export default function PoolLayout() {
       <PoolContext.Provider value={{ pool, isCommissioner }}>
         <div className="pool-layout">
           <TopBar pool={pool} onMenuToggle={handleMenuToggle} />
-          <NoticeBar />
           <div className="pool-layout__body">
             <SideNav
               poolId={poolId}
@@ -76,7 +75,10 @@ export default function PoolLayout() {
             )}
 
               <main className="pool-layout__main">
-                <Outlet />
+                <NoticeBar />
+                <div className="pool-layout__content">
+                  <Outlet />
+                </div>
               </main>
           </div>
           <NoticeFloat />

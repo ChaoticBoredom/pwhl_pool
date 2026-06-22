@@ -1078,7 +1078,18 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .pool-layout__body { display: flex; flex: 1; min-height: 0; width: 100%; }
-.pool-layout__main { flex: 1; min-width: 0; padding: 1.5rem; }
+
+.pool-layout__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pool-layout__content {
+  flex: 1;
+  padding: 1.5rem;
+}
 
 /* ============================================================
    NAV — TOP BAR
