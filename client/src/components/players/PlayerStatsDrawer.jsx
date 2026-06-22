@@ -101,7 +101,7 @@ function StatRow({ field, rawValue, pointValue, mode, label }) {
 
 // poolId: if provided, fetches from league_players#show (no clip toggle)
 // otherwise fetches from team_player (full drawer with clip toggle)
-export function PlayerDrawer({ player, isOpen, onClose, drawerState, onDrawerChange, poolId }) {
+export function PlayerStatsDrawer({ player, isOpen, onClose, drawerState, onDrawerChange, poolId }) {
   const { authHeaders } = useAuth();
   const { tab, mode, clipped } = drawerState;
   const isLeagueMode = !!poolId;
