@@ -20,8 +20,6 @@ RSpec.describe "pools", type: :request do
         expect(pool_json["reference_season_id"]).to eq(nil)
         expect(pool_json["season_label"]).to eq("2025-26 Playoffs")
         expect(pool_json["is_admin"]).to eq(false)
-        expect(pool_json["scoring_count"]).to eq(6)
-        expect(pool_json["box_count"]).to eq(2)
       end
     end
   end

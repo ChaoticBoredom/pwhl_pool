@@ -1,10 +1,8 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
-import useNotices from "@/hooks/useNotices";
 import LoadingState from "@c/shared/LoadingState";
-import StepBadge from "@c/shared/StepBadge";
 import { ScoringSection } from "@c/pool/ScoringSection";
 import { DraftBox } from "@c/boxes/BoxDraft";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
@@ -26,43 +24,22 @@ const ReviewField = ({ label, value }) => (
   </div>
 );
 
-export default function ReviewSetup() {
-  const { poolId } = useParams();
-  const navigate = useNavigate();
+export default function ReviewSetup({
+  poolId,
+  data,
+  onSave,
+  saveLabel,
+}) {
   const { authHeaders } = useAuth();
   const { pool } = usePool();
-  const { add } = useNotices();
   const { rosterTypeLabels } = useLeagueConstants();
+  const { scoring, boxes } = data;
 
   const { data: meta } = useQuery({
     queryKey: ["pools-meta"],
     queryFn: async () => {
       const res = await fetch("/api/pools/meta", { headers: authHeaders });
       if (!res.ok) throw new Error("Failed to load meta");
-      return res.json();
-    },
-    staleTime: Infinity,
-  });
-
-  const { data: scoring, isLoading: scoringLoading } = useQuery({
-    queryKey: ["pool-scoring", poolId],
-    queryFn: async () => {
-      const res = await fetch(`/api/pools/${poolId}/pool_scoring`, {
-        headers: authHeaders,
-      });
-      if (!res.ok) throw new Error("Failed to load scoring");
-      return res.json();
-    },
-    staleTime: Infinity,
-  });
-
-  const { data: boxes, isLoading: boxesLoading } = useQuery({
-    queryKey: ["commissioner-pool-boxes", poolId],
-    queryFn: async () => {
-      const res = await fetch(`/api/commissioner/${poolId}/pool_boxes`, {
-        headers: authHeaders,
-      });
-      if (!res.ok) throw new Error("Failed to load boxes");
       return res.json();
     },
     staleTime: Infinity,
@@ -76,14 +53,9 @@ export default function ReviewSetup() {
       });
       if (!res.ok) throw new Error("Failed to activate pool");
     },
-    onSuccess: () => {
-      add({ severity: "success", message: "Pool activated! Share the invite link to get started." });
-      navigate(`/pools/${poolId}`);
-    },
-    onError: (err) => {
-      add({ severity: "error", message: err.message });
-    },
   });
+
+  const handleActivateClick = () => onSave(() => activateMutation.mutateAsync());
 
   const seasonLabel = (id) =>
     meta?.seasons?.find((s) => s.id === id)?.name ?? id;
@@ -91,12 +63,8 @@ export default function ReviewSetup() {
   const tradePolicyLabel = (policy) =>
     meta?.trade_policies?.find((p) => p.value === policy)?.label ?? policy;
 
-  if (scoringLoading || boxesLoading) return <LoadingState message="Loading review…" />;
-
   return (
     <div className="app-wrapper">
-      <StepBadge label="New Pool" step={4} total={4} />
-      <h1 className="setup-page-title">Review & Activate</h1>
       <p className="setup-page-subtitle">
         Review your pool settings before activating. You can go back and make changes at any time.
       </p>
@@ -120,7 +88,6 @@ export default function ReviewSetup() {
             title={rosterTypeLabels[rosterType] ?? rosterType}
             scorings={fields.filter((f) => f.value !== null && f.value !== 0)}
             editable={false}
-            onChange={() => {}}
           />
         ))}
       </ReviewSection>
@@ -137,10 +104,10 @@ export default function ReviewSetup() {
         </p>
         <button
           className="btn-primary"
-          onClick={() => activateMutation.mutate()}
+          onClick={handleActivateClick}
           disabled={activateMutation.isPending}
         >
-          {activateMutation.isPending ? "Activating…" : "Activate Pool →"}
+          {activateMutation.isPending ? "Activating..." : saveLabel}
         </button>
       </div>
     </div>

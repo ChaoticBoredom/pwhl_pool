@@ -10,18 +10,13 @@ class PoolsController < ApplicationController
     @current_user_id = current_user.id
     @season_labels = Pwhl::StatConfig::SEASON_LABELS
 
-    @box_counts = Pool::Box.active.where(pool: @pools).group(:pool_id).count
-    @box_counts.default = 0
-    @scoring_counts = Pool::Scoring.where(pool: @pools).group(:pool_id).count
-    @scoring_counts.default = 0
-
     render :index
   end
 
   def show
     id = params[:id]
     @pool = Pool.
-      includes(:league, :admin, :scoring, pool_teams: [:owner, :pool_team_players]).
+      includes(:league, :admin, :scoring, :pool_boxes, pool_teams: [:owner, :pool_team_players]).
       find(id)
 
     records = PlayerRecordQuery.new(

@@ -59,7 +59,7 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
       <div className="free-agents-panel__filters">
         <input
           className="form-input"
-          placeholder="Search players…"
+          placeholder="Search players..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
         />

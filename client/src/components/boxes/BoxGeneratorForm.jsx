@@ -249,7 +249,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
         onClick={generate}
         disabled={loading || teams.size === 0}
       >
-        {loading ? "Generating…" : "Generate boxes"}
+        {loading ? "Generating..." : "Generate boxes"}
       </button>
 
       {error && <div className="generator-error">{error}</div>}

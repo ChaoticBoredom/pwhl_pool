@@ -11,16 +11,18 @@ import CreatePool from "@c/pool/CreatePool";
 import AuthForm from "@c/auth/AuthForm";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
 import PoolDetails from "@c/pool/PoolDetails";
-import PoolScoring from "@c/pool/PoolScoring";
+import ScoringView from "@c/pool/ScoringView";
 import PoolTeamDetails from "@c/pool/PoolTeamDetails";
 import PlayerSelection from "@c/players/PlayerSelection";
 
 // Commissioner specific paths, lazy load them
+const PoolBuilder = lazy(() => import("@c/pool/PoolBuilder"));
 const BoxSetup = lazy(() => import("@c/boxes/BoxSetup"));
 const ReviewSetup = lazy(() => import("@c/pool/ReviewSetup"));
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
 const EditBoxes = lazy(() => import("@c/boxes/EditBoxes"));
 const PoolSettings = lazy(() => import("@c/pool/PoolSettings"));
+const ScoringConfig = lazy(() => import("@c/pool/ScoringConfig"));
 const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
 const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
@@ -44,7 +46,6 @@ export function AppRouter() {
           <Route path="/" element={<Dashboard />}/>
 
           <Route path="/pools/new" element={<CreatePool />} />
-          <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
         </Route>
 
         <Route path="/pools/:poolId" element={<PoolLayout />}>
@@ -56,7 +57,8 @@ export function AppRouter() {
           )}
 
           <Route path="/pools/:poolId" element={<PoolDetails />} />
-          <Route path="/pools/:poolId/scoring" element={<PoolScoring />} />
+          <Route path="/pools/:poolId/invite" element={<JoinPoolPrompt />} />
+          <Route path="/pools/:poolId/scoring" element={<ScoringView />} />
           <Route path="/pools/:poolId/teams/:teamId" element={<PoolTeamDetails />} />
           <Route path="/pools/:poolId/teams/:teamId/select" element={<PlayerSelection />} />
 
@@ -67,13 +69,11 @@ export function AppRouter() {
               </Suspense>
             }
           >
-            <Route path="/pools/:poolId/boxes/setup" element={<BoxSetup />} />
-            <Route path="/pools/:poolId/scoring/setup" element={<PoolScoring setupMode />} />
-            <Route path="/pools/:poolId/setup" element={<ReviewSetup />} />
+            <Route path="/pools/:poolId/setup" element={<PoolBuilder />} />
 
             <Route path="/pools/:poolId/edit" element={<PoolSettings />} />
             <Route path="/pools/:poolId/boxes/edit" element={<EditBoxes />} />
-            <Route path="/pools/:poolId/scoring/edit" element={<PoolScoring editMode />} />
+            <Route path="/pools/:poolId/scoring/edit" element={<ScoringConfig />} />
             <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
             <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
             <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />

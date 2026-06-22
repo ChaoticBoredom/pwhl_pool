@@ -116,18 +116,17 @@ export default function EditBoxes() {
           onClick={handleReset}
           disabled={defaultsLoading}
         >
-          {defaultsLoading ? "Loading…" : "Reset to Defaults"}
+          {defaultsLoading ? "Loading..." : "Reset to Defaults"}
         </button>
       </div>
 
       {(loading || error)
-        ? <LoadingState error={error} message="Loading boxes…" />
+        ? <LoadingState error={error} message="Loading boxes..." />
         : activeData && (
             <BoxEditor
               key={usingDefaults ? "defaults" : "current"}
               poolId={poolId}
-              initialBoxes={activeData.boxes}
-              initialFreeAgents={activeData.free_agents}
+              data={activeData}
               onSave={handleSave}
               saveLabel="Save Boxes"
             />

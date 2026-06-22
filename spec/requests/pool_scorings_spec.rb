@@ -37,6 +37,7 @@ RSpec.describe "PoolScoring#index", type: :request do
       expect(skater_goals_field).to match(
         "id" => skater_goals.id,
         "descriptive" => "Goals",
+        "roster_type" => "skater",
         "field_name" => "goals",
         "value" => 3.0,
       )

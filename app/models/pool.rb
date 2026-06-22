@@ -42,6 +42,14 @@ class Pool < ApplicationRecord
     reference_season_id.present?
   end
 
+  def active_box_count
+    pool_boxes.active.count
+  end
+
+  def configured_scoring_count
+    scoring.where.not(value: 0).count
+  end
+
   def start_end_range
     Rails.cache.fetch("#{cache_key_with_version}/start_end_range", expires_in: 1.hour) do
       times = League::Game.

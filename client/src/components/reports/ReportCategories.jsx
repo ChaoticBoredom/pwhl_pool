@@ -143,7 +143,7 @@ export default function ReportCategories() {
                     angle={-30}
                     textAnchor="end"
                     interval={0}
-                    tickFormatter={v => v.length > 15 ? `${v.slice(0, 15)}…` : v}
+                    tickFormatter={v => v.length > 15 ? `${v.slice(0, 15)}...` : v}
                   />
                   <YAxis tick={{ fontSize: 11, fill: "var(--text-muted)" }} width={44} />
                   <Tooltip content={<ChartTooltip />} />
