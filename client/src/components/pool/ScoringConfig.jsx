@@ -19,7 +19,7 @@ export default function ScoringConfig() {
     });
   };
 
-  const handleCancel = () => navigate(`/pools/${poolId}/scoring`);
+  const handleCancel = () => navigate(-1);
 
   return (
     <div className="app-wrapper">
