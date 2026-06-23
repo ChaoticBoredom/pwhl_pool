@@ -28,7 +28,6 @@ export default function PoolLayout() {
     if (!isMobile) localStorage.setItem(NAV_COLLAPSED_KEY, collapsed);
   }, [collapsed, isMobile]);
 
-
   const handleMenuToggle = () => {
     if (isMobile) {
       setMobileOpen(o => !o);
