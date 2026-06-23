@@ -9,7 +9,7 @@ import { formatDate } from "@/utils/formatDate";
 export default function PoolDetails() {
   const { poolId } = useParams();
   const { authHeaders, currentUser } = useAuth();
-  const { pool, isCommissioner } = useContext(PoolContext);
+  const { pool } = useContext(PoolContext);
   const poolGrid = "grid-cols-[40px_1fr_160px_80px]";
 
   const { dataUpdatedAt } = useQuery({
@@ -45,7 +45,7 @@ export default function PoolDetails() {
         </Link>
       )}
 
-      {pool.state === "active" && isCommissioner && !hasOwnTeam && (
+      {pool.state === "active" && !hasOwnTeam && (
         <Link to={`/pools/${poolId}/invite`} className="btn-primary btn-top">
           Create Team
         </Link>
