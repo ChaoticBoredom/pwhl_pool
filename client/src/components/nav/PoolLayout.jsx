@@ -28,6 +28,7 @@ export default function PoolLayout() {
     if (!isMobile) localStorage.setItem(NAV_COLLAPSED_KEY, collapsed);
   }, [collapsed, isMobile]);
 
+
   const handleMenuToggle = () => {
     if (isMobile) {
       setMobileOpen(o => !o);
@@ -43,6 +44,12 @@ export default function PoolLayout() {
     staleTime: 60_000,
     enabled: !!poolId,
   });
+
+  useEffect(() => {
+    if (pool?.name) {
+      document.title = `Fantasy - ${pool.name}`;
+    }
+  }, [pool]);
 
   const isCommissioner = pool && (pool.admin.id === currentUser || isGod);
 

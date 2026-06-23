@@ -1,28 +1,24 @@
-import { useEffect } from "react";
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import PoolContext from "@/context/PoolContext";
 import { DataRow } from "@c/shared/DataRow";
 import { formatDate } from "@/utils/formatDate";
 
-function PoolDetails() {
-  const { poolId } = useParams()
-  const { authHeaders } = useAuth();
-  const poolGrid = "grid-cols-[40px_1fr_160px_80px]"
+export default function PoolDetails() {
+  const { poolId } = useParams();
+  const { authHeaders, currentUser } = useAuth();
+  const { pool, isCommissioner } = useContext(PoolContext);
+  const poolGrid = "grid-cols-[40px_1fr_160px_80px]";
 
-  const { data: pool, isLoading, dataUpdatedAt } = useQuery({
+  const { dataUpdatedAt } = useQuery({
     queryKey: ["pool", poolId],
     queryFn: () => fetch(`/api/pools/${poolId}`, { headers: authHeaders }).then((r) => r.json()),
     staleTime: 25_000,
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
     gcTime: 5 * 60 * 1000, // 5 minutes to store cached data
-  })
-
-  useEffect(() => {
-    if (pool?.name) {
-      document.title = `Fantasy - ${pool.name}`;
-    }
-  }, [pool]);
+  });
 
   const toOrdinal = (i) => {
     if (isNaN(i)) return;
@@ -33,14 +29,28 @@ function PoolDetails() {
     return i + "th";
   };
 
-  if (isLoading || !pool) return <div>Loading pool details...</div>
+  if (!pool) return <div>Loading pool details...</div>;
 
   const lastFetchedAt = formatDate(dataUpdatedAt);
+  const hasOwnTeam = pool.pool_teams?.some((team) => team.user?.id === currentUser);
 
   return (
     <div>
       <p className="helper-text">Commissioner: {pool.admin.name}</p>
       <p className="helper-text">Last Updated At: {lastFetchedAt}</p>
+
+      {pool.state !== "active" && (
+        <Link to={`/pools/${poolId}/setup`} className="btn-primary btn-top">
+          Continue Setup →
+        </Link>
+      )}
+
+      {pool.state === "active" && isCommissioner && !hasOwnTeam && (
+        <Link to={`/pools/${poolId}/invite`} className="btn-primary btn-top">
+          Create Team
+        </Link>
+      )}
+
       <div className="pool-standings">
         <DataRow isHeader gridClass={poolGrid}>
           <div />
@@ -49,7 +59,7 @@ function PoolDetails() {
           <div className="score-cell">Score</div>
         </DataRow>
 
-        {pool.pool_teams?.sort((a, b) => a.rank - b.rank)?.map(team => (
+        {pool.pool_teams?.sort((a, b) => a.rank - b.rank)?.map((team) => (
           <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
             <div className="pool-rank">{toOrdinal(team.rank)}</div>
             <div className="pool-team-name">{team.team_name}</div>
@@ -59,7 +69,5 @@ function PoolDetails() {
         ))}
       </div>
     </div>
-  )
-}
-
-export default PoolDetails
+  );
+};
