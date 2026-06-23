@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import {
-  Trophy, Shirt, Star, StarHalf, FileBarChart, BarChart2,
+  Trophy, Shirt, Star, StarPlus, FileBarChart, BarChart2,
   Home, ChevronDown, ChevronRight, ReplaceAll, SquarePen,
 } from "lucide-react";
 
@@ -140,7 +140,7 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
                 />
                 <NavItem
                   to={`${base}/scoring/edit`}
-                  icon={StarHalf}
+                  icon={StarPlus}
                   label="Edit Scoring"
                   collapsed={collapsed}
                   onClick={onNavigate}

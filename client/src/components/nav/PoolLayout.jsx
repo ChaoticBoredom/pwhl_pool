@@ -44,6 +44,12 @@ export default function PoolLayout() {
     enabled: !!poolId,
   });
 
+  useEffect(() => {
+    if (pool?.name) {
+      document.title = `Fantasy - ${pool.name}`;
+    }
+  }, [pool]);
+
   const isCommissioner = pool && (pool.admin.id === currentUser || isGod);
 
   return (

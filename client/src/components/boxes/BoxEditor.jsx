@@ -21,6 +21,7 @@ export default function BoxEditor({
   poolId,
   data,
   onSave,
+  onCancel,
   saveLabel,
 }) {
   const { authHeaders } = useAuth();
@@ -172,12 +173,12 @@ export default function BoxEditor({
     });
   };
 
-  const handleAddBox = () => {
-    setBoxes((prev) => [...prev, {
-      name: `Pool Box ${boxCounter}`,
-      position: prev.length + 1,
-      players: [],
-    }]);
+  const handleAddBox = (afterName) => {
+    setBoxes((prev) => {
+      const i = prev.findIndex((b) => b.name === afterName);
+      const newBox = { name: `Pool Box ${boxCounter}`, position: i + 2, players: [] };
+      return [...prev.slice(0, i + 1), newBox, ...prev.slice(i + 1)];
+    });
     setBoxCounter((c) => c + 1);
   };
 
@@ -248,8 +249,9 @@ export default function BoxEditor({
                   isOver={overBoxName === box.name}
                   searchTerm={search.length >= 3 ? search : ""}
                   onActions={{
-                    rename: handleRename,
-                    remove: handleRemoveBox,
+                    rename: (newName) => handleRename(box.name, newName),
+                    remove: () => handleRemoveBox(box.name),
+                    addBelow: () => handleAddBox(box.name),
                     moveUp: i === 0 ? null : () => handleMoveUp(box.name),
                     moveDown: i === boxes.length - 1 ? null : () => handleMoveDown(box.name),
                   }}
@@ -278,11 +280,8 @@ export default function BoxEditor({
       </DndContext>
 
       <div className="setup-confirm-bar">
-        <button
-          className="btn-primary btn-sm"
-          onClick={handleAddBox}
-        >
-          + Add Box
+        <button className="btn-secondary" onClick={onCancel}>
+          Cancel
         </button>
         <p className="setup-confirm-meta">
           {boxes.length} boxes · {boxes.reduce((n, b) => n + b.players.length, 0)} players assigned

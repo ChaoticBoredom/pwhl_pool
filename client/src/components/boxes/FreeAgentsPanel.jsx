@@ -4,6 +4,7 @@ import DraggablePlayer from "./DraggablePlayer";
 import { matchesSearch } from "@/utils/searchUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { normalizePosition } from "@/utils/positionUtils";
+import { TeamToggleList } from "@c/shared/TeamToggleList";
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
   const { teams, teamCodes, positionGroups } = useLeagueConstants();
@@ -64,21 +65,12 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
           onChange={(e) => onSearchChange(e.target.value)}
         />
 
-        <div className="team-toggle-list">
-          {teamCodes.map((code) => (
-            <button
-              key={code}
-              className={`team-toggle ${teamFilter.has(code) ? "team-toggle--active" : ""}`}
-              style={teamFilter.has(code)
-                ? { background: teams[code].bg, color: teams[code].text, borderColor: teams[code].bg }
-                : {}
-              }
-              onClick={() => toggleTeam(code)}
-            >
-              {code}
-            </button>
-          ))}
-        </div>
+        <TeamToggleList
+          teamCodes={teamCodes}
+          teams={teams}
+          selected={teamFilter}
+          onToggle={toggleTeam}
+        />
         <div className="free-agents-panel__team-controls">
           <button
             className="btn-link"

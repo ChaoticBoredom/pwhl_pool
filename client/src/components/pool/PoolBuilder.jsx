@@ -61,7 +61,7 @@ export default function PoolBuilder() {
     }
   }, [pool, poolId, navigate]);
 
-  const handleCancel = () => navigate("/dashboard");
+  const handleCancel = () => navigate("/");
 
   if (!pool) return <LoadingState />;
 
