@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { boxBadgeStyle } from "@/utils/boxBadgeUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
+import { TeamToggleList } from "@c/shared/TeamToggleList";
 
 const ROOKIE_OPTIONS = [
   { label: "No", value: false },
@@ -119,8 +120,8 @@ function BoxConfigTable({ boxes, onChange, onRemove, positionStyles }) {
 const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   const { authHeaders } = useAuth();
 
-  const { teamCodes, defaultBoxes, positionStyles } = useLeagueConstants();
-  const [teams, setTeams] = useState(new Set(teamCodes));
+  const { teamCodes, teams: teamColours, defaultBoxes, positionStyles } = useLeagueConstants();
+  const [selectedTeams, setSelectedTeams] = useState(new Set(teamCodes));
   const [scope, setScope] = useState("per_team");
   const [seasonId, setSeasonId] = useState(null);
   const [boxes, setBoxes] = useState(defaultBoxes.map(b => ({ ...b })));
@@ -128,7 +129,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   const [error, setError] = useState(null);
 
   const toggleTeam = code => {
-    setTeams(prev => {
+    setSelectedTeams(prev => {
       const next = new Set(prev);
       next.has(code) ? next.delete(code) : next.add(code);
       return next;
@@ -161,7 +162,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
         method: "POST",
         headers: authHeaders,
         body: JSON.stringify({
-          teams: [...teams],
+          teams: [...selectedTeams],
           scope,
           season_id: seasonId,
           excluded_player_ids: [],
@@ -187,17 +188,12 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
     <>
       <section className="generator-section">
         <h2>Teams</h2>
-        <div className="team-toggle-list">
-          {teamCodes.map(code => (
-            <button
-              key={code}
-              onClick={() => toggleTeam(code)}
-              className={`team-toggle ${teams.has(code) ? "team-toggle--active" : ""}`}
-            >
-              {code}
-            </button>
-          ))}
-        </div>
+        <TeamToggleList
+          teamCodes={teamCodes}
+          teams={teamColours}
+          selected={selectedTeams}
+          onToggle={toggleTeam}
+        />
       </section>
 
       <section className="generator-section">
@@ -247,7 +243,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
       <button
         className="btn-primary btn-full"
         onClick={generate}
-        disabled={loading || teams.size === 0}
+        disabled={loading || selectedTeams.size === 0}
       >
         {loading ? "Generating..." : "Generate boxes"}
       </button>
