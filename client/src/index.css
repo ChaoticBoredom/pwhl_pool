@@ -2394,7 +2394,7 @@ input::placeholder { color: var(--placeholder); }
 
 .create-pool-form {
   width: 100%;
-  max-width: 520px;
+  max-width: 720px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
