@@ -8,6 +8,21 @@ import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
 
+// eslint-disable-next-line no-unused-vars
+function BoxActionButton({ icon: Icon, label, onClick, disabled, className = "box-move-btn", size = 14 }) {
+  return (
+    <button
+      className={className}
+      onClick={onClick}
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+    >
+      <Icon size={size} />
+    </button>
+  );
+}
+
 export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTerm }, ref) {
   const { setNodeRef } = useDroppable({ id: `box:${box.name}` });
   const { positionStyles } = useLeagueConstants();
@@ -30,36 +45,17 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
         <span className="box-column__name">
           <EditableField
             value={box.name}
-            onSave={async (newName) => onActions.rename(box.name, newName)}
+            onSave={onActions.rename}
             inputClassName="box-name-input"
           />
         </span>
         <span className="box-column__count">{box.players.length} Players</span>
         <div className="box-column__move">
-          <button
-            className="box-move-btn"
-            onClick={() => onActions.addBelow(box.name)}
-            aria-label="Add box below"
-            title="Add box below"
-          ><ListEnd size={14} /></button>
-          <button
-            className="box-move-btn"
-            onClick={onActions.moveUp}
-            disabled={!onActions.moveUp}
-            aria-label="Move box up"
-          ><ArrowUp size={14} /></button>
-          <button
-            className="box-move-btn"
-            onClick={onActions.moveDown}
-            disabled={!onActions.moveDown}
-            aria-label="Move box down"
-          ><ArrowDown size={14} /></button>
+          <BoxActionButton icon={ListEnd} label="Add box below" onClick={onActions.addBelow} />
+          <BoxActionButton icon={ArrowUp} label="Move box up" onClick={onActions.moveUp} disabled={!onActions.moveUp} />
+          <BoxActionButton icon={ArrowDown} label="Move box down" onClick={onActions.moveDown} disabled={!onActions.moveDown} />
         </div>
-        <button
-          className="box-remove-btn"
-          onClick={() => onActions.remove(box.name)}
-          aria-label="Remove box"
-        ><X size={16} /></button>
+        <BoxActionButton icon={X} label="Remove box" onClick={onActions.remove} size={16} />
       </div>
 
       <SortableContext

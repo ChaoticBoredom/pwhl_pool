@@ -249,9 +249,9 @@ export default function BoxEditor({
                   isOver={overBoxName === box.name}
                   searchTerm={search.length >= 3 ? search : ""}
                   onActions={{
-                    rename: handleRename,
-                    remove: handleRemoveBox,
-                    addBelow: handleAddBox,
+                    rename: (newName) => handleRename(box.name, newName),
+                    remove: () => handleRemoveBox(box.name),
+                    addBelow: () => handleAddBox(box.name),
                     moveUp: i === 0 ? null : () => handleMoveUp(box.name),
                     moveDown: i === boxes.length - 1 ? null : () => handleMoveDown(box.name),
                   }}

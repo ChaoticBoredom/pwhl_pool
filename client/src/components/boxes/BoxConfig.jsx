@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
 import useNotices from "@/hooks/useNotices";
@@ -15,6 +15,7 @@ export default function BoxConfig() {
   const { add } = useNotices();
   const [confirmId, setConfirmId] = useState(null);
   const [usingDefaults, setUsingDefaults] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (pool.state === "completed") {
@@ -43,7 +44,6 @@ export default function BoxConfig() {
       if (!res.ok) throw new Error("Failed to load default boxes");
       return res.json();
     },
-    staleTime: Infinity,
     enabled: false,
   });
 
@@ -69,6 +69,7 @@ export default function BoxConfig() {
   };
 
   const handleAfterSave = () => {
+    queryClient.removeQueries({ queryKey: ["commissioner-pool-boxes", poolId] });
     add({ severity: "success", message: "Boxes updated." });
     navigate(`/pools/${poolId}`);
   };
