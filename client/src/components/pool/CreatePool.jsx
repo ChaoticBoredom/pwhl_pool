@@ -21,7 +21,7 @@ export default function CreatePool() {
         <PoolSettingsEditor
           mode="creating"
           onSave={handleSave}
-          onCancel={() => navigate("/dashboard")}
+          onCancel={() => navigate("/")}
           saveLabel="Continue to Scoring Setup →"
         />
       </div>

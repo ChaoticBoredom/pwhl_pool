@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { ListEnd, ArrowUp, ArrowDown, X } from "lucide-react";
 import DraggablePlayer from "./DraggablePlayer";
 import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
 import { EditableField } from "@c/shared/EditableField";
@@ -37,22 +38,28 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
         <div className="box-column__move">
           <button
             className="box-move-btn"
+            onClick={() => onActions.addBelow(box.name)}
+            aria-label="Add box below"
+            title="Add box below"
+          ><ListEnd size={14} /></button>
+          <button
+            className="box-move-btn"
             onClick={onActions.moveUp}
             disabled={!onActions.moveUp}
             aria-label="Move box up"
-          >↑</button>
+          ><ArrowUp size={14} /></button>
           <button
             className="box-move-btn"
             onClick={onActions.moveDown}
             disabled={!onActions.moveDown}
             aria-label="Move box down"
-          >↓</button>
+          ><ArrowDown size={14} /></button>
         </div>
         <button
           className="box-remove-btn"
           onClick={() => onActions.remove(box.name)}
           aria-label="Remove box"
-        >×</button>
+        ><X size={16} /></button>
       </div>
 
       <SortableContext

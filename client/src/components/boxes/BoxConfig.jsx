@@ -104,6 +104,8 @@ export default function BoxConfig() {
     setConfirmId(id);
   };
 
+  const handleCancel = () => navigate(-1);
+
   const activeData = usingDefaults ? defaultData : data;
   const loading = isLoading || (usingDefaults && defaultsLoading);
 
@@ -128,6 +130,7 @@ export default function BoxConfig() {
               poolId={poolId}
               data={activeData}
               onSave={handleSave}
+              onCancel={handleCancel}
               saveLabel="Save Boxes"
             />
           )
