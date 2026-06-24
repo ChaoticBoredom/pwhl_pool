@@ -1,6 +1,9 @@
 class Commissioner::Trade::RequestsController < Commissioner::BaseController
   def index
-    @trade_requests = @pool.trade_requests.order(requested_at: :desc)
+    @trade_requests = @pool.
+      trade_requests.
+        includes(:league_player, :pool_box, :decided_by, pool_team: :owner).
+        order(requested_at: :desc)
     render :index
   end
 

@@ -14,3 +14,8 @@ json.league_player do
   json.name trade_request.league_player.name
   json.team_short_code trade_request.league_player.current_team_short_code
 end
+
+json.decided_by do
+  json.id trade_request.decided_by.id
+  json.name trade_request.decided_by.name
+end if trade_request.decided_by
