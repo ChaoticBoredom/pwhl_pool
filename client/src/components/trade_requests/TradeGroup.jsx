@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TradePair } from "./TradePair";
+import { formatDateTime } from "@/utils/formatDate"
 
 export default function TradeGroup({ teamName, ownerName, requestedAt, status, pairs, onDecide, isDeciding }) {
   const [selected, setSelected] = useState(() => new Set(pairs.map(p => p.poolBoxId)));
@@ -25,7 +26,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           <span className="pool-team-name">{teamName}</span>
           <span className="pool-owner-name"> · {ownerName}</span>
         </div>
-        <span className="trades-panel__group-date">{requestedAt}</span>
+        <span className="trades-panel__group-date">{formatDateTime(requestedAt)}</span>
         {!isPending && (
           <span className={`trade-status-badge trade-status-badge--${status}`}>{status}</span>
         )}
