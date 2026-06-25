@@ -17,14 +17,14 @@ class Commissioner::Trade::RequestsController < Commissioner::BaseController
 
     backdated_to = params[:backdated_to].present? ? Time.zone.parse(params[:backdated_to]) : nil
 
-    effective_group_id = effective_group_id?(requests, backdated_to)
+    new_group_id = splitting_group?(requests) ? SecureRandom.uuid : nil
 
     case params[:status]
     when "approved"
       gids = []
       Trade::Request.transaction do
         requests.each do |r|
-          r.update!(request_group_id: effective_group_id) unless effective_group_id.nil?
+          r.update!(request_group_id: new_group_id) if new_group_id
           r.decide!(
             :approved,
             decided_by: current_user,
@@ -58,11 +58,8 @@ class Commissioner::Trade::RequestsController < Commissioner::BaseController
 
   private
 
-  def effective_group_id?(requests, backdated_to)
-    return nil if backdated_to.nil?
+  def splitting_group?(requests)
     # Multiple groups, keep their original group_request_ids
-    return nil if requests.map(&:request_group_id).uniq.count > 1
-
-    SecureRandom.uuid
+    requests.map(&:request_group_id).uniq.count == 1
   end
 end
