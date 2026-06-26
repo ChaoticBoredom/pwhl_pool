@@ -2365,15 +2365,26 @@ input::placeholder { color: var(--placeholder); }
 
 .trades-panel__group {
   border-bottom: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 .trades-panel__group:last-child { border-bottom: none; }
 
 .trades-panel__group-header {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-bg-elevated);
+}
+
+.trades-panel__group-header .trade-checkbox {
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -2411,6 +2422,22 @@ input::placeholder { color: var(--placeholder); }
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.trade-group__pair {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.trade-group__pair:last-child {
+  border-bottom: none;
+}
+
+.trade-group__pair .trade-checkbox {
+  margin-top: 0.25rem;
 }
 
 .trade-status-badge {
@@ -2823,7 +2850,8 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .free-agents-panel__filter-group {
-  display: flex;
+  display: inline-flex;
+  width: fit-content;
   gap: 2px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -2831,6 +2859,7 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .filter-toggle {
+  position: relative;
   padding: 0.3rem 0.75rem;
   font-size: 0.8rem;
   font-weight: 600;
@@ -2841,8 +2870,16 @@ input::placeholder { color: var(--placeholder); }
   transition: background 0.15s, color 0.15s;
 }
 
-.filter-toggle:hover { background: var(--accent-bg); color: var(--accent); }
-.filter-toggle--active { background: var(--accent); color: white; }
+.filter-toggle:hover:not(.filter-toggle--active) {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.filter-toggle--active {
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+}
 
 .filter-toggle--rookie {
   border: 1px solid var(--border);
