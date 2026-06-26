@@ -42,11 +42,11 @@ export default function TradeRequestsConfig() {
   });
 
   const decideMutation = useMutation({
-    mutationFn: async ({ status, ids, rejected_reason }) => {
+    mutationFn: async ({ status, ids, rejected_reason, backdated_to }) => {
       const res = await fetch(`/api/commissioner/${poolId}/trade_requests`, {
         method: "PATCH",
         headers: authHeaders,
-        body: JSON.stringify({ status, ids, rejected_reason }),
+        body: JSON.stringify({ status, ids, rejected_reason, backdated_to }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

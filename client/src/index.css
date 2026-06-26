@@ -43,6 +43,18 @@
   --action-text: #ea6c00;
   --action-border: rgba(249, 115, 22, 0.5);
 
+  --trade-pending-bg: rgba(192, 38, 211, 0.12);
+  --trade-pending-text: #a21caf;
+
+  --trade-approved-bg: rgba(59, 130, 246, 0.12);
+  --trade-approved-text: #2563eb;
+
+  --trade-rejected-bg: rgba(220, 38, 38, 0.12);
+  --trade-rejected-text: #b91c1c;
+
+  --trade-cancelled-bg: rgba(148, 163, 184, 0.12);
+  --trade-cancelled-text: #64748b;
+
   --side-nav-collapsed-width: 56px;
   --top-bar-height: 48px;
 
@@ -99,6 +111,18 @@
     --action-notice-bg: rgba(249, 115, 22, 0.92);
     --action-text: #fb923c;
     --action-border: rgba(249, 115, 22, 0.4);
+
+    --trade-pending-bg: rgba(236, 72, 153, 0.15);
+    --trade-pending-text: #f472b6;
+
+    --trade-approved-bg: rgba(59, 130, 246, 0.15);
+    --trade-approved-text: #60a5fa;
+
+    --trade-rejected-bg: rgba(244, 63, 94, 0.15);
+    --trade-rejected-text: #fb7185;
+
+    --trade-cancelled-bg: rgba(148, 163, 184, 0.15);
+    --trade-cancelled-text: #94a3b8;
   }
 
   #social .button-icon { filter: invert(1) brightness(2); }
@@ -221,7 +245,7 @@ code {
    FORMS & INPUTS
    ============================================================ */
 
-input, select {
+input, select, textarea {
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--text-h);
@@ -2399,13 +2423,13 @@ input::placeholder { color: var(--placeholder); }
   flex-shrink: 0;
 }
 
-.trade-status-badge--pending { background: var(--warning-bg); color: var(--warning-text); }
+.trade-status-badge--pending { background: var(--trade-pending-bg); color: var(--trade-pending-text); }
 .trade-status-badge--approved,
-.trade-status-badge--auto_approved { background: var(--info-bg); color: var(--info-text); }
+.trade-status-badge--auto_approved { background: var(--trade-approved-bg); color: var(--trade-approved-text); }
 .trade-status-badge--rejected,
-.trade-status-badge--auto_rejected { background: var(--action-bg); color: var(--action-text); }
+.trade-status-badge--auto_rejected { background: var(--trade-rejected-bg); color: var(--trade-rejected-text); }
 .trade-status-badge--cancelled,
-.trade-status-badge--auto_cancelled { background: var(--card-bg); color: var(--text-muted); }
+.trade-status-badge--auto_cancelled { background: var(--trade-cancelled-bg); color: var(--trade-cancelled-text); }
 
 .trades-panel__cancel-all {
   display: flex;

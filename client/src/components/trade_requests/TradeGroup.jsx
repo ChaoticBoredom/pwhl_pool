@@ -1,15 +1,31 @@
 import { useState } from "react";
-import { formatDateTime } from "@/utils/formatDate";
+import { formatDateTime, formatDate } from "@/utils/formatDate";
 import { TradePair } from "./TradePair";
+
+const STATUS_LABELS = {
+  pending: "Pending",
+  approved: "Approved",
+  auto_approved: "Auto-Approved",
+  rejected: "Rejected",
+  auto_rejected: "Auto-Rejected",
+  cancelled: "Cancelled",
+  auto_cancelled: "Auto-Cancelled",
+};
 
 export default function TradeGroup({ teamName, ownerName, requestedAt, status, pairs, onDecide, isDeciding }) {
   const [selected, setSelected] = useState(() => new Set(pairs.map(p => p.poolBoxId)));
   const [actionPanel, setActionPanel] = useState(null); // null | "approve" | "reject"
   const [rejectedReason, setRejectedReason] = useState("");
-  const [backdatedTo, setBackdatedTo] = useState("");
+  const [backdateInput, setBackdateInput] = useState("");
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const isPending = status === "pending";
   const allSelected = selected.size === pairs.length;
   const someSelected = selected.size > 0 && !allSelected;
+
+  const firstRequest = pairs[0]?.add ?? pairs[0]?.drop;
+  const existingBackdatedTo = firstRequest?.backdated_to;
+  const existingRejectedReason = firstRequest?.rejected_reason;
+  const hasExtraDetails = Boolean(existingBackdatedTo || existingRejectedReason);
 
   const toggleAll = () => {
     setSelected(allSelected ? new Set() : new Set(pairs.map(p => p.poolBoxId)));
@@ -31,11 +47,11 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
   const closePanel = () => {
     setActionPanel(null);
     setRejectedReason("");
-    setBackdatedTo("");
+    setBackdateInput("");
   };
 
   const confirmApprove = () => {
-    onDecide("approved", selectedIds, { backdated_to: backdatedTo || undefined });
+    onDecide("approved", selectedIds, { backdated_to: backdateInput || undefined });
     closePanel();
   };
 
@@ -62,8 +78,27 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           <span className="pool-owner-name"> · {ownerName}</span>
         </div>
         <span className="trades-panel__group-date">{formatDateTime(requestedAt)}</span>
-        <span className={`trade-status-badge trade-status-badge--${status}`}>{status}</span>
+        <span className={`trade-status-badge trade-status-badge--${status}`}>{STATUS_LABELS[status] ?? status}</span>
+        {hasExtraDetails && (
+          <button
+            className="box-selection__expand-btn"
+            onClick={() => setDetailsOpen((o) => !o)}
+          >
+            Details {detailsOpen ? "▲" : "▼"}
+          </button>
+        )}
       </div>
+
+      {detailsOpen && hasExtraDetails && (
+        <div className="trade-group__details">
+          {existingBackdatedTo && (
+            <p className="helper-text">Backdated to {formatDate(existingBackdatedTo)}</p>
+          )}
+          {existingRejectedReason && (
+            <p className="helper-text">Reason: {existingRejectedReason}</p>
+          )}
+        </div>
+      )}
 
       {pairs.map((pair) => (
         <div key={pair.poolBoxId} className="trade-group__pair">
@@ -103,10 +138,10 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           <div className="form-field">
             <label className="form-label">Backdate to (optional)</label>
             <input
-              type="datetime"
+              type="date"
               className="form-input"
-              value={backdatedTo}
-              onChange={(e) => setBackdatedTo(e.target.value)}
+              value={backdateInput}
+              onChange={(e) => setBackdateInput(e.target.value)}
             />
           </div>
           <div className="trade-group__action-buttons">
