@@ -2347,12 +2347,38 @@ input::placeholder { color: var(--placeholder); }
 
 .trades-panel__group-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  background: var(--card-bg);
-  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .trades-panel__group-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trades-panel__group-header > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+}
+
+.trades-panel__group-header .pool-team-name {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trade-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .trades-panel__group-date {
@@ -2363,7 +2389,33 @@ input::placeholder { color: var(--placeholder); }
   letter-spacing: 0.05em;
 }
 
-.trades-panel__cancel-all { flex-shrink: 0; }
+.trade-status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.trade-status-badge--pending { background: var(--warning-bg); color: var(--warning-text); }
+.trade-status-badge--approved,
+.trade-status-badge--auto_approved { background: var(--info-bg); color: var(--info-text); }
+.trade-status-badge--rejected,
+.trade-status-badge--auto_rejected { background: var(--action-bg); color: var(--action-text); }
+.trade-status-badge--cancelled,
+.trade-status-badge--auto_cancelled { background: var(--card-bg); color: var(--text-muted); }
+
+.trades-panel__cancel-all {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.trades-panel__cancel-all .btn-primary,
+.trades-panel__cancel-all .btn-secondary {
+  flex: 1;
+}
 
 /* ============================================================
    LOCKED BOX — pending trades
