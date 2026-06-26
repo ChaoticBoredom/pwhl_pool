@@ -28,6 +28,7 @@ const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
 
 // Dev specific pages
 const NoticeTestPage = lazy(() => import("@c/dev/NoticeTestPage"));
+const StyleGuide = lazy(() => import("@c/dev/StyleGuide"));
 
 export function AppRouter() {
 
@@ -49,10 +50,16 @@ export function AppRouter() {
 
         <Route path="/pools/:poolId" element={<PoolLayout />}>
           {import.meta.env.DEV && (
-            <Route
-              path="/pools/:poolId/dev/notices"
-              element={<NoticeTestPage />}
-            />
+            <>
+              <Route
+                path="/pools/:poolId/dev/notices"
+                element={<NoticeTestPage />}
+              />
+              <Route
+                path="/pools/:poolId/dev/styleguide"
+                element={<StyleGuide />}
+              />
+            </>
           )}
 
           <Route path="/pools/:poolId" element={<PoolDetails />} />
