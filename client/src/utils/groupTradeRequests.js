@@ -9,12 +9,14 @@ export function groupTradeRequests(requests, boxes = []) {
       acc[r.request_group_id] = {
         groupId: r.request_group_id,
         requestedAt: r.requested_at,
+        decidedAt: r.decided_at,
         status: r.status,
         teamName: r.pool_team?.team_name,
         ownerName: r.pool_team?.owner_name,
         byBox: {},
       };
     }
+
     const boxId = r.pool_box.id;
     if (!acc[r.request_group_id].byBox[boxId]) {
       acc[r.request_group_id].byBox[boxId] = {
@@ -24,6 +26,7 @@ export function groupTradeRequests(requests, boxes = []) {
       };
     }
     acc[r.request_group_id].byBox[boxId][r.action] = r;
+
     return acc;
   }, {});
 
@@ -32,5 +35,9 @@ export function groupTradeRequests(requests, boxes = []) {
       ...g,
       pairs: Object.values(g.byBox).sort((a, b) => a.position - b.position),
     }))
-    .sort((a, b) => new Date(b.requestedAt) - new Date(a.requestedAt));
+    .sort((a, b) => {
+      const aTime = new Date(a.decidedAt ?? a.requestedAt);
+      const bTime = new Date(b.decidedAt ?? b.requestedAt);
+      return bTime - aTime;
+    });
 }
