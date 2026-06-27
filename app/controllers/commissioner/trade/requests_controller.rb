@@ -4,6 +4,13 @@ class Commissioner::Trade::RequestsController < Commissioner::BaseController
       trade_requests.
         includes(:league_player, :pool_box, :decided_by, pool_team: :owner).
         order(requested_at: :desc)
+
+    @added_at_by_team_and_player = Pool::TeamPlayer.
+      where(pool_team_id: @trade_requests.map(&:pool_team_id).uniq).
+      where(dropped_at: nil).
+      pluck(:pool_team_id, :league_player_id, :added_at).
+      each_with_object({}) { |(team_id, player_id, added_at), h| h[[team_id, player_id]] = added_at }
+
     render :index
   end
 

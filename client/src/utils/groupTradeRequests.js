@@ -33,7 +33,12 @@ export function groupTradeRequests(requests, boxes = []) {
   return Object.values(byGroup)
     .map((g) => ({
       ...g,
-      pairs: Object.values(g.byBox).sort((a, b) => a.position - b.position),
+      pairs: Object.values(g.byBox)
+        .sort((a, b) => a.position - b.position)
+        .map((pair) => ({
+          ...pair,
+          maxBackdate: pair.add?.max_backdate ?? pair.drop?.max_backdate ?? null,
+        })),
     }))
     .sort((a, b) => {
       const aTime = new Date(a.decidedAt ?? a.requestedAt);

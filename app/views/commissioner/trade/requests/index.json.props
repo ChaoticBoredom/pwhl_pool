@@ -7,5 +7,9 @@ json.array! @trade_requests do |trade_request|
     json.owner_name trade_request.pool_team.owner.name
   end
 
+  if trade_request.trade_action_drop?
+    json.max_backdate @added_at_by_team_and_player[[trade_request.pool_team_id, trade_request.league_player_id]]
+  end
+
   json.rejected_reason trade_request.rejected_reason
 end

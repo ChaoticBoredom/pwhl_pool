@@ -44,6 +44,15 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
     .flatMap(p => [p.add?.id, p.drop?.id])
     .filter(Boolean);
 
+  const selectedMaxBackdates = pairs
+    .filter((p) => selected.has(p.poolBoxId))
+    .map((p) => p.maxBackdate)
+    .filter(Boolean);
+
+  const effectiveMaxBackdate = selectedMaxBackdates.length
+    ? selectedMaxBackdates.reduce((min, d) => (d < min ? d : min))
+    : null;
+
   const closePanel = () => {
     setActionPanel(null);
     setRejectedReason("");
@@ -141,6 +150,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
               type="date"
               className="form-input"
               value={backdateInput}
+              min={effectiveMaxBackdate?.slice(0, 10)}
               onChange={(e) => setBackdateInput(e.target.value)}
             />
           </div>
