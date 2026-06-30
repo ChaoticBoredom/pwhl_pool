@@ -137,10 +137,12 @@ RSpec.describe BoxReplacementService do
       end
 
       it "does not touch already dropped players" do
+        added_at = 5.days.ago
         dropped_at = 2.days.ago
         already_dropped = create(:pool_team_player,
           pool_team: pool_team,
           league_player: players[1],
+          added_at: added_at,
           dropped_at: dropped_at,
         )
 
