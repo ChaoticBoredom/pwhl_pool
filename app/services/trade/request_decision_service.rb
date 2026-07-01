@@ -1,9 +1,8 @@
 class Trade::RequestDecisionService
   class RequestDecisionError < StandardError; end
 
-  def initialize(pool, ids:, status:, decided_by:, backdated_to: nil, rejected_reason: nil)
-    @pool = pool
-    @ids = ids
+  def initialize(requests, status:, decided_by:, backdated_to: nil, rejected_reason: nil)
+    @requests = requests
     @status = status
     @decided_by = decided_by
     @backdated_to = backdated_to.presence && Time.zone.parse(backdated_to)
@@ -11,7 +10,6 @@ class Trade::RequestDecisionService
   end
 
   def call
-    raise RequestDecisionError, "One or more trade requests not found or not pending" unless requests_found?
     raise RequestDecisionError, backdate_error if backdated_to && backdate_error
 
     status == "approved" ? approve! : reject!
@@ -19,18 +17,13 @@ class Trade::RequestDecisionService
 
   private
 
-  attr_reader :pool, :ids, :status, :decided_by, :backdated_to, :rejected_reason
+  attr_reader :requests, :status, :decided_by, :backdated_to, :rejected_reason
 
-  def requests
-    @requests ||= pool.trade_requests.trade_status_pending.where(id: ids)
-  end
-
-  def requests_found?
-    requests.count == Array(ids).count
+  def new_group_id
+    @new_group_id ||= splitting_group?(requests) ? SecureRandom.uuid : nil
   end
 
   def approve!
-    new_group_id = splitting_group?(requests) ? SecureRandom.uuid : nil
     gids = []
 
     Trade::Request.transaction do
@@ -54,6 +47,7 @@ class Trade::RequestDecisionService
 
     Trade::Request.transaction do
       requests.each do |r|
+        r.update!(request_group_id: new_group_id) if new_group_id
         r.decide!(
           :rejected,
           decided_by: decided_by,
