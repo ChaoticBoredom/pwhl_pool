@@ -63,6 +63,50 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
       ids = response.parsed_body.map { |r| r["id"] }
       expect(ids).to match_array([pending_add.id, approved_request.id])
     end
+
+    describe "max_backdate" do
+      let!(:active_team_player) do
+        create(:pool_team_player,
+          pool_team: pool_team,
+          league_player: skater_a,
+          added_at: added_at,
+          dropped_at: nil,
+        )
+      end
+      let(:added_at) { 3.days.ago }
+
+      let!(:pending_drop) do
+        create(:trade_request,
+          :drop,
+          :pending,
+          pool_team: pool_team,
+          league_player: skater_a,
+          pool_box: box,
+          requested_by: owner,
+          request_group_id: group_id,
+        )
+      end
+
+      it "includes max_backdate on drop requests for currently active players" do
+        get_index
+        drop_json = response.parsed_body.find { |r| r["id"] == pending_drop.id }
+        expect(Time.zone.parse(drop_json["max_backdate"])).to be_within(1.second).of(added_at)
+      end
+
+      it "omits max_backdate on add requests" do
+        get_index
+        add_json = response.parsed_body.find { |r| r["id"] == pending_add.id }
+        expect(add_json).to_not have_key("max_backdate")
+      end
+
+      it "omits max_backdate on drop requests for players with no current roster entry" do
+        active_team_player.update!(dropped_at: 1.hour.ago)
+        get_index
+        drop_json = response.parsed_body.find { |r| r["id"] == pending_drop.id }
+        expect(drop_json).to have_key("max_backdate")
+        expect(drop_json["max_backdate"]).to be_nil
+      end
+    end
   end
 
   describe "PATCH /commissioner/:pool_id/trade_requests" do
@@ -156,20 +200,72 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
         expect(pending_add.reload.decided_at).to be_within(1.second).of(Time.current)
       end
 
-      it "enqueues TradeApprovalWorker" do
-        expect(TradeApprovalWorker).to receive(:perform_async).with(group_id)
+      it "assigns a new request_group_id" do
         approve
+        expect(pending_add.reload.request_group_id).to_not eq(group_id)
       end
 
-      context "without backdated_to" do
-        it "keeps the original request_group_id" do
-          approve
-          expect(pending_add.reload.request_group_id).to eq(group_id)
+      it "enqueues the worker with the new request_group_id" do
+        approve
+        new_group_id = pending_add.reload.request_group_id
+        expect(TradeApprovalWorker).to have_received(:perform_async).with(new_group_id)
+      end
+
+      context "when approving a sub-group from a larger group" do
+        let!(:pending_drop) do
+          create(:trade_request,
+            :drop,
+            :pending,
+            pool_team: pool_team,
+            league_player: skater_a,
+            pool_box: box,
+            requested_by: owner,
+            request_group_id: group_id,
+          )
         end
 
-        it "enqueues the worker with the original request_group_id" do
+        it "breaks the approved request into its own group" do
           approve
+          expect(pending_add.reload.request_group_id).to_not eq(pending_drop.request_group_id)
+        end
+
+        it "leaves the other request in the original group" do
+          approve
+          expect(pending_drop.reload.request_group_id).to eq(group_id)
+        end
+      end
+
+      context "when approving across multiple original groups" do
+        let(:other_group_id) { SecureRandom.uuid }
+
+        let!(:other_pending) do
+          create(:trade_request,
+            :add,
+            :pending,
+            pool_team: pool_team,
+            league_player: skater_a,
+            pool_box: box,
+            requested_by: owner,
+            request_group_id: other_group_id,
+          )
+        end
+
+        subject(:approve_multi_group) do
+          patch base_url,
+            params: { ids: [pending_add.id, other_pending.id], status: "approved" }.to_json,
+            headers: auth_headers
+        end
+
+        it "preserves original group_ids" do
+          approve_multi_group
+          expect(pending_add.reload.request_group_id).to eq(group_id)
+          expect(other_pending.reload.request_group_id).to eq(other_group_id)
+        end
+
+        it "enqueues a worker for each group id" do
+          approve_multi_group
           expect(TradeApprovalWorker).to have_received(:perform_async).with(group_id)
+          expect(TradeApprovalWorker).to have_received(:perform_async).with(other_group_id)
         end
       end
 
@@ -186,79 +282,6 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
           approve_backdated
           expect(pending_add.reload.backdated_to).
             to be_within(1.second).of(backdated_to)
-        end
-
-        it "assigns a new request_group_id" do
-          approve_backdated
-          expect(pending_add.reload.request_group_id).to_not eq(group_id)
-        end
-
-        it "enqueues the worker with the new request_group_id" do
-          approve_backdated
-          new_group_id = pending_add.reload.request_group_id
-          expect(TradeApprovalWorker).to have_received(:perform_async).with(new_group_id)
-        end
-
-        context "when backdating a sub-group from the larger group" do
-          let!(:pending_drop) do
-            create(:trade_request,
-              :drop,
-              :pending,
-              pool_team: pool_team,
-              league_player: skater_a,
-              pool_box: box,
-              requested_by: owner,
-              request_group_id: group_id,
-            )
-          end
-
-          it "breaks the backdated request into its own group" do
-            approve_backdated
-            expect(pending_add.reload.request_group_id).to_not eq(pending_drop.request_group_id)
-          end
-
-          it "leaves the other request in the original group" do
-            approve_backdated
-            expect(pending_drop.reload.request_group_id).to eq(group_id)
-          end
-        end
-
-        context "when backdating across multiple groups" do
-          let(:other_group_id) { SecureRandom.uuid }
-
-          let!(:other_pending) do
-            create(:trade_request,
-              :add,
-              :pending,
-              pool_team: pool_team,
-              league_player: skater_a,
-              pool_box: box,
-              requested_by: owner,
-              request_group_id: other_group_id,
-            )
-          end
-
-          subject(:approve_multi_group_backdated) do
-            patch base_url,
-              params: {
-                ids: [pending_add.id, other_pending.id],
-                status: "approved",
-                backdated_to: backdated_to.iso8601,
-              }.to_json,
-              headers: auth_headers
-          end
-
-          it "preserves original_group_ids" do
-            approve_multi_group_backdated
-            expect(pending_add.reload.request_group_id).to eq(group_id)
-            expect(other_pending.reload.request_group_id).to eq(other_group_id)
-          end
-
-          it "enqueues a worker for each group id" do
-            approve_multi_group_backdated
-            expect(TradeApprovalWorker).to have_received(:perform_async).with(group_id)
-            expect(TradeApprovalWorker).to have_received(:perform_async).with(other_group_id)
-          end
         end
       end
     end

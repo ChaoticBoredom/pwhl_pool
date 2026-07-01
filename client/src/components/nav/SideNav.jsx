@@ -6,6 +6,7 @@ import { usePool } from "@/context/PoolContext";
 import {
   Trophy, Shirt, Star, StarPlus, FileBarChart, BarChart2,
   Home, ChevronDown, ChevronRight, ReplaceAll, SquarePen,
+  ArrowRightLeft,
 } from "lucide-react";
 
 // eslint-disable-next-line no-unused-vars
@@ -149,6 +150,13 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
                   to={`${base}/boxes/edit`}
                   icon={ReplaceAll}
                   label="Edit Boxes"
+                  collapsed={collapsed}
+                  onClick={onNavigate}
+                />
+                <NavItem
+                  to={`${base}/trade_requests`}
+                  icon={ArrowRightLeft}
+                  label="Trade Requests"
                   collapsed={collapsed}
                   onClick={onNavigate}
                 />

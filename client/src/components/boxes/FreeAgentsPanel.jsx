@@ -8,11 +8,11 @@ import { TeamToggleList } from "@c/shared/TeamToggleList";
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
   const { teams, teamCodes, positionGroups } = useLeagueConstants();
+  const POSITIONS = Object.keys(positionGroups);
   const [teamFilter, setTeamFilter] = useState(new Set(teamCodes));
-  const [positionFilter, setPositionFilter] = useState(null);
+  const [positionFilters, setPositionFilters] = useState(new Set(POSITIONS));
   const [rookieFilter, setRookieFilter] = useState(null);
   const [sortDesc, setSortDesc] = useState(true);
-  const POSITIONS = Object.keys(positionGroups);
 
   const toggleTeam = (team) => {
     setTeamFilter((prev) => {
@@ -22,17 +22,26 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
     });
   };
 
+  const togglePosition = (pos) => {
+    setPositionFilters((prev) => {
+      const next = new Set(prev);
+      next.has(pos) ? next.delete(pos) : next.add(pos);
+      return next;
+    });
+  };
+
+
   const filtered = useMemo(() => {
     return players.
       filter((p) => {
         if (search && !matchesSearch(p.name, search)) return false;
         if (!teamFilter.has(p.current_team_short_code)) return false;
-        if (positionFilter && normalizePosition(p.position, positionGroups) !== positionFilter) return false;
+        if (!positionFilters.has(normalizePosition(p.position, positionGroups))) return false;
         if (rookieFilter !== null && p.rookie !== rookieFilter) return false;
         return true;
       }).
       sort((a, b) => sortDesc ? b.score - a.score : a.score - b.score);
-  }, [players, search, teamFilter, positionFilter, rookieFilter, sortDesc, positionGroups]);
+  }, [players, search, teamFilter, positionFilters, rookieFilter, sortDesc, positionGroups]);
 
   return (
     <div className={`free-agents-panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
@@ -92,8 +101,8 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
             {POSITIONS.map((pos) => (
               <button
                 key={pos}
-                className={`filter-toggle ${positionFilter === pos ? "filter-toggle--active" : ""}`}
-                onClick={() => setPositionFilter((p) => p === pos ? null : pos)}
+                className={`filter-toggle ${positionFilters.has(pos) ? "filter-toggle--active" : ""}`}
+                onClick={() => togglePosition(pos)}
               >
                 {pos}
               </button>

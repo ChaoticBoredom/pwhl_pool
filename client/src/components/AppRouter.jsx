@@ -20,6 +20,7 @@ const PoolBuilder = lazy(() => import("@c/pool/PoolBuilder"));
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
 const BoxConfig = lazy(() => import("@c/boxes/BoxConfig"));
 const PoolSettingsConfig = lazy(() => import("@c/pool/PoolSettingsConfig"));
+const TradeRequestsConfig = lazy(() => import("@c/trade_requests/TradeRequestsConfig"));
 const ScoringConfig = lazy(() => import("@c/pool/ScoringConfig"));
 const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
@@ -27,6 +28,7 @@ const ReportTeams = lazy(() => import("@c/reports/ReportTeams"));
 
 // Dev specific pages
 const NoticeTestPage = lazy(() => import("@c/dev/NoticeTestPage"));
+const StyleGuide = lazy(() => import("@c/dev/StyleGuide"));
 
 export function AppRouter() {
 
@@ -48,10 +50,16 @@ export function AppRouter() {
 
         <Route path="/pools/:poolId" element={<PoolLayout />}>
           {import.meta.env.DEV && (
-            <Route
-              path="/pools/:poolId/dev/notices"
-              element={<NoticeTestPage />}
-            />
+            <>
+              <Route
+                path="/pools/:poolId/dev/notices"
+                element={<NoticeTestPage />}
+              />
+              <Route
+                path="/pools/:poolId/dev/styleguide"
+                element={<StyleGuide />}
+              />
+            </>
           )}
 
           <Route path="/pools/:poolId" element={<PoolDetails />} />
@@ -72,6 +80,7 @@ export function AppRouter() {
             <Route path="/pools/:poolId/edit" element={<PoolSettingsConfig />} />
             <Route path="/pools/:poolId/boxes/edit" element={<BoxConfig />} />
             <Route path="/pools/:poolId/scoring/edit" element={<ScoringConfig />} />
+            <Route path="/pools/:poolId/trade_requests" element={<TradeRequestsConfig />} />
             <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
             <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
             <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />
