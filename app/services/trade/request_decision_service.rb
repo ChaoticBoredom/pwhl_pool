@@ -10,9 +10,13 @@ class Trade::RequestDecisionService
   end
 
   def call
-    raise RequestDecisionError, backdate_error if backdated_to && backdate_error
+    if status == "approved"
+      raise RequestDecisionError, backdate_error if backdated_to && backdate_error
 
-    status == "approved" ? approve! : reject!
+      approve!
+    else
+      reject!
+    end
   end
 
   private
