@@ -92,11 +92,11 @@ export default function TradeRequestsConfig() {
       </div>
 
       {groups.length === 0 ? (
-        <div className="report-empty">
-          {requests.length === 0
+        <LoadingState
+          message={requests.length === 0
             ? "No trade requests for this pool yet."
             : "All requests filtered out — try enabling another status above."}
-        </div>
+        />
       ) : (
         groups.map((group) => (
           <TradeGroup

@@ -159,7 +159,7 @@ export default function ReportCategories() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="report-empty">No category data.</p>
+              <LoadingState message="No category data." />
             )}
           </div>
 
