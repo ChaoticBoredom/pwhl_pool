@@ -30,7 +30,83 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
   let(:base_url) { "/api/commissioner/#{pool.id}/trade_requests" }
 
   describe "GET /commissioner/:pool_id/trade_requests" do
-    # ... unchanged, no service involved here ...
+    let!(:approved_request) do
+      create(:trade_request,
+        :approved,
+        :add,
+        pool_team: pool_team,
+        league_player: skater_a,
+        pool_box: box,
+        requested_by: owner,
+        decided_by: admin,
+      )
+    end
+
+    subject(:get_index) { get base_url, headers: auth_headers }
+
+    context "when not the pool commissioner" do
+      let(:auth_headers) { auth_headers_for(other_user) }
+
+      it "returns 403" do
+        get_index
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    it "returns 200" do
+      get_index
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns all trade requests" do
+      get_index
+      ids = response.parsed_body.map { |r| r["id"] }
+      expect(ids).to match_array([pending_add.id, approved_request.id])
+    end
+
+    describe "max_backdate" do
+      let!(:active_team_player) do
+        create(:pool_team_player,
+          pool_team: pool_team,
+          league_player: skater_a,
+          added_at: added_at,
+          dropped_at: nil,
+        )
+      end
+      let(:added_at) { 3.days.ago }
+
+      let!(:pending_drop) do
+        create(:trade_request,
+          :drop,
+          :pending,
+          pool_team: pool_team,
+          league_player: skater_a,
+          pool_box: box,
+          requested_by: owner,
+          request_group_id: group_id,
+        )
+      end
+
+      it "includes max_backdate on drop requests for currently active players" do
+        get_index
+        drop_json = response.parsed_body.find { |r| r["id"] == pending_drop.id }
+        expect(Time.zone.parse(drop_json["max_backdate"])).to be_within(1.second).of(added_at)
+      end
+
+      it "omits max_backdate on add requests" do
+        get_index
+        add_json = response.parsed_body.find { |r| r["id"] == pending_add.id }
+        expect(add_json).to_not have_key("max_backdate")
+      end
+
+      it "omits max_backdate on drop requests for players with no current roster entry" do
+        active_team_player.update!(dropped_at: 1.hour.ago)
+        get_index
+        drop_json = response.parsed_body.find { |r| r["id"] == pending_drop.id }
+        expect(drop_json).to have_key("max_backdate")
+        expect(drop_json["max_backdate"]).to be_nil
+      end
+    end
   end
 
   describe "PATCH /commissioner/:pool_id/trade_requests" do
