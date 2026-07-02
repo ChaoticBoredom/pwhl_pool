@@ -27,6 +27,12 @@ class Pool::TeamPlayer < ApplicationRecord
     added_at..dropped_at
   end
 
+  def self.added_at_by_team_and_player(pool_team_ids)
+    where(pool_team_id: pool_team_ids, dropped_at: nil).
+      pluck(:pool_team_id, :league_player_id, :added_at).
+      each_with_object({}) { |(team_id, player_id, added_at), h| h[[team_id, player_id]] = added_at }
+  end
+
   private
 
   def denormalize_fields
