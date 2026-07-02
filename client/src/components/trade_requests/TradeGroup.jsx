@@ -12,6 +12,22 @@ const STATUS_LABELS = {
   auto_cancelled: "Auto-Cancelled",
 };
 
+function ActionPanel({ onCancel, onConfirm, confirmLabel, confirmDisabled, isDeciding, children }) {
+  return (
+    <div className="trade-group__action-panel">
+      {children}
+      <div className="trade-group__action-buttons">
+        <button className="btn-secondary btn-sm" onClick={onCancel} disabled={isDeciding}>
+          Cancel
+        </button>
+        <button className="btn-primary btn-sm" onClick={onConfirm} disabled={isDeciding || confirmDisabled}>
+          {confirmLabel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function TradeGroup({ teamName, ownerName, requestedAt, status, pairs, onDecide, isDeciding }) {
   const [selected, setSelected] = useState(() => new Set(pairs.map(p => p.poolBoxId)));
   const [actionPanel, setActionPanel] = useState(null); // null | "approve" | "reject"
@@ -143,7 +159,12 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
       )}
 
       {actionPanel === "approve" && (
-        <div className="trade-group__action-panel">
+        <ActionPanel
+          onCancel={closePanel}
+          onConfirm={confirmApprove}
+          confirmLabel="Confirm Approval"
+          isDeciding={isDeciding}
+        >
           <div className="form-field">
             <label className="form-label">Backdate to (optional)</label>
             <input
@@ -154,19 +175,17 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
               onChange={(e) => setBackdateInput(e.target.value)}
             />
           </div>
-          <div className="trade-group__action-buttons">
-            <button className="btn-secondary btn-sm" onClick={closePanel} disabled={isDeciding}>
-              Cancel
-            </button>
-            <button className="btn-primary btn-sm" onClick={confirmApprove} disabled={isDeciding}>
-              Confirm Approval
-            </button>
-          </div>
-        </div>
+        </ActionPanel>
       )}
 
       {actionPanel === "reject" && (
-        <div className="trade-group__action-panel">
+        <ActionPanel
+          onCancel={closePanel}
+          onConfirm={confirmReject}
+          confirmLabel="Confirm Rejection"
+          confirmDisabled={!rejectedReason.trim()}
+          isDeciding={isDeciding}
+        >
           <div className="form-field">
             <label className="form-label">Reason for rejection</label>
             <textarea
@@ -176,19 +195,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
               rows={2}
             />
           </div>
-          <div className="trade-group__action-buttons">
-            <button className="btn-secondary btn-sm" onClick={closePanel} disabled={isDeciding}>
-              Cancel
-            </button>
-            <button
-              className="btn-primary btn-sm"
-              onClick={confirmReject}
-              disabled={isDeciding || !rejectedReason.trim()}
-            >
-              Confirm Rejection
-            </button>
-          </div>
-        </div>
+        </ActionPanel>
       )}
     </div>
   );
