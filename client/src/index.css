@@ -32,6 +32,7 @@
   --success-bg: rgba(16, 185, 129, 0.1);
   --success-text: #059669;
   --danger-bg: rgba(220, 38, 38, 0.12);
+  --danger-notice-bg: rgba(220, 38, 38, 0.9);
   --danger-border: rgba(220, 38, 38, 0.45);
   --danger-text: #b91c1c;
 
@@ -102,6 +103,7 @@
     --success-bg: rgba(16, 185, 129, 0.15);
     --success-text: #34d399;
     --danger-bg: rgba(220, 38, 38, 0.15);
+    --danger-notice-bg: rgba(220, 38, 38, 0.92);
     --danger-border: rgba(220, 38, 38, 0.4);
     --danger-text: #f87171;
 
@@ -1848,7 +1850,7 @@ input::placeholder { color: var(--placeholder); }
 
 .notice-float__item--error {
   border-color: var(--danger-border);
-  background: var(--danger-bg);
+  background: var(--danger-notice-bg);
 }
 
 .notice-float__item--action {
