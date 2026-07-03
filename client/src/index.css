@@ -473,36 +473,22 @@ input::placeholder { color: var(--placeholder); }
    STANDINGS — shared by pool page and reports
    ============================================================ */
 
-.standings-row,
-.rp-standings-item {
+.standings-row {
   display: grid;
   grid-template-columns: 18px 12px 1fr auto;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.45rem 0.625rem;
+  padding: 0.4rem 0.625rem;
   background: var(--card-bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.825rem;
-}
-
-.rp-standings-item {
-  padding: 0.4rem 0.625rem;
   cursor: pointer;
   user-select: none;
   transition: opacity 0.15s, background 0.15s, border-color 0.15s;
 }
 
-.rp-standings-item:hover { background: var(--accent-bg); border-color: var(--accent-border); }
-.rp-standings-item--hidden { opacity: 0.35; }
-
-.standings-row--toggleable {
-  cursor: pointer;
-  user-select: none;
-  transition: opacity 0.15s, background 0.15s, border-color 0.15s;
-}
-
-.standings-row--toggleable:hover { background: var(--accent-bg); border-color: var(--accent-border); }
+.standings-row:hover { background: var(--accent-bg); border-color: var(--accent-border); }
 .standings-row--hidden { opacity: 0.35; }
 
 .standings-rank {
@@ -516,8 +502,7 @@ input::placeholder { color: var(--placeholder); }
 
 .standings-swatch { width: 10px; height: 10px; border-radius: 50%; }
 
-.standings-name,
-.rp-standings-item-name {
+.standings-name {
   color: var(--text-h);
   font-weight: 500;
   white-space: nowrap;
@@ -1586,6 +1571,7 @@ input::placeholder { color: var(--placeholder); }
   transition: border-color 0.15s, background 0.15s;
 }
 
+.rp-team-card--hidden { opacity: 0.35; }
 .rp-team-card:hover { background: var(--accent-bg); border-color: var(--accent-border); }
 .rp-team-card-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .rp-team-card-name   { flex: 1; font-size: 0.875rem; font-weight: 600; color: var(--text-h); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

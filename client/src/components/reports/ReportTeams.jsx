@@ -226,7 +226,7 @@ export default function ReportTeams() {
               {sorted.map((team, i) => (
                 <div
                   key={team.id}
-                  className={`rp-team-card${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
+                  className={`rp-team-card${hiddenIds.has(team.id) ? " rp-team-card--hidden" : ""}`}
                   onClick={() => navigate(`/pools/${poolId}/reports/teams/${team.id}`)}
                 >
                   <span className="standings-rank">{i + 1}</span>

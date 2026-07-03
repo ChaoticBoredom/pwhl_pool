@@ -35,12 +35,12 @@ export default function CollapsibleStandings({
             {sorted.map((team, i) => (
               <div
                 key={team.id}
-                className={`rp-standings-item${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
+                className={`standings-row${hiddenIds.has(team.id) ? " standings-row--hidden" : ""}`}
                 onClick={() => onToggle(team.id)}
               >
                 <span className="standings-rank">{i + 1}</span>
                 <span className="standings-swatch" style={{ background: colourMap[team.id] }} />
-                <span className="rp-standings-item-name">{team.team_name}</span>
+                <span className="standings-name">{team.team_name}</span>
                 <span className="standings-score">{fmt(team.total_score)}</span>
               </div>
             ))}
