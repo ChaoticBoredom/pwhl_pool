@@ -52,13 +52,13 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
         </span>
         <div className="player-drawer-mode-toggle">
           <button
-            className={`player-drawer-mode-btn ${sortDesc ? "player-drawer-mode-btn--active" : ""}`}
+            className={`player-drawer-mode-btn toggle-btn ${sortDesc ? "toggle-btn--active" : ""}`}
             onClick={() => setSortDesc(true)}
           >
             Score ↓
           </button>
           <button
-            className={`player-drawer-mode-btn ${!sortDesc ? "player-drawer-mode-btn--active" : ""}`}
+            className={`player-drawer-mode-btn toggle-btn ${!sortDesc ? "toggle-btn--active" : ""}`}
             onClick={() => setSortDesc(false)}
           >
             Score ↑

@@ -142,6 +142,14 @@ export default function StyleGuide() {
       </section>
 
       <section>
+        <h2>Toggle Buttons</h2>
+        <div className="player-drawer-mode-toggle">
+          <button className="player-drawer-mode-btn toggle-btn toggle-btn--active">Active</button>
+          <button className="player-drawer-mode-btn toggle-btn">Inactive</button>
+        </div>
+      </section>
+
+      <section>
         <h2>Filter Toggles</h2>
         <div className="free-agents-panel__filter-group">
           <button className="filter-toggle filter-toggle--active">F</button>

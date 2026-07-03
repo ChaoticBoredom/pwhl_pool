@@ -43,7 +43,7 @@ function ModeToggle({ value, onChange }) {
         <button
           key={key}
           onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn ${value === key ? "player-drawer-mode-btn--active" : ""}`}
+          className={`player-drawer-mode-btn toggle-btn ${value === key ? "toggle-btn--active" : ""}`}
         >
           {label}
         </button>
@@ -62,7 +62,7 @@ function ClipToggle({ clipped, onChange }) {
         <button
           key={String(key)}
           onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn ${clipped === key ? "player-drawer-mode-btn--active" : ""}`}
+          className={`player-drawer-mode-btn toggle-btn ${clipped === key ? "toggle-btn--active" : ""}`}
         >
           {label}
         </button>

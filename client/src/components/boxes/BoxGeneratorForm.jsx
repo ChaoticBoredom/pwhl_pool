@@ -207,7 +207,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
             ].map(({ label, value }) => (
               <button
                 key={value}
-                className={`player-drawer-mode-btn ${scope === value ? "player-drawer-mode-btn--active" : ""}`}
+                className={`player-drawer-mode-btn toggle-btn ${scope === value ? "toggle-btn--active" : ""}`}
                 onClick={() => setScope(value)}
               >
                 {label}
@@ -222,7 +222,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
             {SEASONS.map(({ label, value }) => (
               <button
                 key={String(value)}
-                className={`player-drawer-mode-btn ${seasonId === value ? "player-drawer-mode-btn--active" : ""}`}
+                className={`player-drawer-mode-btn toggle-btn ${seasonId === value ? "toggle-btn--active" : ""}`}
                 onClick={() => setSeasonId(value)}
               >
                 {label}

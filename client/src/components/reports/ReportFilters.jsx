@@ -40,7 +40,7 @@ export default function ReportFilters({
             {PERIODS.map(({ value, label }) => (
               <button
                 key={value}
-                className={`reports-toggle__btn${period === value ? " reports-toggle__btn--active" : ""}`}
+                className={`reports-toggle__btn toggle-btn${period === value ? " toggle-btn--active" : ""}`}
                 onClick={() => onPeriodChange(value)}
               >
                 {label}

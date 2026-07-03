@@ -364,6 +364,24 @@ input::placeholder { color: var(--placeholder); }
   cursor: pointer;
 }
 
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+
+@media (hover: hover) {
+  .toggle-btn:hover:not(.toggle-btn--active) {
+    background: var(--card-bg);
+    color: var(--text-h);
+  }
+}
+
+.toggle-btn--active { background: var(--accent); color: #fff; }
+
 /* ============================================================
    EDITABLE FIELD
    ============================================================ */
@@ -694,18 +712,10 @@ input::placeholder { color: var(--placeholder); }
   overflow: hidden;
   border: 1px solid var(--border);
   font-size: 0.75rem;
+  width: fit-content;
 }
 
-.player-drawer-mode-btn {
-  padding: 4px 10px;
-  color: var(--text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s;
-}
-
-.player-drawer-mode-btn--active { background: var(--accent); color: white; font-weight: 600; }
+.player-drawer-mode-btn { padding: 4px 10px; }
 
 .player-drawer-close {
   color: var(--text-muted);
@@ -1347,21 +1357,10 @@ input::placeholder { color: var(--placeholder); }
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
+  width: fit-content;
 }
 
-.reports-toggle__btn {
-  padding: 0.3rem 0.875rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: background 0.15s, color 0.15s;
-}
-
-.reports-toggle__btn:hover { background: var(--card-bg); color: var(--text-h); }
-.reports-toggle__btn--active { background: var(--accent); color: #fff; }
+.reports-toggle__btn { padding: 0.3rem 0.875rem; font-size: 0.8rem; }
 
 .report-nav {
   display: flex;
@@ -1375,17 +1374,11 @@ input::placeholder { color: var(--placeholder); }
 .report-nav__link {
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
   text-decoration: none;
-  background: transparent;
   border-right: 1px solid var(--border);
-  transition: background 0.15s, color 0.15s;
 }
 
 .report-nav__link:last-child { border-right: none; }
-.report-nav__link:hover { background: var(--card-bg); color: var(--text-h); }
-.report-nav__link--active { background: var(--accent); color: #fff; }
 
 .recharts-tooltip-wrapper { opacity: 1 !important; }
 
@@ -2747,9 +2740,11 @@ input::placeholder { color: var(--placeholder); }
   transition: background 0.15s, color 0.15s;
 }
 
-.filter-toggle:hover:not(.filter-toggle--active) {
-  background: var(--accent-bg);
-  color: var(--accent);
+@media (hover: hover) {
+  .filter-toggle:hover:not(.filter-toggle--active) {
+    background: var(--accent-bg);
+    color: var(--accent);
+  }
 }
 
 .filter-toggle--active {

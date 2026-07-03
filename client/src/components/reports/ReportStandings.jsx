@@ -170,7 +170,7 @@ export default function ReportStandings() {
                 ].map(({ value, label }) => (
                   <button
                     key={value}
-                    className={`reports-toggle__btn${view === value ? " reports-toggle__btn--active" : ""}`}
+                    className={`reports-toggle__btn toggle-btn${view === value ? " toggle-btn--active" : ""}`}
                     onClick={() => setView(value)}
                   >
                     {label}
