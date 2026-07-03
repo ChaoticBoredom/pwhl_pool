@@ -156,7 +156,7 @@ export default function ReportStandings() {
       {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
-        <div className="rp-full">
+        <div className="rp-full panel">
           <div className="rp-chart-header">
             <span className="label-eyebrow label-eyebrow--sm">Score Trajectory</span>
             <div className="rp-chart-controls">

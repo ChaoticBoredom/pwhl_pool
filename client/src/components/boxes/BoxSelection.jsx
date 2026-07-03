@@ -16,7 +16,7 @@ const BoxSelection = ({
   const hasPending = boxRequests.length > 0;
 
   return (
-    <div className="box-container mb-6">
+    <div className="box-container panel mb-6">
       <div className="box-selection__header">
         <h3>{box.name}</h3>
         {isDesktop && (

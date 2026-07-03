@@ -114,7 +114,7 @@ export default function ReportCategories() {
       {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
-        <div className="rp-full">
+        <div className="rp-full panel">
           <div className="rp-chart-header">
             <span className="label-eyebrow label-eyebrow--sm">Scoring by Category</span>
           </div>

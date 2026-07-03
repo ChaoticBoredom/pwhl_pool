@@ -42,7 +42,7 @@ export default function BoxPreview({ box }) {
   const players = box.players || [];
 
   return (
-    <div className="result-box">
+    <div className="panel">
       <BoxPreviewHeader box={box} open={open} onToggle={() => setOpen((o) => !o)} />
       {open && (
         <div className="result-box-players">

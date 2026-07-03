@@ -44,7 +44,7 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
   }, [players, search, teamFilter, positionFilters, rookieFilter, sortDesc, positionGroups]);
 
   return (
-    <div className={`free-agents-panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
+    <div className={`free-agents-panel panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
       <div className="free-agents-panel__header">
         <span className="free-agents-panel__title">
           Free Agents

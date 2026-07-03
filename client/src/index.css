@@ -206,6 +206,13 @@ code {
   box-shadow: var(--shadow-elevated);
 }
 
+.panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
 .helper-text {
   color: var(--text-muted);
   font-size: 0.85rem;
@@ -834,9 +841,6 @@ input::placeholder { color: var(--placeholder); }
 .box-container {
   width: 100%;
   padding: 1.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   box-shadow: var(--shadow);
 }
 
@@ -1031,13 +1035,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .result-box-list { display: flex; flex-direction: column; gap: 8px; }
-
-.result-box {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
 
 .result-box-header {
   width: 100%;
@@ -1411,14 +1408,7 @@ input::placeholder { color: var(--placeholder); }
    REPORTS — FULL WIDTH CHART LAYOUT
    ============================================================ */
 
-.rp-full {
-  display: flex;
-  flex-direction: column;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
+.rp-full { display: flex; flex-direction: column; }
 
 .rp-chart-header {
   display: flex;
@@ -1619,17 +1609,6 @@ input::placeholder { color: var(--placeholder); }
 .rp-team-badges    { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .rp-team-badge-wrap { display: inline-flex; align-items: center; gap: 2px; }
 .rp-team-sep       { font-size: 0.65rem; color: var(--text-muted); line-height: 1; }
-
-.rp-standings {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  position: sticky;
-  top: 1rem;
-}
-
-.rp-main { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 
 .rp-tabs {
   display: flex;
@@ -1968,13 +1947,6 @@ input::placeholder { color: var(--placeholder); }
 /* ============================================================
    SELECTION DETAIL PANEL
    ============================================================ */
-
-.selection-panel {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
 
 .selection-panel--empty {
   display: flex;
@@ -2376,9 +2348,6 @@ input::placeholder { color: var(--placeholder); }
 .create-pool-form {
   width: 100%;
   max-width: 720px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   padding: 2rem;
   box-shadow: var(--shadow-elevated);
 }
@@ -2541,13 +2510,7 @@ input::placeholder { color: var(--placeholder); }
   overflow-y: auto;
 }
 
-.box-column {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
+.box-column { transition: border-color 0.15s; }
 
 .box-column__header {
   display: flex;
@@ -2670,13 +2633,7 @@ input::placeholder { color: var(--placeholder); }
   padding-left: calc(0.875rem - 2px);
 }
 
-.free-agents-panel {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
+.free-agents-panel { transition: border-color 0.15s; }
 
 .free-agents-panel--over { border-color: var(--accent); }
 

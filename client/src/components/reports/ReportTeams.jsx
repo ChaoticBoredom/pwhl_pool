@@ -208,7 +208,7 @@ export default function ReportTeams() {
 
       {teams.length > 0 && (
         selectedTeam ? (
-          <div className="rp-full">
+          <div className="rp-full panel">
             <div className="rp-chart-header">
               <button
                 className="back-to-dashboard"
@@ -221,7 +221,7 @@ export default function ReportTeams() {
             <TeamDetail team={selectedTeam} labels={labels} colourMap={colourMap} />
           </div>
         ) : (
-          <div className="rp-full">
+          <div className="rp-full panel">
             <div className="rp-team-grid" style={{ padding: "1rem" }}>
               {sorted.map((team, i) => (
                 <div
