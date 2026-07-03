@@ -33,14 +33,10 @@ export default function StyleGuide() {
       </section>
 
       <section>
-        <h2>Add / Drop Pills</h2>
+        <h2>Action Badges</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <div className="pending-trade-group__player pending-trade-group__player--add">
-            <span className="pending-trade-group__action">Add</span>
-          </div>
-          <div className="pending-trade-group__player pending-trade-group__player--drop">
-            <span className="pending-trade-group__action">Drop</span>
-          </div>
+          <span className="action-badge action-badge--add">Add</span>
+          <span className="action-badge action-badge--drop">Drop</span>
         </div>
       </section>
 

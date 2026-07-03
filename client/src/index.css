@@ -2027,24 +2027,20 @@ input::placeholder { color: var(--placeholder); }
   padding-left: 2rem;
 }
 
-.box-selection__trade-badge {
+.action-badge {
   font-size: 0.65rem;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 3px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
 }
 
-.box-selection__trade-badge--drop {
-  background: var(--warning-bg);
-  color: var(--warning-text);
-}
-
-.box-selection__trade-badge--add {
-  background: var(--success-bg);
-  color: var(--success-text);
-}
+.action-badge--add { background: var(--success-bg); color: var(--success-text); }
+.action-badge--drop { background: var(--warning-bg); color: var(--warning-text); }
 
 /* ============================================================
    SELECTION DETAIL PANEL
@@ -2184,16 +2180,6 @@ input::placeholder { color: var(--placeholder); }
   flex-shrink: 0;
 }
 
-.selection-pending__action--add {
-  background: var(--success-bg);
-  color: var(--success-text);
-}
-
-.selection-pending__action--drop {
-  background: var(--warning-bg);
-  color: var(--warning-text);
-}
-
 .selection-pending__name {
   font-size: 0.875rem;
   font-weight: 600;
@@ -2325,28 +2311,6 @@ input::placeholder { color: var(--placeholder); }
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-}
-
-.pending-trade-group__action {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 1px 6px;
-  border-radius: 3px;
-  flex-shrink: 0;
-  min-width: 36px;
-  text-align: center;
-}
-
-.pending-trade-group__player--drop .pending-trade-group__action {
-  background: var(--warning-bg);
-  color: var(--warning-text);
-}
-
-.pending-trade-group__player--add .pending-trade-group__action {
-  background: var(--success-bg);
-  color: var(--success-text);
 }
 
 .pending-trade-group__name {

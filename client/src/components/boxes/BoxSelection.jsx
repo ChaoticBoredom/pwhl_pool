@@ -63,12 +63,12 @@ const BoxSelection = ({
                 </Player>
                 <div className="box-selection__badges">
                   {hasDrop && (
-                    <span className="box-selection__trade-badge box-selection__trade-badge--drop">
+                    <span className="action-badge action-badge--drop">
                       Drop pending
                     </span>
                   )}
                   {hasAdd && (
-                    <span className="box-selection__trade-badge box-selection__trade-badge--add">
+                    <span className="action-badge action-badge--add">
                       Add pending
                     </span>
                   )}
