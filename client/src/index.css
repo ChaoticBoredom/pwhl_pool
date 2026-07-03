@@ -2170,16 +2170,6 @@ input::placeholder { color: var(--placeholder); }
   flex: 1;
 }
 
-.selection-pending__action {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 1px 6px;
-  border-radius: 3px;
-  flex-shrink: 0;
-}
-
 .selection-pending__name {
   font-size: 0.875rem;
   font-weight: 600;
