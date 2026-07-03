@@ -27,7 +27,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed, end = false, onClick }) => 
 
 const NavSection = ({ label, children, collapsed }) => (
   <div className="side-nav__section">
-    {!collapsed && <span className="side-nav__section-label">{label}</span>}
+    {!collapsed && <span className="side-nav__section-label label-eyebrow label-eyebrow--sm">{label}</span>}
     {collapsed && <div className="side-nav__section-divider" />}
     {children}
   </div>
@@ -57,7 +57,7 @@ const ReportsNavCollapsed = ({ base, onNavigate }) => {
       </div>
       {top !== null && createPortal(
         <div className="side-nav__popout" style={{ top }}>
-          <span className="side-nav__popout-label">Reports</span>
+          <span className="side-nav__popout-label label-eyebrow label-eyebrow--sm">Reports</span>
           <NavItem to={`${base}/reports/standings`} icon={BarChart2} label="Standings" collapsed={false} onClick={onNavigate} />
           <NavItem to={`${base}/reports/categories`} icon={BarChart2} label="Categories" collapsed={false} onClick={onNavigate} />
           <NavItem to={`${base}/reports/teams`} icon={BarChart2} label="Teams" collapsed={false} onClick={onNavigate} />

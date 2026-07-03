@@ -166,7 +166,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           isDeciding={isDeciding}
         >
           <div className="form-field">
-            <label className="form-label">Backdate to (optional)</label>
+            <label className="label-eyebrow label-eyebrow--md">Backdate to (optional)</label>
             <input
               type="date"
               className="form-input"
@@ -187,7 +187,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           isDeciding={isDeciding}
         >
           <div className="form-field">
-            <label className="form-label">Reason for rejection</label>
+            <label className="label-eyebrow label-eyebrow--md">Reason for rejection</label>
             <textarea
               className="form-input"
               value={rejectedReason}

@@ -35,7 +35,7 @@ export default function ReportFilters({
     <div className="rp-controls">
       {showPeriod && (
         <div className="rp-control-group">
-          <span className="rp-control-label">Period</span>
+          <span className="label-eyebrow label-eyebrow--sm">Period</span>
           <div className="reports-toggle">
             {PERIODS.map(({ value, label }) => (
               <button
@@ -51,7 +51,7 @@ export default function ReportFilters({
       )}
 
       <div className="rp-control-group">
-        <span className="rp-control-label">Date Range</span>
+        <span className="label-eyebrow label-eyebrow--sm">Date Range</span>
         <div className="reports-date-range">
           <input
             type="date"

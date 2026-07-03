@@ -243,6 +243,16 @@ code {
 .loading-state--error { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
 .loading-state--error { color: var(--danger-text); }
 
+.label-eyebrow {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.label-eyebrow--sm { font-size: 0.7rem;   letter-spacing: 0.07em; }
+.label-eyebrow--md { font-size: 0.75rem;  letter-spacing: 0.06em; }
+.label-eyebrow--lg { font-size: 0.875rem; letter-spacing: 0.07em; }
+
 /* ============================================================
    FORMS & INPUTS
    ============================================================ */
@@ -390,15 +400,7 @@ input::placeholder { color: var(--placeholder); }
 
 .data-row--compact { padding: 0.375rem 1rem; }
 
-.data-row--header {
-  background: var(--card-bg);
-  border-bottom: 1px solid var(--border);
-  color: var(--text-muted);
-  font-weight: 700;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+.data-row--header { background: var(--card-bg); border-bottom: 1px solid var(--border); }
 
 .data-row--content {
   background: var(--card-bg-elevated);
@@ -422,15 +424,6 @@ input::placeholder { color: var(--placeholder); }
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin-top: 1.5rem;
-}
-
-.grid-header {
-  background-color: var(--card-bg);
-  border-bottom: 1px solid var(--border);
-  font-weight: bold;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
 }
 
 .grid-row { border-bottom: 1px solid var(--border); }
@@ -860,15 +853,7 @@ input::placeholder { color: var(--placeholder); }
 
 .scoring-section { margin-top: 2rem; }
 
-.scoring-section-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  padding: 0 4px;
-  margin-bottom: 0.75rem;
-}
+.scoring-section-title { padding: 0 4px; margin-bottom: 0.75rem; }
 
 .scoring-card-grid {
   display: grid;
@@ -990,11 +975,6 @@ input::placeholder { color: var(--placeholder); }
   background: var(--card-bg);
   position: sticky;
   top: 0;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
   z-index: var(--z-sticky);
 }
 
@@ -1239,11 +1219,6 @@ input::placeholder { color: var(--placeholder); }
 
 .side-nav__section-label {
   display: block;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
   padding: 0.5rem 0.875rem 0.25rem;
   white-space: nowrap;
 }
@@ -1296,15 +1271,7 @@ input::placeholder { color: var(--placeholder); }
   padding: 0.25rem 0;
 }
 
-.side-nav__popout-label {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  padding: 0.375rem 0.875rem 0.25rem;
-}
+.side-nav__popout-label { display: block; padding: 0.375rem 0.875rem 0.25rem; }
 
 .side-nav__item--popout-trigger {
   justify-content: center;
@@ -1361,17 +1328,6 @@ input::placeholder { color: var(--placeholder); }
 
 .rp-header   { margin-bottom: 1.5rem; }
 .rp-subtitle { margin: 0; font-size: 0.95rem; color: var(--text-muted); }
-
-.rp-section-label,
-.rp-control-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-}
-
-.rp-section-label { margin: 0 0 0.75rem; }
 
 .rp-controls {
   display: flex;
@@ -1613,14 +1569,7 @@ input::placeholder { color: var(--placeholder); }
 .rp-player-row:last-child { border-bottom: none; }
 .rp-player-row--dropped { opacity: 0.6; }
 
-.rp-player-row--header {
-  background: var(--card-bg);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
+.rp-player-row--header { background: var(--card-bg); }
 
 .rp-player-name {
   font-weight: 600;
@@ -1667,11 +1616,6 @@ input::placeholder { color: var(--placeholder); }
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius) var(--radius) 0 0;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
 }
 
 .rp-box-name  { flex: 1; }
@@ -2087,16 +2031,6 @@ input::placeholder { color: var(--placeholder); }
 
 .selection-panel__trade-group { padding: 0.75rem 1rem 0; }
 
-.selection-panel__trade-label {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
 .selection-panel__trade-row {
   display: flex;
   align-items: center;
@@ -2127,14 +2061,7 @@ input::placeholder { color: var(--placeholder); }
   border-top: 1px solid var(--border);
 }
 
-.selection-pending__title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-  margin: 0 0 0.75rem;
-}
+.selection-pending__title { margin: 0 0 0.75rem; }
 
 .selection-pending__row {
   display: flex;
@@ -2488,14 +2415,6 @@ input::placeholder { color: var(--placeholder); }
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
-}
-
-.form-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
 }
 
 .form-input,

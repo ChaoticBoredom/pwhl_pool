@@ -83,7 +83,7 @@ function TeamDetail({ team, labels, colourMap }) {
 
       {grouped.map(({ box, players }) => (
         <div key={box.id} className="rp-box-section">
-          <div className="rp-box-header">
+          <div className="rp-box-header label-eyebrow label-eyebrow--md">
             <span className="rp-box-name">{box.name}</span>
             <span className="rp-box-total">
               {fmt(players.reduce((sum, p) => sum + p.total_score, 0))}
@@ -91,7 +91,7 @@ function TeamDetail({ team, labels, colourMap }) {
           </div>
 
           <div className="rp-player-table" style={{ "--cat-cols": keys.length }}>
-            <div className="rp-player-row rp-player-row--header">
+            <div className="rp-player-row rp-player-row--header label-eyebrow label-eyebrow--sm">
               <span>Player</span>
               <span>Tenure</span>
               {keys.map(k => <span key={k} className="rp-cat-cell">{labels?.[k] ?? k}</span>)}

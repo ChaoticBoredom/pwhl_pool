@@ -17,7 +17,7 @@ export default function CollapsibleStandings({
   return (
     <div className="rp-standings-bar">
       <button className="rp-standings-toggle" onClick={() => setOpen(o => !o)}>
-        <span className="rp-section-label" style={{ margin: 0 }}>
+        <span className="label-eyebrow label-eyebrow--sm">
           Standings ({teams.length} teams)
         </span>
         <span className="rp-standings-chevron">{open ? "▲" : "▼"}</span>

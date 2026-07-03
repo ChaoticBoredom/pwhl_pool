@@ -5,7 +5,7 @@ export default function PendingTradesSection({ tradeRequests, boxes, onCancel, i
 
   return (
     <section className="selection-pending">
-      <h2 className="selection-pending__title">Pending Requests</h2>
+      <h2 className="selection-pending__title label-eyebrow label-eyebrow--lg">Pending Requests</h2>
       <TradesPanel
         requests={tradeRequests}
         boxes={boxes}

@@ -98,15 +98,15 @@ export default function StyleGuide() {
         <h2>Form Elements</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "400px" }}>
           <div className="form-field">
-            <label className="form-label">Text input</label>
+            <label className="label-eyebrow label-eyebrow--md">Text input</label>
             <input className="form-input" placeholder="Placeholder text" />
           </div>
           <div className="form-field">
-            <label className="form-label">Textarea</label>
+            <label className="label-eyebrow label-eyebrow--md">Textarea</label>
             <textarea className="form-input" rows={3} placeholder="Placeholder text" />
           </div>
           <div className="form-field">
-            <label className="form-label">Select</label>
+            <label className="label-eyebrow label-eyebrow--md">Select</label>
             <select className="form-select">
               <option>Option A</option>
               <option>Option B</option>

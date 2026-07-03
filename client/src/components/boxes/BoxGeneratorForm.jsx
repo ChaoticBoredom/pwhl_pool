@@ -92,7 +92,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionSty
 function BoxConfigTable({ boxes, onChange, onRemove, positionStyles }) {
   return (
     <div className="box-config-table-wrapper">
-      <div className="box-config-table-header">
+      <div className="box-config-table-header label-eyebrow label-eyebrow--sm">
         <span></span>
         <span>Name</span>
         <span>Position</span>

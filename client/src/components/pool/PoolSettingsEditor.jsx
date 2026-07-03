@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 function SettingsField({ label, children }) {
   return (
     <div className="scoring-card">
-      <span className="scoring-section-title">{label}</span>
+      <span className="scoring-section-title label-eyebrow label-eyebrow--md">{label}</span>
       {children}
     </div>
   );
