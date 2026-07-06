@@ -85,7 +85,7 @@ function TeamDetail({ team, labels, colourMap }) {
         <div key={box.id} className="rp-box-section">
           <div className="rp-box-header label-eyebrow label-eyebrow--md">
             <span className="rp-box-name">{box.name}</span>
-            <span className="rp-box-total">
+            <span className="stat-value stat-value--bold stat-value--accent">
               {fmt(players.reduce((sum, p) => sum + p.total_score, 0))}
             </span>
           </div>
@@ -117,13 +117,15 @@ function TeamDetail({ team, labels, colourMap }) {
                 </span>
                 <span className="rp-tenure">{tenureStr(p.tenures)}</span>
                 {keys.map(k => (
-                  <span key={k} className="rp-cat-cell rp-cat-value">
+                  <span key={k} className="rp-cat-cell stat-value">
                     {(p.by_category?.[k] ?? 0) > 0
                       ? fmt(p.by_category[k])
                       : <span className="rp-zero">–</span>}
                   </span>
                 ))}
-                <span className="rp-cat-cell rp-cat-value rp-cat-total">{fmt(p.total_score)}</span>
+                <span className="rp-cat-cell stat-value stat-value--bold stat-value--accent">
+                  {fmt(p.total_score)}
+                </span>
               </div>
             ))}
           </div>

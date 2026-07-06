@@ -78,7 +78,7 @@ const BoxSelection = ({
                 <span className="score-label">
                   {isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}
                 </span>
-                <span className="score-value">{player.scores.season_to_date.toFixed(2)}</span>
+                <span className="stat-value stat-value--lg stat-value--bold">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>
           );

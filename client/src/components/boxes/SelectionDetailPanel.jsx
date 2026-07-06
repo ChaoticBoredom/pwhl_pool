@@ -45,7 +45,7 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
           {WINDOWS.map(({ key, label }) => (
             <button
               key={key}
-              className={`comparison-table__col comparison-table__col--score comparison-table__sort-btn ${sortKey === key ? "comparison-table__sort-btn--active" : ""}`}
+              className={`comparison-table__col comparison-table__col--score stat-value comparison-table__sort-btn ${sortKey === key ? "comparison-table__sort-btn--active" : ""}`}
               onClick={() => handleSort(key)}
             >
               {label}{sortIcon(key)}
@@ -64,7 +64,7 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
                 <TeamBadge shortCode={player.current_team_short_code} />
               </div>
               {WINDOWS.map(({ key }) => (
-                <span key={key} className="comparison-table__col comparison-table__col--score">
+                <span key={key} className="comparison-table__col comparison-table__col--score stat-value">
                   {player.scores[key].toFixed(2)}
                 </span>
               ))}
