@@ -213,6 +213,18 @@ code {
   overflow: hidden;
 }
 
+.panel__header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-bg-elevated);
+  padding: 0.625rem 1rem;
+}
+
+.panel__header--split { justify-content: space-between; }
+.panel__header--gap { gap: 0.5rem; }
+.panel__header--gap-wrap { gap: 0.5rem; flex-wrap: wrap; }
+
 .helper-text {
   color: var(--text-muted);
   font-size: 0.85rem;
@@ -1335,6 +1347,7 @@ input::placeholder { color: var(--placeholder); }
 
 .rp-header   { margin-bottom: 1.5rem; }
 .rp-subtitle { margin: 0; font-size: 0.95rem; color: var(--text-muted); }
+.rp-team-back { margin: 0; }
 
 .rp-controls {
   display: flex;
@@ -1409,14 +1422,6 @@ input::placeholder { color: var(--placeholder); }
    ============================================================ */
 
 .rp-full { display: flex; flex-direction: column; }
-
-.rp-chart-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.625rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
 
 .rp-chart-controls { display: flex; align-items: center; gap: 0.75rem; }
 
@@ -1963,16 +1968,6 @@ input::placeholder { color: var(--placeholder); }
   padding: 1rem;
 }
 
-.selection-panel__header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card-bg-elevated);
-  flex-wrap: wrap;
-}
-
 .selection-panel__player-name {
   font-weight: 700;
   font-size: 0.9rem;
@@ -2211,17 +2206,13 @@ input::placeholder { color: var(--placeholder); }
   background: var(--card-bg-elevated);
 }
 
-.trades-panel__group-header .trade-checkbox {
-  flex-shrink: 0;
-}
-
 @media (max-width: 768px) {
-  .trades-panel__group-header {
+  .mob-trades-panel-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .trades-panel__group-header > div:first-child {
+  .mob-team-info {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -2229,7 +2220,7 @@ input::placeholder { color: var(--placeholder); }
   }
 }
 
-.trades-panel__group-header .pool-team-name {
+.pool-team-name--clamped {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2508,15 +2499,6 @@ input::placeholder { color: var(--placeholder); }
 
 .box-column { transition: border-color 0.15s; }
 
-.box-column__header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.875rem;
-  background: var(--card-bg-elevated);
-  border-bottom: 1px solid var(--border);
-}
-
 .box-column__name {
   flex: 1;
   font-size: 0.875rem;
@@ -2632,15 +2614,6 @@ input::placeholder { color: var(--placeholder); }
 .free-agents-panel { transition: border-color 0.15s; }
 
 .free-agents-panel--over { border-color: var(--accent); }
-
-.free-agents-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card-bg-elevated);
-}
 
 .free-agents-panel__title {
   font-size: 0.875rem;

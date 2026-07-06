@@ -209,10 +209,9 @@ export default function ReportTeams() {
       {teams.length > 0 && (
         selectedTeam ? (
           <div className="rp-full panel">
-            <div className="rp-chart-header">
+            <div className="panel__header panel__header--split">
               <button
-                className="back-to-dashboard"
-                style={{ margin: 0 }}
+                className="btn-link rp-team-back"
                 onClick={() => navigate(`/pools/${poolId}/reports/teams`)}
               >
                 ← All Teams

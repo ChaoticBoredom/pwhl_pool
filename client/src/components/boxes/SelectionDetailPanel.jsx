@@ -35,7 +35,7 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
 
   return (
     <div className="panel">
-      <div className="selection-panel__header">
+      <div className="panel__header panel__header--gap-wrap">
         <span className="selection-panel__player-name">{boxName}</span>
         <span className="selection-panel__subtitle">Compare</span>
       </div>
@@ -108,7 +108,7 @@ export default function SelectionDetailPanel({
   if (panel.type === "trades") {
     return (
       <div className="panel">
-        <div className="selection-panel__header">
+        <div className="panel__header panel__header--gap-wrap">
           <span className="selection-panel__player-name">Pending Requests</span>
         </div>
         <TradesPanel

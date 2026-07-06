@@ -9,7 +9,7 @@ export default function TradesPanel({ requests, boxes, onCancel, isCancelling })
     <div className="trades-panel">
       {groups.map((group) => (
         <div key={group.groupId} className="trades-panel__group">
-          <div className="trades-panel__group-header">
+          <div className="mob-trades-panel-header panel__header panel__header--gap-wrap">
             <span className="trades-panel__group-date">
               Submitted {formatDateTime(group.requestedAt)}
             </span>

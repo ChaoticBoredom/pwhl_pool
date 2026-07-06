@@ -115,7 +115,7 @@ export default function ReportCategories() {
 
       {teams.length > 0 && (
         <div className="rp-full panel">
-          <div className="rp-chart-header">
+          <div className="panel__header panel__header--split">
             <span className="label-eyebrow label-eyebrow--sm">Scoring by Category</span>
           </div>
 

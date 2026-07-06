@@ -157,7 +157,7 @@ export default function ReportStandings() {
 
       {teams.length > 0 && (
         <div className="rp-full panel">
-          <div className="rp-chart-header">
+          <div className="panel__header panel__header--split">
             <span className="label-eyebrow label-eyebrow--sm">Score Trajectory</span>
             <div className="rp-chart-controls">
               {isZoomed && (
