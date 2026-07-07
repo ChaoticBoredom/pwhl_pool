@@ -29,7 +29,7 @@ function BoxPreviewPlayerRow({ player }) {
           <TeamBadge shortCode={player.current_team_short_code} />
         </div>
         <div className="score-display-vertical">
-          <span className="score-value">{Number(player.score).toFixed(2)}</span>
+          <span className="stat-value stat-value--lg stat-value--bold">{Number(player.score).toFixed(2)}</span>
           <span className="score-label">pts</span>
         </div>
       </div>
@@ -42,7 +42,7 @@ export default function BoxPreview({ box }) {
   const players = box.players || [];
 
   return (
-    <div className="result-box">
+    <div className="panel">
       <BoxPreviewHeader box={box} open={open} onToggle={() => setOpen((o) => !o)} />
       {open && (
         <div className="result-box-players">

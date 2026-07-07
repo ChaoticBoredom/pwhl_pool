@@ -44,21 +44,21 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
   }, [players, search, teamFilter, positionFilters, rookieFilter, sortDesc, positionGroups]);
 
   return (
-    <div className={`free-agents-panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
-      <div className="free-agents-panel__header">
+    <div className={`free-agents-panel panel ${isDragTarget ? "free-agents-panel--over" : ""}`}>
+      <div className="panel__header panel__header--split">
         <span className="free-agents-panel__title">
           Free Agents
           <span className="free-agents-panel__count">{players.length}</span>
         </span>
         <div className="player-drawer-mode-toggle">
           <button
-            className={`player-drawer-mode-btn ${sortDesc ? "player-drawer-mode-btn--active" : ""}`}
+            className={`player-drawer-mode-btn toggle-btn ${sortDesc ? "toggle-btn--active" : ""}`}
             onClick={() => setSortDesc(true)}
           >
             Score ↓
           </button>
           <button
-            className={`player-drawer-mode-btn ${!sortDesc ? "player-drawer-mode-btn--active" : ""}`}
+            className={`player-drawer-mode-btn toggle-btn ${!sortDesc ? "toggle-btn--active" : ""}`}
             onClick={() => setSortDesc(false)}
           >
             Score ↑

@@ -76,22 +76,22 @@ function TeamDetail({ team, labels, colourMap }) {
   return (
     <div className="rp-drilldown">
       <div className="rp-drilldown-header">
-        <span className="rp-drilldown-swatch" style={{ background: colourMap[team.id] }} />
+        <span className="swatch swatch--lg" style={{ background: colourMap[team.id] }} />
         <span className="rp-drilldown-name">{team.team_name}</span>
         <span className="rp-drilldown-total">{fmt(team.total_score)} pts</span>
       </div>
 
       {grouped.map(({ box, players }) => (
         <div key={box.id} className="rp-box-section">
-          <div className="rp-box-header">
+          <div className="rp-box-header label-eyebrow label-eyebrow--md">
             <span className="rp-box-name">{box.name}</span>
-            <span className="rp-box-total">
+            <span className="stat-value stat-value--bold stat-value--accent">
               {fmt(players.reduce((sum, p) => sum + p.total_score, 0))}
             </span>
           </div>
 
           <div className="rp-player-table" style={{ "--cat-cols": keys.length }}>
-            <div className="rp-player-row rp-player-row--header">
+            <div className="rp-player-row rp-player-row--header label-eyebrow label-eyebrow--sm">
               <span>Player</span>
               <span>Tenure</span>
               {keys.map(k => <span key={k} className="rp-cat-cell">{labels?.[k] ?? k}</span>)}
@@ -117,13 +117,15 @@ function TeamDetail({ team, labels, colourMap }) {
                 </span>
                 <span className="rp-tenure">{tenureStr(p.tenures)}</span>
                 {keys.map(k => (
-                  <span key={k} className="rp-cat-cell rp-cat-value">
+                  <span key={k} className="rp-cat-cell stat-value">
                     {(p.by_category?.[k] ?? 0) > 0
                       ? fmt(p.by_category[k])
                       : <span className="rp-zero">–</span>}
                   </span>
                 ))}
-                <span className="rp-cat-cell rp-cat-value rp-cat-total">{fmt(p.total_score)}</span>
+                <span className="rp-cat-cell stat-value stat-value--bold stat-value--accent">
+                  {fmt(p.total_score)}
+                </span>
               </div>
             ))}
           </div>
@@ -208,11 +210,10 @@ export default function ReportTeams() {
 
       {teams.length > 0 && (
         selectedTeam ? (
-          <div className="rp-full">
-            <div className="rp-chart-header">
+          <div className="rp-full panel">
+            <div className="panel__header panel__header--split">
               <button
-                className="back-to-dashboard"
-                style={{ margin: 0 }}
+                className="btn-link rp-team-back"
                 onClick={() => navigate(`/pools/${poolId}/reports/teams`)}
               >
                 ← All Teams
@@ -221,16 +222,16 @@ export default function ReportTeams() {
             <TeamDetail team={selectedTeam} labels={labels} colourMap={colourMap} />
           </div>
         ) : (
-          <div className="rp-full">
+          <div className="rp-full panel">
             <div className="rp-team-grid" style={{ padding: "1rem" }}>
               {sorted.map((team, i) => (
                 <div
                   key={team.id}
-                  className={`rp-team-card${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
+                  className={`rp-team-card${hiddenIds.has(team.id) ? " rp-team-card--hidden" : ""}`}
                   onClick={() => navigate(`/pools/${poolId}/reports/teams/${team.id}`)}
                 >
                   <span className="standings-rank">{i + 1}</span>
-                  <span className="rp-team-card-swatch" style={{ background: colourMap[team.id] }} />
+                  <span className="swatch swatch--md" style={{ background: colourMap[team.id] }} />
                   <span className="rp-team-card-name">{team.team_name}</span>
                   <span className="rp-team-card-score">{fmt(team.total_score)}</span>
                 </div>

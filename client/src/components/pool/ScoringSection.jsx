@@ -36,7 +36,7 @@ export function ScoringSection({ title, scorings, editable = false, onChange }) 
 
   return (
     <div className="scoring-section">
-      <div className="scoring-section-title">{title}</div>
+      <div className="scoring-section-title label-eyebrow label-eyebrow--md">{title}</div>
       <div className="scoring-card-grid">
         {scorings.map((scoring) => (
           <StatCard

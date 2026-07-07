@@ -29,7 +29,7 @@ export default function DraggablePlayer({ player, isMatch }) {
     >
       <Player player={player} />
       <div className="score-display-vertical">
-        <span className="score-value">{Number(player.score).toFixed(2)}</span>
+        <span className="stat-value stat-value--lg stat-value--bold">{Number(player.score).toFixed(2)}</span>
         <span className="score-label">pts</span>
       </div>
     </div>

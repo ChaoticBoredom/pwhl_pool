@@ -156,9 +156,9 @@ export default function ReportStandings() {
       {isLoading && <LoadingState />}
 
       {teams.length > 0 && (
-        <div className="rp-full">
-          <div className="rp-chart-header">
-            <span className="rp-section-label" style={{ margin: 0 }}>Score Trajectory</span>
+        <div className="rp-full panel">
+          <div className="panel__header panel__header--split">
+            <span className="label-eyebrow label-eyebrow--sm">Score Trajectory</span>
             <div className="rp-chart-controls">
               {isZoomed && (
                 <button className="rp-reset-zoom" onClick={resetZoom}>Reset Zoom</button>
@@ -170,7 +170,7 @@ export default function ReportStandings() {
                 ].map(({ value, label }) => (
                   <button
                     key={value}
-                    className={`reports-toggle__btn${view === value ? " reports-toggle__btn--active" : ""}`}
+                    className={`reports-toggle__btn toggle-btn${view === value ? " toggle-btn--active" : ""}`}
                     onClick={() => setView(value)}
                   >
                     {label}

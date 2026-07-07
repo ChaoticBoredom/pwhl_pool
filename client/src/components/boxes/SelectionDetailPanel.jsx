@@ -34,8 +34,8 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
   };
 
   return (
-    <div className="selection-panel">
-      <div className="selection-panel__header">
+    <div className="panel">
+      <div className="panel__header panel__header--gap-wrap">
         <span className="selection-panel__player-name">{boxName}</span>
         <span className="selection-panel__subtitle">Compare</span>
       </div>
@@ -45,7 +45,7 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
           {WINDOWS.map(({ key, label }) => (
             <button
               key={key}
-              className={`comparison-table__col comparison-table__col--score comparison-table__sort-btn ${sortKey === key ? "comparison-table__sort-btn--active" : ""}`}
+              className={`comparison-table__col comparison-table__col--score stat-value comparison-table__sort-btn ${sortKey === key ? "comparison-table__sort-btn--active" : ""}`}
               onClick={() => handleSort(key)}
             >
               {label}{sortIcon(key)}
@@ -64,7 +64,7 @@ function ComparisonPanel({ boxName, players, selectedPlayerId }) {
                 <TeamBadge shortCode={player.current_team_short_code} />
               </div>
               {WINDOWS.map(({ key }) => (
-                <span key={key} className="comparison-table__col comparison-table__col--score">
+                <span key={key} className="comparison-table__col comparison-table__col--score stat-value">
                   {player.scores[key].toFixed(2)}
                 </span>
               ))}
@@ -89,7 +89,7 @@ export default function SelectionDetailPanel({
 }) {
   if (!panel) {
     return (
-      <div className="selection-panel selection-panel--empty">
+      <div className="panel selection-panel--empty">
         <p className="selection-panel__hint">Click the arrow on a box to compare players</p>
       </div>
     );
@@ -107,8 +107,8 @@ export default function SelectionDetailPanel({
 
   if (panel.type === "trades") {
     return (
-      <div className="selection-panel">
-        <div className="selection-panel__header">
+      <div className="panel">
+        <div className="panel__header panel__header--gap-wrap">
           <span className="selection-panel__player-name">Pending Requests</span>
         </div>
         <TradesPanel

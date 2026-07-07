@@ -5,7 +5,7 @@ export function DataRow({ to, children, gridClass = "", isHeader = false, compac
 
   if (isHeader) {
     return (
-      <div className={`${baseClasses} data-row--header`}>
+      <div className={`${baseClasses} data-row--header label-eyebrow label-eyebrow--md`}>
         {children}
       </div>
     );

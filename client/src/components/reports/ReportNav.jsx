@@ -15,7 +15,7 @@ export default function ReportNav({ poolId }) {
           key={to}
           to={to}
           className={({ isActive }) =>
-            `report-nav__link${isActive ? " report-nav__link--active" : ""}`
+            `report-nav__link toggle-btn${isActive ? " toggle-btn--active" : ""}`
           }
         >
           {label}

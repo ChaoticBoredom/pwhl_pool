@@ -43,7 +43,7 @@ function ModeToggle({ value, onChange }) {
         <button
           key={key}
           onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn ${value === key ? "player-drawer-mode-btn--active" : ""}`}
+          className={`player-drawer-mode-btn toggle-btn ${value === key ? "toggle-btn--active" : ""}`}
         >
           {label}
         </button>
@@ -62,7 +62,7 @@ function ClipToggle({ clipped, onChange }) {
         <button
           key={String(key)}
           onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn ${clipped === key ? "player-drawer-mode-btn--active" : ""}`}
+          className={`player-drawer-mode-btn toggle-btn ${clipped === key ? "toggle-btn--active" : ""}`}
         >
           {label}
         </button>
@@ -92,7 +92,7 @@ function StatRow({ field, rawValue, pointValue, mode, label }) {
   return (
     <div className="player-drawer-stat-row">
       <span className="player-drawer-stat-label">{label}</span>
-      <span className={`player-drawer-stat-value ${isDisplayOnly ? "player-drawer-stat-value--dim" : ""}`}>
+      <span className={`stat-value ${isDisplayOnly ? "stat-value--dim" : "stat-value--bold"}`}>
         {display}
       </span>
     </div>
@@ -193,7 +193,7 @@ export function PlayerStatsDrawer({ player, isOpen, onClose, drawerState, onDraw
             {mode === "points" && (
               <div className="player-drawer-stat-row player-drawer-stat-row--total">
                 <span className="player-drawer-stat-label">Total</span>
-                <span className="player-drawer-stat-value">
+                <span className="stat-value stat-value--bold">
                   {Number(periodTotal).toFixed(2)}
                 </span>
               </div>

@@ -35,12 +35,12 @@ export default function ReportFilters({
     <div className="rp-controls">
       {showPeriod && (
         <div className="rp-control-group">
-          <span className="rp-control-label">Period</span>
+          <span className="label-eyebrow label-eyebrow--sm">Period</span>
           <div className="reports-toggle">
             {PERIODS.map(({ value, label }) => (
               <button
                 key={value}
-                className={`reports-toggle__btn${period === value ? " reports-toggle__btn--active" : ""}`}
+                className={`reports-toggle__btn toggle-btn${period === value ? " toggle-btn--active" : ""}`}
                 onClick={() => onPeriodChange(value)}
               >
                 {label}
@@ -51,7 +51,7 @@ export default function ReportFilters({
       )}
 
       <div className="rp-control-group">
-        <span className="rp-control-label">Date Range</span>
+        <span className="label-eyebrow label-eyebrow--sm">Date Range</span>
         <div className="reports-date-range">
           <input
             type="date"

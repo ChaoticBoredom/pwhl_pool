@@ -16,7 +16,7 @@ const BoxSelection = ({
   const hasPending = boxRequests.length > 0;
 
   return (
-    <div className="box-container mb-6">
+    <div className="box-container panel mb-6">
       <div className="box-selection__header">
         <h3>{box.name}</h3>
         {isDesktop && (
@@ -63,12 +63,12 @@ const BoxSelection = ({
                 </Player>
                 <div className="box-selection__badges">
                   {hasDrop && (
-                    <span className="box-selection__trade-badge box-selection__trade-badge--drop">
+                    <span className="action-badge action-badge--drop">
                       Drop pending
                     </span>
                   )}
                   {hasAdd && (
-                    <span className="box-selection__trade-badge box-selection__trade-badge--add">
+                    <span className="action-badge action-badge--add">
                       Add pending
                     </span>
                   )}
@@ -78,7 +78,7 @@ const BoxSelection = ({
                 <span className="score-label">
                   {isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}
                 </span>
-                <span className="score-value">{player.scores.season_to_date.toFixed(2)}</span>
+                <span className="stat-value stat-value--lg stat-value--bold">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
             </DataRow>
           );

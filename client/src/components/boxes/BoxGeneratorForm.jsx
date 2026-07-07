@@ -92,7 +92,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionSty
 function BoxConfigTable({ boxes, onChange, onRemove, positionStyles }) {
   return (
     <div className="box-config-table-wrapper">
-      <div className="box-config-table-header">
+      <div className="box-config-table-header label-eyebrow label-eyebrow--sm">
         <span></span>
         <span>Name</span>
         <span>Position</span>
@@ -207,7 +207,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
             ].map(({ label, value }) => (
               <button
                 key={value}
-                className={`player-drawer-mode-btn ${scope === value ? "player-drawer-mode-btn--active" : ""}`}
+                className={`player-drawer-mode-btn toggle-btn ${scope === value ? "toggle-btn--active" : ""}`}
                 onClick={() => setScope(value)}
               >
                 {label}
@@ -222,7 +222,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
             {SEASONS.map(({ label, value }) => (
               <button
                 key={String(value)}
-                className={`player-drawer-mode-btn ${seasonId === value ? "player-drawer-mode-btn--active" : ""}`}
+                className={`player-drawer-mode-btn toggle-btn ${seasonId === value ? "toggle-btn--active" : ""}`}
                 onClick={() => setSeasonId(value)}
               >
                 {label}

@@ -88,7 +88,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
 
   return (
     <div className="trades-panel__group">
-      <div className="trades-panel__group-header">
+      <div className="mob-trades-panel-header panel__header panel__header--gap-wrap">
         {isPending && (
           <input
             type="checkbox"
@@ -98,8 +98,8 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
             onChange={toggleAll}
           />
         )}
-        <div>
-          <span className="pool-team-name">{teamName}</span>
+        <div className="mob-team-info">
+          <span className="pool-team-name pool-team-name--clamped">{teamName}</span>
           <span className="pool-owner-name"> · {ownerName}</span>
         </div>
         <span className="trades-panel__group-date">{formatDateTime(requestedAt)}</span>
@@ -166,7 +166,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           isDeciding={isDeciding}
         >
           <div className="form-field">
-            <label className="form-label">Backdate to (optional)</label>
+            <label className="label-eyebrow label-eyebrow--md">Backdate to (optional)</label>
             <input
               type="date"
               className="form-input"
@@ -187,7 +187,7 @@ export default function TradeGroup({ teamName, ownerName, requestedAt, status, p
           isDeciding={isDeciding}
         >
           <div className="form-field">
-            <label className="form-label">Reason for rejection</label>
+            <label className="label-eyebrow label-eyebrow--md">Reason for rejection</label>
             <textarea
               className="form-input"
               value={rejectedReason}

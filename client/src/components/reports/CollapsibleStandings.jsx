@@ -17,7 +17,7 @@ export default function CollapsibleStandings({
   return (
     <div className="rp-standings-bar">
       <button className="rp-standings-toggle" onClick={() => setOpen(o => !o)}>
-        <span className="rp-section-label" style={{ margin: 0 }}>
+        <span className="label-eyebrow label-eyebrow--sm">
           Standings ({teams.length} teams)
         </span>
         <span className="rp-standings-chevron">{open ? "▲" : "▼"}</span>
@@ -35,13 +35,13 @@ export default function CollapsibleStandings({
             {sorted.map((team, i) => (
               <div
                 key={team.id}
-                className={`rp-standings-item${hiddenIds.has(team.id) ? " rp-standings-item--hidden" : ""}`}
+                className={`standings-row${hiddenIds.has(team.id) ? " standings-row--hidden" : ""}`}
                 onClick={() => onToggle(team.id)}
               >
                 <span className="standings-rank">{i + 1}</span>
-                <span className="standings-swatch" style={{ background: colourMap[team.id] }} />
-                <span className="rp-standings-item-name">{team.team_name}</span>
-                <span className="standings-score">{fmt(team.total_score)}</span>
+                <span className="swatch swatch--md" style={{ background: colourMap[team.id] }} />
+                <span className="standings-name">{team.team_name}</span>
+                <span className="stat-value stat-value--bold">{fmt(team.total_score)}</span>
               </div>
             ))}
           </div>

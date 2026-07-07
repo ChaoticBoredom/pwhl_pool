@@ -34,9 +34,9 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
         setNodeRef(el);
         if (ref) ref(el);
     }}
-      className={`box-column ${isOver ? "box-column--over" : ""} ${hasMatch ? "box-column--match" : ""}`}
+      className={`box-column panel ${isOver ? "box-column--over" : ""} ${hasMatch ? "box-column--match" : ""}`}
     >
-      <div className="box-column__header">
+      <div className="panel__header panel__header--gap">
         <span
           className="box-badge"
           style={boxBadgeStyle(box.position_type, box.rookie, positionStyles)}>

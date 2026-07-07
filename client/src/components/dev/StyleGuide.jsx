@@ -33,14 +33,10 @@ export default function StyleGuide() {
       </section>
 
       <section>
-        <h2>Add / Drop Pills</h2>
+        <h2>Action Badges</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <div className="pending-trade-group__player pending-trade-group__player--add">
-            <span className="pending-trade-group__action">Add</span>
-          </div>
-          <div className="pending-trade-group__player pending-trade-group__player--drop">
-            <span className="pending-trade-group__action">Drop</span>
-          </div>
+          <span className="action-badge action-badge--add">Add</span>
+          <span className="action-badge action-badge--drop">Drop</span>
         </div>
       </section>
 
@@ -102,15 +98,15 @@ export default function StyleGuide() {
         <h2>Form Elements</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "400px" }}>
           <div className="form-field">
-            <label className="form-label">Text input</label>
+            <label className="label-eyebrow label-eyebrow--md">Text input</label>
             <input className="form-input" placeholder="Placeholder text" />
           </div>
           <div className="form-field">
-            <label className="form-label">Textarea</label>
+            <label className="label-eyebrow label-eyebrow--md">Textarea</label>
             <textarea className="form-input" rows={3} placeholder="Placeholder text" />
           </div>
           <div className="form-field">
-            <label className="form-label">Select</label>
+            <label className="label-eyebrow label-eyebrow--md">Select</label>
             <select className="form-select">
               <option>Option A</option>
               <option>Option B</option>
@@ -143,6 +139,14 @@ export default function StyleGuide() {
           selected={selected}
           onToggle={toggle}
         />
+      </section>
+
+      <section>
+        <h2>Toggle Buttons</h2>
+        <div className="player-drawer-mode-toggle">
+          <button className="player-drawer-mode-btn toggle-btn toggle-btn--active">Active</button>
+          <button className="player-drawer-mode-btn toggle-btn">Inactive</button>
+        </div>
       </section>
 
       <section>

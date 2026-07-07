@@ -88,7 +88,7 @@ function PoolTeamDetails() {
       </div>
 
       <div className="player-list-container">
-        <DataRow isHeader gridClass={`${poolGrid} grid-header`}>
+        <DataRow isHeader gridClass={poolGrid}>
           <div>Player</div>
           <div />
           <div className="score-cell">Today</div>
