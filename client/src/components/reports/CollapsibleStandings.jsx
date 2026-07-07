@@ -39,7 +39,7 @@ export default function CollapsibleStandings({
                 onClick={() => onToggle(team.id)}
               >
                 <span className="standings-rank">{i + 1}</span>
-                <span className="standings-swatch" style={{ background: colourMap[team.id] }} />
+                <span className="swatch swatch--md" style={{ background: colourMap[team.id] }} />
                 <span className="standings-name">{team.team_name}</span>
                 <span className="stat-value stat-value--bold">{fmt(team.total_score)}</span>
               </div>

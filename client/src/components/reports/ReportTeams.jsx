@@ -76,7 +76,7 @@ function TeamDetail({ team, labels, colourMap }) {
   return (
     <div className="rp-drilldown">
       <div className="rp-drilldown-header">
-        <span className="rp-drilldown-swatch" style={{ background: colourMap[team.id] }} />
+        <span className="swatch swatch--lg" style={{ background: colourMap[team.id] }} />
         <span className="rp-drilldown-name">{team.team_name}</span>
         <span className="rp-drilldown-total">{fmt(team.total_score)} pts</span>
       </div>
@@ -231,7 +231,7 @@ export default function ReportTeams() {
                   onClick={() => navigate(`/pools/${poolId}/reports/teams/${team.id}`)}
                 >
                   <span className="standings-rank">{i + 1}</span>
-                  <span className="rp-team-card-swatch" style={{ background: colourMap[team.id] }} />
+                  <span className="swatch swatch--md" style={{ background: colourMap[team.id] }} />
                   <span className="rp-team-card-name">{team.team_name}</span>
                   <span className="rp-team-card-score">{fmt(team.total_score)}</span>
                 </div>
