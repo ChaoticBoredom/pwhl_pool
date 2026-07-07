@@ -1,6 +1,22 @@
 @import "tailwindcss";
 
 /* ============================================================
+   BREAKPOINTS
+   ============================================================
+   No CSS custom property equivalent exists for @media conditions
+   (var() isn't valid inside a media query condition — browser
+   limitation, not a Tailwind/Vite one). Treat these as the
+   canonical values; grep for the number before introducing a
+   new one.
+
+   768px  — mobile / nav-collapse breakpoint (used by .side-nav
+            and any `mob-` prefixed class)
+   1024px — tablet / condensed-layout breakpoint (app shell,
+            typography scaling)
+   640px  — small-grid breakpoint (stat/scoring card grids)
+   ============================================================ */
+
+/* ============================================================
    DESIGN TOKENS
    ============================================================ */
 
@@ -1197,7 +1213,6 @@ input::placeholder { color: var(--placeholder); }
   position: sticky;
   top: var(--top-bar-height);
   height: calc(100svh - var(--top-bar-height));
-  &.side-nav--collapsed { color: blue; }
 }
 
 .side-nav--collapsed { width: var(--side-nav-collapsed-width); }
@@ -2167,16 +2182,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .trades-panel__group:last-child { border-bottom: none; }
-
-.trades-panel__group-header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card-bg-elevated);
-}
 
 @media (max-width: 768px) {
   .mob-trades-panel-header {
