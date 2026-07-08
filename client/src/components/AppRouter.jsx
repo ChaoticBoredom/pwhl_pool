@@ -2,8 +2,8 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
+import AccountLayout from "@c/nav/AccountLayout";
 import PoolLayout from "@c/nav/PoolLayout"
-import TopBar from "@c/nav/TopBar";
 import LoadingState from "@c/shared/LoadingState";
 
 import CreatePool from "@c/pool/CreatePool";
@@ -37,14 +37,8 @@ export function AppRouter() {
       <Route path="/login" element={<AuthForm />} />
 
       <Route element={<RequireAuth />}>
-        <Route element={
-          <div className="pool-layout">
-            <TopBar />
-            <main className="pool-layout__main"><Outlet /></main>
-          </div>
-        }>
+        <Route element={<AccountLayout />}>
           <Route path="/" element={<Dashboard />}/>
-
           <Route path="/pools/new" element={<CreatePool />} />
         </Route>
 

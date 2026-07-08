@@ -55,7 +55,7 @@ export default function TradeRequestsConfig() {
       return res.json();
     },
     onSuccess: (_data, { status }) => {
-      add({ severity: "success", message: `Trade request${status === "approved" ? " approved" : " rejected"}.` });
+      add({ severity: "success", message: `Trade request ${status === "approved" ? "approved" : "rejected"}.` });
       queryClient.removeQueries({ queryKey: ["commissioner-trade-requests", poolId] });
     },
     onError: (err) => {

@@ -1,6 +1,22 @@
 @import "tailwindcss";
 
 /* ============================================================
+   BREAKPOINTS
+   ============================================================
+   No CSS custom property equivalent exists for @media conditions
+   (var() isn't valid inside a media query condition — browser
+   limitation, not a Tailwind/Vite one). Treat these as the
+   canonical values; grep for the number before introducing a
+   new one.
+
+   768px  — mobile / nav-collapse breakpoint (used by .side-nav
+            and any `mob-` prefixed class)
+   1024px — tablet / condensed-layout breakpoint (app shell,
+            typography scaling)
+   640px  — small-grid breakpoint (stat/scoring card grids)
+   ============================================================ */
+
+/* ============================================================
    DESIGN TOKENS
    ============================================================ */
 
@@ -23,8 +39,6 @@
   --shadow: rgba(0, 0, 0, 0.06) 0 2px 8px 0;
   --shadow-elevated: rgba(0, 0, 0, 0.1) 0 4px 12px -2px;
 
-  --input-bg: #1e1e1e;
-  --input-border: #444;
   --placeholder: #888;
 
   --warning-bg: rgba(245, 158, 11, 0.1);
@@ -196,16 +210,6 @@ code {
 
 .stack { display: flex; flex-direction: column; gap: 1rem; }
 
-.card {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #121212;
-  border: 1px solid #333;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-elevated);
-}
-
 .panel {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -224,6 +228,14 @@ code {
 .panel__header--split { justify-content: space-between; }
 .panel__header--gap { gap: 0.5rem; }
 .panel__header--gap-wrap { gap: 0.5rem; flex-wrap: wrap; }
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  box-shadow: var(--shadow-elevated);
+}
 
 .helper-text {
   color: var(--text-muted);
@@ -307,13 +319,6 @@ input {
 }
 
 input::placeholder { color: var(--placeholder); }
-
-.card input {
-  padding: 12px;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
-  color: #fff;
-}
 
 .radio-option {
   display: flex;
@@ -1197,7 +1202,6 @@ input::placeholder { color: var(--placeholder); }
   position: sticky;
   top: var(--top-bar-height);
   height: calc(100svh - var(--top-bar-height));
-  &.side-nav--collapsed { color: blue; }
 }
 
 .side-nav--collapsed { width: var(--side-nav-collapsed-width); }
@@ -2167,16 +2171,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .trades-panel__group:last-child { border-bottom: none; }
-
-.trades-panel__group-header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--card-bg-elevated);
-}
 
 @media (max-width: 768px) {
   .mob-trades-panel-header {

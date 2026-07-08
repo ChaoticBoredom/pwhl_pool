@@ -1,101 +1,84 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
+import { usePool } from "@/context/PoolContext";
+import useNotices from "@/hooks/useNotices";
+import LoadingState from "@c/shared/LoadingState";
 
 export default function JoinPoolPrompt() {
   const { poolId } = useParams();
   const navigate = useNavigate();
   const { currentUser, authHeaders } = useAuth();
-  const [poolName, setPoolName] = useState('Loading...');
-  const [teamName, setTeamName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [hasTeam, setHasTeam] = useState(false);
+  const { pool } = usePool();
+  const { add } = useNotices();
+  const [teamName, setTeamName] = useState("");
+
+  const existingTeam = pool?.pool_teams?.find((team) => team.user.id === currentUser);
+  const hasTeam = Boolean(existingTeam);
 
   useEffect(() => {
-    const fetchPoolData = async () => {
-      try {
-        const response = await fetch(`/api/pools/${poolId}`, { headers: authHeaders });
+    if (hasTeam) navigate(`/pools/${poolId}/teams/${existingTeam.id}`);
+  }, [hasTeam, existingTeam, navigate, poolId]);
 
-        if (response.ok) {
-          const result = await response.json();
-
-          setPoolName(result.name);
-
-          const existingTeam = result.pool_teams?.find(
-            team => team.user.id === currentUser
-          );
-
-          if (existingTeam) {
-            setHasTeam(true);
-            console.log("User already has a team, redirecting...");
-            navigate(`/pools/${poolId}/teams/${existingTeam.id}`);
-          }
-        }
-      } catch (err) {
-        console.error("Pool fetch error:", err);
-      }
-    };
-
-    if (poolId && currentUser) {
-      fetchPoolData();
-    }
-  }, [poolId, currentUser, navigate, authHeaders]);
-
-  const handleJoin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch(`/api/pool_teams`, {
-        method: 'POST',
+  const joinMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/pool_teams", {
+        method: "POST",
         headers: authHeaders,
         body: JSON.stringify({
           team: {
             team_name: teamName,
-            pool_id: poolId
-          }
-        })
+            pool_id: poolId,
+          },
+        }),
       });
+      if (!res.ok) throw new Error("Failed to create team");
+      return res.json();
+    },
+    onSuccess: (result) => {
+      navigate(`/pools/${poolId}/teams/${result.data.id}/select`);
+    },
+    onError: (err) => {
+      add({ severity: "error", message: err.message });
+    },
+  });
 
-      if (response.ok) {
-        const result = await response.json();
-
-        navigate(`/pools/${poolId}/teams/${result.data.id}/select`)
-      } else {
-        alert("Error creating team. Please try again.");
-      }
-    } catch (err) {
-      console.error("Team creation error:", err);
-    } finally {
-      setLoading(false);
-    }
+  const handleJoin = (e) => {
+    e.preventDefault();
+    joinMutation.mutate();
   };
 
   const getButtonText = () => {
-    if (hasTeam) return 'Redirecting to your team...';
-    if (loading) return 'Creating...';
-    return 'Create Team & Pick Players';
+    if (hasTeam) return "Redirecting to your team...";
+    if (joinMutation.isPending) return "Creating...";
+    return "Create Team & Pick Players";
   };
 
+  if (!pool) return <LoadingState message="Loading pool details..." />;
+
   return (
-    <div className="card">
+    <div className="panel auth-card">
       <p>
         You're joining:
       </p>
-      <h2>{poolName}</h2>
+      <h2>{pool.name}</h2>
 
       <form onSubmit={handleJoin} className="stack">
-        <label htmlFor="teamName">Team Name</label>
-        <input
-          id="teamName"
-          type="text"
-          placeholder="Enter your team name..."
-          value={teamName}
-          onChange={(e) => setTeamName(e.target.value)}
-          required
-          autoFocus
-        />
-        <button type="submit" className="btn-primary" disabled={loading || hasTeam}>
+        <div className="form-field">
+          <label htmlFor="teamName" className="label-eyebrow label-eyebrow--md">Team Name</label>
+          <input
+            id="teamName"
+            type="text"
+            className="form-input"
+            placeholder="Enter your team name..."
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            required
+            autoFocus
+          />
+        </div>
+        <button type="submit" className="btn-primary" disabled={joinMutation.isPending || hasTeam}>
           {getButtonText()}
         </button>
       </form>
