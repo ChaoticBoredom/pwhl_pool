@@ -4,7 +4,6 @@ import { RequireAuth } from "@c/auth/RequireAuth";
 import { Dashboard } from "@c/pool/Dashboard";
 import AccountLayout from "@c/nav/AccountLayout";
 import PoolLayout from "@c/nav/PoolLayout"
-import TopBar from "@c/nav/TopBar";
 import LoadingState from "@c/shared/LoadingState";
 
 import CreatePool from "@c/pool/CreatePool";
