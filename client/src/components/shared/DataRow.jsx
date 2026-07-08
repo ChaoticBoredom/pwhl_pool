@@ -1,24 +1,30 @@
+import { Children } from "react";
 import { Link } from "react-router-dom";
 
-export function DataRow({ to, children, gridClass = "", isHeader = false, compact = false, onClick }) {
-  const baseClasses = `grid ${gridClass} items-center w-full px-4 ${compact ? "py-1.5" : "py-3"}`;
+function buildGridStyle(columns) {
+  return {
+    "--data-row-grid": columns.map((c) => c.width).join(" "),
+    "--data-row-grid-mobile": columns.filter((c) => !c.hideOnMobile).map((c) => c.width).join(" "),
+  };
+}
 
-  if (isHeader) {
-    return (
-      <div className={`${baseClasses} data-row--header label-eyebrow label-eyebrow--md`}>
-        {children}
-      </div>
-    );
-  }
+export function DataRow({ to, children, columns = [], isHeader = false, onClick }) {
+  const style = buildGridStyle(columns);
 
-  const Content = (
-    <div
-      onClick={onClick}
-      className={`${baseClasses} data-row--content`}>
-      {children}
+  const cells = Children.toArray(children).map((child, i) => {
+    if (!columns[i]?.hideOnMobile) return child;
+    return <div className="mob-hide-cell" key={child.key ?? i}>{child}</div>;
+  });
+
+  const rowClass = isHeader
+    ? "data-row data-row--header label-eyebrow label-eyebrow--md"
+    : "data-row data-row--content";
+
+  const content = (
+    <div onClick={onClick} className={rowClass} style={style}>
+      {cells}
     </div>
   );
 
-  // If 'to' is provided, wrap in a Link; otherwise just show the row
-  return to ? <Link to={to} className="block no-underline">{Content}</Link> : Content;
+  return to ? <Link to={to} className="block no-underline">{content}</Link> : content;
 }
