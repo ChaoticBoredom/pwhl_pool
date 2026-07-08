@@ -6,18 +6,23 @@ import PoolContext from "@/context/PoolContext";
 import { DataRow } from "@c/shared/DataRow";
 import { formatDate } from "@/utils/formatDate";
 
+const poolColumns = [
+  { width: "40px" },
+  { width: "1fr" },
+  { width: "80px" },
+];
+
 export default function PoolDetails() {
   const { poolId } = useParams();
   const { authHeaders, currentUser } = useAuth();
   const { pool } = useContext(PoolContext);
-  const poolGrid = "grid-cols-[40px_1fr_160px_80px]";
 
   const { dataUpdatedAt } = useQuery({
     queryKey: ["pool", poolId],
     queryFn: () => fetch(`/api/pools/${poolId}`, { headers: authHeaders }).then((r) => r.json()),
     staleTime: 25_000,
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
-    gcTime: 5 * 60 * 1000, // 5 minutes to store cached data
+    gcTime: 5 * 60 * 1000,
   });
 
   const toOrdinal = (i) => {
@@ -52,22 +57,23 @@ export default function PoolDetails() {
       )}
 
       <div className="pool-standings">
-        <DataRow isHeader gridClass={poolGrid}>
+        <DataRow columns={poolColumns} isHeader>
           <div />
           <div>Team</div>
-          <div className="score-cell">Owner</div>
           <div className="score-cell">Score</div>
         </DataRow>
 
         {pool.pool_teams?.sort((a, b) => a.rank - b.rank)?.map((team) => (
-          <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} gridClass={poolGrid}>
+          <DataRow key={team.id} to={`/pools/${poolId}/teams/${team.id}`} columns={poolColumns}>
             <div className="pool-rank">{toOrdinal(team.rank)}</div>
-            <div className="pool-team-name">{team.team_name}</div>
-            <div className="pool-owner-name">{team.user?.name}</div>
-            <div className="score-cell font-bold">{team.total_score.toFixed(2)}</div>
+            <div className="pool-team-cell">
+              <span className="pool-team-name">{team.team_name}</span>
+              <span className="pool-team-owner">{team.user?.name}</span>
+            </div>
+            <div className="score-cell stat-value stat-value--bold">{team.total_score.toFixed(2)}</div>
           </DataRow>
         ))}
       </div>
     </div>
   );
-};
+}

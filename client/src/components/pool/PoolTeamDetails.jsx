@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { DataRow } from "@c/shared/DataRow";
@@ -12,9 +12,14 @@ import getTradingState from "@/utils/tradingState";
 
 import Player from "@c/players/Player";
 
-const GRID_MOBILE = "grid-cols-[1fr_80px]";
-const GRID_MD = "md:grid-cols-[1fr_100px_100px_80px_100px_80px]"
-const poolGrid = `${GRID_MOBILE} ${GRID_MD}`;
+const poolTeamColumns = [
+  { width: "1fr" },
+  { width: "80px" },
+  { width: "80px" },
+  { width: "90px", hideOnMobile: true },
+  { width: "90px", hideOnMobile: true },
+  { width: "80px", hideOnMobile: true },
+];
 
 function PoolTeamDetails() {
   const { teamId } = useParams()
@@ -23,7 +28,6 @@ function PoolTeamDetails() {
   const navigate = useNavigate();
 
   const [openDrawers, setOpenDrawers] = useState(new Set());
-  // Shared state for all drawers
   const { drawerState, updateDrawer } = useDrawerState();
 
   const toggleDrawer = (id) => {
@@ -39,7 +43,7 @@ function PoolTeamDetails() {
     queryFn: () => fetch(`/api/pool_teams/${teamId}`, { headers: authHeaders }).then((r) => r.json()),
     staleTime: 25_000,
     refetchInterval: (query) => { return query.state.data?.games_active ? 30_000 : false; },
-    gcTime: 5 * 60 * 1000, // 5 minutes to store data in the 'cache'
+    gcTime: 5 * 60 * 1000,
   });
 
   const { tradingIsBlocked } = getTradingState(poolTeam?.trade_state);
@@ -68,7 +72,7 @@ function PoolTeamDetails() {
       <div className="selection-header">
         <div>
           <h2 className="page-title">
-            {isOwner ? 
+            {isOwner ?
             (<EditableField value={poolTeam.team_name} onSave={saveTeamName} />) :
             (poolTeam.team_name)
             }
@@ -88,33 +92,29 @@ function PoolTeamDetails() {
       </div>
 
       <div className="player-list-container">
-        <DataRow isHeader gridClass={poolGrid}>
+        <DataRow columns={poolTeamColumns} isHeader>
           <div>Player</div>
           <div />
           <div className="score-cell">Today</div>
-          <div className="hidden md:block score-cell">Yesterday</div>
-          <div className="hidden md:block score-cell">
-            <span className="wrap-header">Month-to-Date</span>
-          </div>
-          <div className="hidden md:block score-cell">
-            <span className="wrap-header">Season</span>
-          </div>
+          <div className="score-cell">Yesterday</div>
+          <div className="score-cell"><span className="wrap-header">Month-to-Date</span></div>
+          <div className="score-cell">Season</div>
         </DataRow>
 
         {poolTeam.current_team?.
           sort((a, b) => a.pool_box_position - b.pool_box_position)?.
           map((player) => {
           const isOpen = openDrawers.has(player.id);
-          
+
           return (
             <div key={player.id} className="player-row-group">
-              <DataRow gridClass={poolGrid} onClick={() => toggleDrawer(player.id)}>
+              <DataRow columns={poolTeamColumns} onClick={() => toggleDrawer(player.id)}>
                 <Player player={player} />
                 <GameData gameId={player.games.today?.id} />
-                <div className="score-cell">{player.scores.scores.today.toFixed(2)}</div>
-                <div className="hidden md:block score-cell">{player.scores.scores.yesterday.toFixed(2)}</div>
-                <div className="hidden md:block score-cell">{player.scores.scores.month_to_date.toFixed(2)}</div>
-                <div className="hidden md:block score-cell">{player.scores.scores.season_to_date.toFixed(2)}</div>
+                <div className="stat-value">{player.scores.scores.today.toFixed(2)}</div>
+                <div className="stat-value">{player.scores.scores.yesterday.toFixed(2)}</div>
+                <div className="stat-value">{player.scores.scores.month_to_date.toFixed(2)}</div>
+                <div className="stat-value stat-value--bold">{player.scores.scores.season_to_date.toFixed(2)}</div>
               </DataRow>
               <div className={`player-drawer-wrapper ${isOpen ? "player-drawer-wrapper--open" : ""}`}>
                 <PlayerStatsDrawer
@@ -128,13 +128,13 @@ function PoolTeamDetails() {
             </div>
           );
         })}
-        <DataRow gridClass={`${poolGrid}`}>
+        <DataRow columns={poolTeamColumns}>
           <div className="font-semibold">Total</div>
-          <div className="hidden md:block"/>
           <div />
-          <div className="hidden md:block"/>
-          <div className="hidden md:block"/>
-          <div className="score-cell font-bold">{poolTeam.total_score?.toFixed(2)}</div>
+          <div />
+          <div />
+          <div />
+          <div className="stat-value stat-value--bold">{poolTeam.total_score?.toFixed(2)}</div>
         </DataRow>
       </div>
     </div>
