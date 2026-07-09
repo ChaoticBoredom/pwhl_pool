@@ -225,7 +225,7 @@ code {
   padding: 0.625rem 1rem;
 }
 
-.panel__header--split { justify-content: space-between; }
+.panel__header--split { justify-content: space-between; gap: 0.75rem; }
 .panel__header--gap { gap: 0.5rem; }
 .panel__header--gap-wrap { gap: 0.5rem; flex-wrap: wrap; }
 
@@ -413,6 +413,9 @@ input::placeholder { color: var(--placeholder); }
   cursor: pointer;
   color: var(--text-muted);
   font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
   transition: background 0.15s, color 0.15s;
 }
 
@@ -424,6 +427,23 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .toggle-btn--active { background: var(--accent); color: #fff; }
+
+.toggle-group {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.toggle-group--exclusive {
+  border: 1px solid var(--border);
+}
+
+.toggle-group--multi {
+  gap: 6px;
+  flex-wrap: wrap;
+  width: 100%;
+}
 
 /* ============================================================
    EDITABLE FIELD
