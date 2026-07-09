@@ -1,5 +1,4 @@
 import { ChevronRight } from "lucide-react";
-import { DataRow } from "@c/shared/DataRow";
 import Player from "@c/players/Player";
 
 const BoxSelection = ({
@@ -11,7 +10,6 @@ const BoxSelection = ({
   onExpandDetails,
   isDesktop,
 }) => {
-  const selectionGrid = "grid-cols-[1fr_80px]";
   const boxRequests = box.players.flatMap(p => pendingByPlayer[p.id] ?? []);
   const hasPending = boxRequests.length > 0;
 
@@ -46,11 +44,7 @@ const BoxSelection = ({
           const hasAdd = playerRequests.some(r => r.action === "add");
 
           return (
-            <DataRow
-              key={player.id}
-              gridClass={selectionGrid}
-              onClick={hasPending ? undefined : () => onSelect(player.id)}
-            >
+            <label key={player.id} className="player-option">
               <div className="box-selection__player-row">
                 <Player player={player}>
                   <input
@@ -62,16 +56,8 @@ const BoxSelection = ({
                   />
                 </Player>
                 <div className="box-selection__badges">
-                  {hasDrop && (
-                    <span className="action-badge action-badge--drop">
-                      Drop pending
-                    </span>
-                  )}
-                  {hasAdd && (
-                    <span className="action-badge action-badge--add">
-                      Add pending
-                    </span>
-                  )}
+                  {hasDrop && <span className="action-badge action-badge--drop">Drop pending</span>}
+                  {hasAdd && <span className="action-badge action-badge--add">Add pending</span>}
                 </div>
               </div>
               <div className="score-display-vertical">
@@ -80,7 +66,7 @@ const BoxSelection = ({
                 </span>
                 <span className="stat-value stat-value--lg stat-value--bold">{player.scores.season_to_date.toFixed(2)}</span>
               </div>
-            </DataRow>
+            </label>
           );
         })}
       </div>

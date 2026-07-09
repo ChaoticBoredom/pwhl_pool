@@ -289,6 +289,7 @@ code {
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: var(--text-h);
+  text-align: right;
 }
 
 .stat-value--lg { font-size: 1.1rem; }
@@ -453,12 +454,16 @@ input::placeholder { color: var(--placeholder); }
 
 .data-row {
   display: grid;
+  grid-template-columns: var(--data-row-grid);
   align-items: center;
   width: 100%;
   padding: 0.75rem 1rem;
 }
 
-.data-row--compact { padding: 0.375rem 1rem; }
+@media (max-width: 768px) {
+  .data-row { grid-template-columns: var(--data-row-grid-mobile); }
+  .mob-hide-cell { display: none; }
+}
 
 .data-row--header { background: var(--card-bg); border-bottom: 1px solid var(--border); }
 
@@ -515,6 +520,16 @@ input::placeholder { color: var(--placeholder); }
 .pool-team-name {
   font-weight: 600;
   color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pool-team-cell { display: flex; flex-direction: column; min-width: 0; }
+
+.pool-team-owner {
+  font-size: 0.75rem;
+  color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
