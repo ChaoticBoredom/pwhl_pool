@@ -1,19 +1,31 @@
-export function TeamToggleList({ teamCodes, teams, selected, onToggle }) {
+import { ToggleGroup } from "@c/shared/ToggleGroup";
+
+export function TeamToggleList({ teamCodes, teams, selected, onChange }) {
+  const options = teamCodes.map((code) => ({
+    label: code,
+    value: code,
+    style: selected.has(code)
+      ? { background: teams[code].bg, color: teams[code].text, borderColor: teams[code].bg }
+      : undefined,
+  }));
+
+  const selectAll = () => onChange(new Set(Object.keys(teams).filter((c) => c !== "default")));
+  const selectNone = () => onChange(new Set());
+
   return (
-    <div className="team-toggle-list">
-      {teamCodes.map((code) => (
-        <button
-          key={code}
-          className={`team-toggle ${selected.has(code) ? "team-toggle--active": ""}`}
-          style={selected.has(code)
-            ? { background: teams[code].bg, color: teams[code].text, borderColor: teams[code].bg }
-            : {}
-          }
-          onClick={() => onToggle(code)}
-        >
-          {code}
-        </button>
-      ))}
+    <div>
+      <ToggleGroup
+        mode="multi"
+        className="team-toggle"
+        options={options}
+        value={selected}
+        onChange={onChange}
+      />
+      <div className="free-agents-panel__team-controls">
+        <button className="btn-link" onClick={selectAll}>All</button>
+        <span className="free-agents-panel__team-sep">·</span>
+        <button className="btn-link" onClick={selectNone}>None</button>
+      </div>
     </div>
-  )
+  );
 }

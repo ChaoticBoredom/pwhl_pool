@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { isValidDate } from "@/utils/reportUtils";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 
 const PERIODS = [
   { value: "day",   label: "Day"   },
@@ -17,7 +18,6 @@ export default function ReportFilters({
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo, setLocalTo] = useState(to);
 
-  // Stable refs so effects don't need the callbacks in their dep arrays
   const onFromRef = useRef(onFromChange);
   const onToRef = useRef(onToChange);
   useEffect(() => { onFromRef.current = onFromChange; }, [onFromChange]);
@@ -36,17 +36,13 @@ export default function ReportFilters({
       {showPeriod && (
         <div className="rp-control-group">
           <span className="label-eyebrow label-eyebrow--sm">Period</span>
-          <div className="reports-toggle">
-            {PERIODS.map(({ value, label }) => (
-              <button
-                key={value}
-                className={`reports-toggle__btn toggle-btn${period === value ? " toggle-btn--active" : ""}`}
-                onClick={() => onPeriodChange(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <ToggleGroup
+            mode="exclusive"
+            className="toggle-btn"
+            options={PERIODS}
+            value={period}
+            onChange={onPeriodChange}
+          />
         </div>
       )}
 
