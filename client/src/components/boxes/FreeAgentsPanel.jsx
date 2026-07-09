@@ -5,6 +5,7 @@ import { matchesSearch } from "@/utils/searchUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { normalizePosition } from "@/utils/positionUtils";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 
 export default function FreeAgentsPanel({ players, isDragTarget, search, onSearchChange }) {
   const { teams, teamCodes, positionGroups } = useLeagueConstants();
@@ -13,23 +14,6 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
   const [positionFilters, setPositionFilters] = useState(new Set(POSITIONS));
   const [rookieFilter, setRookieFilter] = useState(null);
   const [sortDesc, setSortDesc] = useState(true);
-
-  const toggleTeam = (team) => {
-    setTeamFilter((prev) => {
-      const next = new Set(prev);
-      next.has(team) ? next.delete(team) : next.add(team);
-      return next;
-    });
-  };
-
-  const togglePosition = (pos) => {
-    setPositionFilters((prev) => {
-      const next = new Set(prev);
-      next.has(pos) ? next.delete(pos) : next.add(pos);
-      return next;
-    });
-  };
-
 
   const filtered = useMemo(() => {
     return players.
@@ -50,20 +34,13 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
           Free Agents
           <span className="free-agents-panel__count">{players.length}</span>
         </span>
-        <div className="player-drawer-mode-toggle">
-          <button
-            className={`player-drawer-mode-btn toggle-btn ${sortDesc ? "toggle-btn--active" : ""}`}
-            onClick={() => setSortDesc(true)}
-          >
-            Score ↓
-          </button>
-          <button
-            className={`player-drawer-mode-btn toggle-btn ${!sortDesc ? "toggle-btn--active" : ""}`}
-            onClick={() => setSortDesc(false)}
-          >
-            Score ↑
-          </button>
-        </div>
+        <ToggleGroup
+          mode="exclusive"
+          className="toggle-btn"
+          options={[{ label: "Score ↓", value: true }, { label: "Score ↑", value: false }]}
+          value={sortDesc}
+          onChange={setSortDesc}
+        />
       </div>
 
       <div className="free-agents-panel__filters">
@@ -78,36 +55,17 @@ export default function FreeAgentsPanel({ players, isDragTarget, search, onSearc
           teamCodes={teamCodes}
           teams={teams}
           selected={teamFilter}
-          onToggle={toggleTeam}
+          onChange={setTeamFilter}
         />
-        <div className="free-agents-panel__team-controls">
-          <button
-            className="btn-link"
-            onClick={() => setTeamFilter(new Set(Object.keys(teams).filter(c => c !== "default")))}
-          >
-            All
-          </button>
-          <span className="free-agents-panel__team-sep">·</span>
-          <button
-            className="btn-link"
-            onClick={() => setTeamFilter(new Set())}
-          >
-            None
-          </button>
-        </div>
 
         <div className="free-agents-panel__filter-row">
-          <div className="free-agents-panel__filter-group">
-            {POSITIONS.map((pos) => (
-              <button
-                key={pos}
-                className={`filter-toggle ${positionFilters.has(pos) ? "filter-toggle--active" : ""}`}
-                onClick={() => togglePosition(pos)}
-              >
-                {pos}
-              </button>
-            ))}
-          </div>
+          <ToggleGroup
+            mode="multi"
+            className="filter-toggle"
+            options={POSITIONS.map((pos) => ({ label: pos, value: pos }))}
+            value={positionFilters}
+            onChange={setPositionFilters}
+          />
 
           <button
             className={`filter-toggle filter-toggle--rookie ${rookieFilter ? "filter-toggle--active" : ""}`}

@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { boxBadgeStyle } from "@/utils/boxBadgeUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 
 const ROOKIE_OPTIONS = [
   { label: "No", value: false },
@@ -128,14 +129,6 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const toggleTeam = code => {
-    setSelectedTeams(prev => {
-      const next = new Set(prev);
-      next.has(code) ? next.delete(code) : next.add(code);
-      return next;
-    });
-  };
-
   const updateBox = useCallback((index, field, value) => {
     setBoxes(prev => prev.map((b, i) => i === index ? { ...b, [field]: value } : b));
   }, []);
@@ -192,7 +185,7 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
           teamCodes={teamCodes}
           teams={teamColours}
           selected={selectedTeams}
-          onToggle={toggleTeam}
+          onChange={setSelectedTeams}
         />
       </section>
 
@@ -200,35 +193,22 @@ const BoxGeneratorForm = ({ poolId, onGenerated }) => {
         <h2>Config</h2>
         <div className="generator-config-row">
           <label className="generator-config-label">Scope</label>
-          <div className="player-drawer-mode-toggle">
-            {[
-              { label: "Per team", value: "per_team" },
-              { label: "Global", value: "global" },
-            ].map(({ label, value }) => (
-              <button
-                key={value}
-                className={`player-drawer-mode-btn toggle-btn ${scope === value ? "toggle-btn--active" : ""}`}
-                onClick={() => setScope(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <ToggleGroup
+            mode="exclusive"
+            options={[{ label: "Per team", value: "per_team" }, { label: "Global", value: "global" }]}
+            value={scope}
+            onChange={setScope}
+          />
         </div>
 
         <div className="generator-config-row">
           <label className="generator-config-label">Season</label>
-          <div className="player-drawer-mode-toggle">
-            {SEASONS.map(({ label, value }) => (
-              <button
-                key={String(value)}
-                className={`player-drawer-mode-btn toggle-btn ${seasonId === value ? "toggle-btn--active" : ""}`}
-                onClick={() => setSeasonId(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <ToggleGroup
+            mode="exclusive"
+            options={SEASONS}
+            value={seasonId}
+            onChange={setSeasonId}
+          />
         </div>
       </section>
 
