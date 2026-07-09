@@ -1,74 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { formatDate } from "@/utils/formatDate";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 import { X } from "lucide-react";
 
 const TABS = [
-  { key: "today", label: "Today" },
-  { key: "week_to_date", label: "Week" },
-  { key: "month_to_date", label: "Month" },
-  { key: "season_to_date", label: "Season" },
+  { value: "today", label: "Today" },
+  { value: "week_to_date", label: "Week" },
+  { value: "month_to_date", label: "Month" },
+  { value: "season_to_date", label: "Season" },
 ];
 
 function formatToi(seconds) {
   if (!seconds) return "0:00";
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
-function TabBar({ active, onSelect }) {
-  return (
-    <div className="player-drawer-tabs" role="tablist">
-      {TABS.map(({ key, label }) => (
-        <button
-          key={key}
-          role="tab"
-          aria-selected={active === key}
-          onClick={() => onSelect(key)}
-          className={`player-drawer-tab ${active === key ? "player-drawer-tab--active" : ""}`}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function ModeToggle({ value, onChange }) {
-  return (
-    <div className="player-drawer-mode-toggle" role="group" aria-label="Display mode">
-      {[
-        { key: "raw", label: "Stats" },
-        { key: "points", label: "Points" },
-      ].map(({ key, label }) => (
-        <button
-          key={key}
-          onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn toggle-btn ${value === key ? "toggle-btn--active" : ""}`}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function ClipToggle({ clipped, onChange }) {
-  return (
-    <div className="player-drawer-mode-toggle" role="group" aria-label="Stat window">
-      {[
-        { key: false, label: "Full season" },
-        { key: true, label: "This pool" },
-      ].map(({ key, label }) => (
-        <button
-          key={String(key)}
-          onClick={() => onChange(key)}
-          className={`player-drawer-mode-btn toggle-btn ${clipped === key ? "toggle-btn--active" : ""}`}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 function StatRow({ field, rawValue, pointValue, mode, label }) {
@@ -139,11 +84,28 @@ export function PlayerStatsDrawer({ player, isOpen, onClose, drawerState, onDraw
   return (
     <div className="player-drawer" role="region" aria-label={`${player.name} stats`}>
       <div className="player-drawer-controls">
-        <TabBar active={tab} onSelect={(v) => onDrawerChange("tab", v)} />
+        <ToggleGroup
+          mode="exclusive"
+          className="player-drawer-tab"
+          wrapperClassName="player-drawer-tabs"
+          options={TABS}
+          value={tab}
+          onChange={(v) => onDrawerChange("tab", v)}
+        />
         <div className="player-drawer-actions">
-          <ModeToggle value={mode} onChange={(v) => onDrawerChange("mode", v)} />
+          <ToggleGroup
+            mode="exclusive"
+            options={[{ value: "raw", label: "Stats" }, { value: "points", label: "Points" }]}
+            value={mode}
+            onChange={(v) => onDrawerChange("mode", v)}
+          />
           {!isLeagueMode && (
-            <ClipToggle clipped={clipped} onChange={(v) => onDrawerChange("clipped", v)} />
+            <ToggleGroup
+              mode="exclusive"
+              options={[{ value: false, label: "Full season" }, { value: true, label: "This pool" }]}
+              value={clipped}
+              onChange={(v) => onDrawerChange("clipped", v)}
+            />
           )}
           {onClose && (
             <button
@@ -160,12 +122,12 @@ export function PlayerStatsDrawer({ player, isOpen, onClose, drawerState, onDraw
       <div className="player-drawer-summary">
         <span className="player-drawer-summary-score">
           {isLeagueMode
-            ? `${TABS.find(t => t.key === tab)?.label} total`
+            ? `${TABS.find(t => t.value === tab)?.label} total`
             : effectiveClipped && tab === "season_to_date"
             ? `Season from ${formatDate(player.added_at, { year: "numeric" })}`
             : effectiveClipped
-            ? `${TABS.find(t => t.key === tab)?.label} (pool)`
-            : `${TABS.find(t => t.key === tab)?.label} total`
+            ? `${TABS.find(t => t.value === tab)?.label} (pool)`
+            : `${TABS.find(t => t.value === tab)?.label} total`
           }
         </span>
       </div>

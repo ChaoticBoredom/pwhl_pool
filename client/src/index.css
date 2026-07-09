@@ -442,7 +442,6 @@ input::placeholder { color: var(--placeholder); }
 .toggle-group--multi {
   gap: 6px;
   flex-wrap: wrap;
-  width: 100%;
 }
 
 /* ============================================================

@@ -10,6 +10,7 @@ import ReportNav from "./ReportNav";
 import ReportFilters from "./ReportFilters";
 import ChartTooltip from "@c/shared/ChartTooltip";
 import LoadingState from "@c/shared/LoadingState";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 import CollapsibleStandings from "./CollapsibleStandings";
 import { periodLabel, seasonBounds } from "@/utils/reportUtils";
 import { buildColourMap } from "@/utils/colourUtils";
@@ -163,20 +164,15 @@ export default function ReportStandings() {
               {isZoomed && (
                 <button className="rp-reset-zoom" onClick={resetZoom}>Reset Zoom</button>
               )}
-              <div className="reports-toggle">
-                {[
+              <ToggleGroup
+                mode="exclusive"
+                options={[
                   { value: "cumulative", label: "Cumulative" },
                   { value: "periodic", label: "Per Period" },
-                ].map(({ value, label }) => (
-                  <button
-                    key={value}
-                    className={`reports-toggle__btn toggle-btn${view === value ? " toggle-btn--active" : ""}`}
-                    onClick={() => setView(value)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+                ]}
+                value={view}
+                onChange={setView}
+              />
             </div>
           </div>
 

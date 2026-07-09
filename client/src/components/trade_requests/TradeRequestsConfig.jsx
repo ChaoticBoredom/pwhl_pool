@@ -5,14 +5,15 @@ import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import LoadingState from "@c/shared/LoadingState";
 import TradeGroup from "./TradeGroup";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 import { groupTradeRequests } from "@/utils/groupTradeRequests";
 
-const STATUS_GROUPS = {
-  pending: ["pending"],
-  approved: ["approved", "auto_approved"],
-  rejected: ["rejected", "auto_rejected"],
-  cancelled: ["cancelled", "auto_cancelled"],
-};
+const STATUS_OPTIONS = [
+  { value: "pending", label: "Pending" },
+  { value: "approved", label: "Approved" },
+  { value: "rejected", label: "Rejected" },
+  { value: "cancelled", label: "Cancelled" },
+];
 
 export default function TradeRequestsConfig() {
   const { poolId } = useParams();
@@ -22,12 +23,11 @@ export default function TradeRequestsConfig() {
 
   const [activeStatuses, setActiveStatuses] = useState(new Set(["pending"]));
 
-  const toggleStatus = (key) => {
-    setActiveStatuses((prev) => {
-      const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
-      return next;
-    });
+  const STATUS_GROUPS = {
+    pending: ["pending"],
+    approved: ["approved", "auto_approved"],
+    rejected: ["rejected", "auto_rejected"],
+    cancelled: ["cancelled", "auto_cancelled"],
   };
 
   const { data: requests, isLoading, error } = useQuery({
@@ -79,17 +79,13 @@ export default function TradeRequestsConfig() {
     <div className="app-wrapper">
       <h1 className="setup-page-title">Trade Requests</h1>
 
-      <div className="free-agents-panel__filter-group">
-        {Object.keys(STATUS_GROUPS).map((key) => (
-          <button
-            key={key}
-            className={`filter-toggle ${activeStatuses.has(key) ? "filter-toggle--active" : ""}`}
-            onClick={() => toggleStatus(key)}
-          >
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </button>
-        ))}
-      </div>
+      <ToggleGroup
+        mode="multi"
+        className="filter-toggle"
+        options={STATUS_OPTIONS}
+        value={activeStatuses}
+        onChange={setActiveStatuses}
+      />
 
       {groups.length === 0 ? (
         <LoadingState
