@@ -1,19 +1,14 @@
 import { useState } from "react";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
+import { ToggleGroup } from "@c/shared/ToggleGroup";
 import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
 
 export default function StyleGuide() {
   const { teamCodes, teams, positionStyles } = useLeagueConstants();
   const [selected, setSelected] = useState(new Set(teamCodes));
-
-  const toggle = (code) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(code) ? next.delete(code) : next.add(code);
-      return next;
-    });
-  };
+  const [exclusiveDemo, setExclusiveDemo] = useState("active");
+  const [multiDemo, setMultiDemo] = useState(new Set(["F"]));
 
   return (
     <div className="app-wrapper" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -137,25 +132,28 @@ export default function StyleGuide() {
           teamCodes={teamCodes}
           teams={teams}
           selected={selected}
-          onToggle={toggle}
+          onChange={setSelected}
         />
       </section>
 
       <section>
-        <h2>Toggle Buttons</h2>
-        <div className="player-drawer-mode-toggle">
-          <button className="player-drawer-mode-btn toggle-btn toggle-btn--active">Active</button>
-          <button className="player-drawer-mode-btn toggle-btn">Inactive</button>
-        </div>
+        <h2>Toggle Group — Exclusive</h2>
+        <ToggleGroup
+          mode="exclusive"
+          options={[{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]}
+          value={exclusiveDemo}
+          onChange={setExclusiveDemo}
+        />
       </section>
 
       <section>
-        <h2>Filter Toggles</h2>
-        <div className="free-agents-panel__filter-group">
-          <button className="filter-toggle filter-toggle--active">F</button>
-          <button className="filter-toggle">D</button>
-          <button className="filter-toggle">G</button>
-        </div>
+        <h2>Toggle Group — Multi</h2>
+        <ToggleGroup
+          mode="multi"
+          options={[{ value: "F", label: "F" }, { value: "D", label: "D" }, { value: "G", label: "G" }]}
+          value={multiDemo}
+          onChange={setMultiDemo}
+        />
       </section>
     </div>
   );

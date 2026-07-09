@@ -442,6 +442,15 @@ input::placeholder { color: var(--placeholder); }
 .toggle-group--multi {
   gap: 6px;
   flex-wrap: wrap;
+  padding: 4px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.toggle-group--multi .toggle-btn {
+  background: var(--card-bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
 }
 
 /* ============================================================
@@ -763,17 +772,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .player-drawer-actions { display: flex; align-items: center; gap: 8px; }
-
-.player-drawer-mode-toggle {
-  display: flex;
-  border-radius: 4px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  font-size: 0.75rem;
-  width: fit-content;
-}
-
-.player-drawer-mode-btn { padding: 4px 10px; }
 
 .player-drawer-close {
   color: var(--text-muted);
@@ -1389,16 +1387,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .rp-control-group { display: flex; flex-direction: column; gap: 0.375rem; }
-
-.reports-toggle {
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  width: fit-content;
-}
-
-.reports-toggle__btn { padding: 0.3rem 0.875rem; font-size: 0.8rem; }
 
 .report-nav {
   display: flex;
@@ -2636,15 +2624,6 @@ input::placeholder { color: var(--placeholder); }
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-}
-
-.free-agents-panel__filter-group {
-  display: inline-flex;
-  width: fit-content;
-  gap: 2px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
 }
 
 .filter-toggle {
