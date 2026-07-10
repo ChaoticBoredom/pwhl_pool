@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatDateTime, formatDate } from "@/utils/formatDate";
+import { useTradeSelection } from "@/hooks/useTradeSelection";
 import { TradePair } from "./TradePair";
 
 const STATUS_LABELS = {
@@ -29,45 +30,26 @@ function ActionPanel({ onCancel, onConfirm, confirmLabel, confirmDisabled, isDec
 }
 
 export default function TradeGroup({ teamName, ownerName, requestedAt, status, pairs, onDecide, isDeciding }) {
-  const [selected, setSelected] = useState(() => new Set(pairs.map(p => p.poolBoxId)));
+  const {
+    selected,
+    allSelected,
+    someSelected,
+    toggleAll,
+    toggle,
+    selectedIds,
+    effectiveMaxBackdate,
+  } = useTradeSelection(pairs)
+
   const [actionPanel, setActionPanel] = useState(null); // null | "approve" | "reject"
   const [rejectedReason, setRejectedReason] = useState("");
   const [backdateInput, setBackdateInput] = useState("");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const isPending = status === "pending";
-  const allSelected = selected.size === pairs.length;
-  const someSelected = selected.size > 0 && !allSelected;
 
   const firstRequest = pairs[0]?.add ?? pairs[0]?.drop;
   const existingBackdatedTo = firstRequest?.backdated_to;
   const existingRejectedReason = firstRequest?.rejected_reason;
   const hasExtraDetails = Boolean(existingBackdatedTo || existingRejectedReason);
-
-  const toggleAll = () => {
-    setSelected(allSelected ? new Set() : new Set(pairs.map(p => p.poolBoxId)));
-  };
-
-  const toggle = (poolBoxId) => {
-    setSelected(prev => {
-      const next = new Set(prev);
-      next.has(poolBoxId) ? next.delete(poolBoxId) : next.add(poolBoxId);
-      return next;
-    });
-  };
-
-  const selectedIds = pairs
-    .filter(p => selected.has(p.poolBoxId))
-    .flatMap(p => [p.add?.id, p.drop?.id])
-    .filter(Boolean);
-
-  const selectedMaxBackdates = pairs
-    .filter((p) => selected.has(p.poolBoxId))
-    .map((p) => p.maxBackdate)
-    .filter(Boolean);
-
-  const effectiveMaxBackdate = selectedMaxBackdates.length
-    ? selectedMaxBackdates.reduce((min, d) => (d < min ? d : min))
-    : null;
 
   const closePanel = () => {
     setActionPanel(null);
