@@ -1583,18 +1583,6 @@ input::placeholder { color: var(--placeholder); }
   gap: 0.5rem;
 }
 
-.rp-dropped-badge {
-  font-size: 0.65rem;
-  font-weight: 600;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
-}
-
 .rp-tenure   { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
 .rp-cat-cell { text-align: right; }
 .rp-zero     { color: var(--text-muted); font-weight: 400; }
