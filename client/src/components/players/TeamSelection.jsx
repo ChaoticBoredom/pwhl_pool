@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import useNotices from "@/hooks/useNotices";
 import BoxSelection from "@c/boxes/BoxSelection";
 import SelectionDetailPanel from "@c/boxes/SelectionDetailPanel";
-import PendingTradesSection from "@c/trade_requests/PendingTradesSection";
+import CancellableTradesSection from "@c/cancellable_trades/CancellableTradesSection";
 import { useIsDesktop } from "@/hooks/useBreakpoint";
 import getTradingState from "@/utils/tradingState";
 
@@ -250,7 +250,7 @@ export default function TeamSelection() {
 
       {/* Mobile: pending requests section */}
       {!isDesktop && hasPendingTrades && tradeRequests.length > 0 && (
-        <PendingTradesSection
+        <CancellableTradesSection
           tradeRequests={tradeRequests}
           boxes={boxes}
           onCancel={cancelRequest}

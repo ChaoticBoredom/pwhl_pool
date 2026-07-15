@@ -1,6 +1,6 @@
 import TradesPanel from "./TradesPanel";
 
-export default function PendingTradesSection({ tradeRequests, boxes, onCancel, isCancelling }) {
+export default function CancellableTradesSection({ tradeRequests, boxes, onCancel, isCancelling }) {
   if (!tradeRequests.length) return null;
 
   return (

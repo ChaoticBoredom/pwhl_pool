@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { formatDateTime, formatDate } from "@/utils/formatDate";
 import { useTradeSelection } from "@/hooks/useTradeSelection";
-import { TradePair } from "./TradePair";
+import { TradePair } from "@c/shared/TradePair";
 
 const STATUS_LABELS = {
   pending: "Pending",

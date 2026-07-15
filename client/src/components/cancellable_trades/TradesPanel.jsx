@@ -1,4 +1,4 @@
-import PendingTradeGroup from "./PendingTradeGroup";
+import CancellableTradePair from "./CancellableTradePair";
 import { groupTradeRequests } from "@/utils/groupTradeRequests";
 import { formatDateTime } from "@/utils/formatDate";
 
@@ -22,7 +22,7 @@ export default function TradesPanel({ requests, boxes, onCancel, isCancelling })
             </button>
           </div>
           {group.pairs.map((pair) => (
-            <PendingTradeGroup
+            <CancellableTradePair
               key={pair.poolBoxId}
               boxName={pair.boxName ?? "Unknown Box"}
               requests={[pair.add, pair.drop].filter(Boolean)}

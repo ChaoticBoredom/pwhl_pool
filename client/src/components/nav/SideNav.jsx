@@ -154,9 +154,9 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
                   onClick={onNavigate}
                 />
                 <NavItem
-                  to={`${base}/trade_requests`}
+                  to={`${base}/trade_review`}
                   icon={ArrowRightLeft}
-                  label="Trade Requests"
+                  label="Review Trades"
                   collapsed={collapsed}
                   onClick={onNavigate}
                 />
