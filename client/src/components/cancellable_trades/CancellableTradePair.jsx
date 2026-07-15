@@ -1,6 +1,6 @@
-import { TradePair } from "./TradePair";
+import { TradePair } from "@c/shared/TradePair";
 
-export default function PendingTradeGroup({ boxName, requests, onCancel, isCancelling }) {
+export default function CancellableTradePair({ boxName, requests, onCancel, isCancelling }) {
   const drop = requests.find(r => r.action === "drop");
   const add = requests.find(r => r.action === "add");
   const poolBoxId = requests[0].pool_box.id;

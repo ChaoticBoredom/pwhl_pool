@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TeamBadge from "@c/shared/TeamBadge";
-import TradesPanel from "@c/trade_requests/TradesPanel";
+import TradesPanel from "@c/cancellable_trades/TradesPanel";
 
 const WINDOWS = [
   { key: "season_to_date", label: "Season" },

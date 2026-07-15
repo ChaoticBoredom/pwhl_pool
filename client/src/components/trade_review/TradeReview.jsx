@@ -15,7 +15,7 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-export default function TradeRequestsConfig() {
+export default function TradeReview() {
   const { poolId } = useParams();
   const { authHeaders } = useAuth();
   const { add } = useNotices();
@@ -77,7 +77,7 @@ export default function TradeRequestsConfig() {
 
   return (
     <div className="app-wrapper">
-      <h1 className="setup-page-title">Trade Requests</h1>
+      <h1 className="setup-page-title">Review Trade Requests</h1>
 
       <ToggleGroup
         mode="multi"
