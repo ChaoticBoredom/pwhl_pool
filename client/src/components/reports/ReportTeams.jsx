@@ -105,9 +105,9 @@ function TeamDetail({ team, labels, colourMap }) {
               >
                 <span className="rp-player-name">
                   {p.name}
-                  <span className="rp-team-badges">
+                  <span className="rp-team-list">
                     {p.team_short_codes.map((code, i) => (
-                      <span key={code} className="rp-team-badge-wrap">
+                      <span key={code} className="rp-team-list-item">
                         {i > 0 && <span className="rp-team-sep">/</span>}
                         <TeamBadge shortCode={code} />
                       </span>

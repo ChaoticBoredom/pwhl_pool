@@ -284,6 +284,8 @@ code {
 .label-eyebrow--md { font-size: 0.75rem;  letter-spacing: 0.06em; }
 .label-eyebrow--lg { font-size: 0.875rem; letter-spacing: 0.07em; }
 
+.label-eyebrow--accent { color: var(--accent); }
+
 .stat-value {
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -458,6 +460,8 @@ input::placeholder { color: var(--placeholder); }
    ============================================================ */
 
 .badge {
+  display: inline-block;
+  width: fit-content;
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -470,6 +474,8 @@ input::placeholder { color: var(--placeholder); }
 
 .badge--add  { background: var(--success-bg); color: var(--success-text); min-width: 36px; }
 .badge--drop { background: var(--warning-bg); color: var(--warning-text); min-width: 36px; }
+
+.badge--team { font-weight: 800; margin-top: 2px; line-height: 1.4; }
 
 .badge--neutral {
   background: var(--card-bg);
@@ -701,19 +707,6 @@ input::placeholder { color: var(--placeholder); }
   font-size: 0.65rem;
   color: var(--accent);
   line-height: 1;
-}
-
-.team-badge {
-  display: inline-block;
-  width: fit-content;
-  font-weight: 800;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 5px;
-  border-radius: 3px;
-  margin-top: 2px;
-  line-height: 1.4;
 }
 
 .score-display-vertical {
@@ -1616,9 +1609,9 @@ input::placeholder { color: var(--placeholder); }
 
 .rp-box-section .rp-player-table { border-top: none; border-radius: 0 0 var(--radius) var(--radius); }
 
-.rp-team-badges    { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.rp-team-badge-wrap { display: inline-flex; align-items: center; gap: 2px; }
-.rp-team-sep       { font-size: 0.65rem; color: var(--text-muted); line-height: 1; }
+.rp-team-list { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.rp-team-list-item { display: inline-flex; align-items: center; gap: 2px; }
+.rp-team-sep { font-size: 0.65rem; color: var(--text-muted); line-height: 1; }
 
 .rp-tabs {
   display: flex;

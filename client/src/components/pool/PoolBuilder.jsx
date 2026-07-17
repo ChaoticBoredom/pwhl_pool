@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePool } from "@/context/PoolContext";
-import StepBadge from "@c/shared/StepBadge";
+import StepIndicator from "@c/shared/StepIndicator";
 import LoadingState from "@c/shared/LoadingState";
 import ScoringEditor from "@c/pool/ScoringEditor";
 import BoxEditor from "@c/boxes/BoxEditor";
@@ -83,7 +83,7 @@ export default function PoolBuilder() {
 
   return (
     <div className="app-wrapper">
-      <StepBadge label="New Pool" step={step + 1} total={STEPS.length} />
+      <StepIndicator label="New Pool" step={step + 1} total={STEPS.length} />
       <h1 className="setup-page-title">{current.label}</h1>
 
       <current.Component

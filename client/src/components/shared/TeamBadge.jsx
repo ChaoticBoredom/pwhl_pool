@@ -6,7 +6,7 @@ const TeamBadge = ({ shortCode }) => {
 
   return (
     <span
-      className="team-badge"
+      className="badge badge--team"
       style={{
         backgroundColor: teamInfo.bg,
         color: teamInfo.text,

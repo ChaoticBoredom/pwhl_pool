@@ -6,9 +6,9 @@ export function boxBadgeStyle(position, rookie, positionStyles) {
 
   const border = (() => {
     switch (rookie) {
-    case true: return `2.5px solid ${styles.border}`;
-    case null: return `2px dashed ${styles.border}`;
-    case false: return `1px solid ${styles.border}`;
+    case true: return `2.5px solid ${styles.text}`;
+    case null: return `2px dashed ${styles.text}`;
+    case false: return `1px solid ${styles.text}`;
     }
   })();
 
