@@ -688,6 +688,12 @@ input::placeholder { color: var(--placeholder); }
 
 .player-display-row { display: flex; align-items: center; width: 100%; gap: 12px; }
 .player-identity-vertical { display: flex; flex-direction: column; text-align: left; }
+.player-pending-badges {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
 
 .player-name {
   font-weight: 600;
@@ -1917,20 +1923,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .box-selection__pending-count { font-weight: 600; }
-
-.box-selection__player-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.box-selection__badges {
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
-  padding-left: 2rem;
-}
 
 /* ============================================================
    SELECTION DETAIL PANEL
