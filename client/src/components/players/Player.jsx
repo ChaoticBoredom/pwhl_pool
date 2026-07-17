@@ -3,7 +3,7 @@ import TeamBadge from "@c/shared/TeamBadge";
 
 const Player = ({ player, badges, children }) => {
   return (
-    <div className="player-row-container flex items-left gap-3">
+    <div className="player-row-container flex items-center gap-3">
       {children && <div className="player-action">{children}</div>}
 
       <div className="player-identity-vertical">

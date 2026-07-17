@@ -1,6 +1,6 @@
 import { normalizePosition } from "./positionUtils";
 
-export function boxBadgeStyle(position, rookie, positionStyles) {
+export function positionLegendStyle(position, rookie, positionStyles) {
   const styles = positionStyles[position];
   if (!styles) return {};
 
@@ -15,12 +15,12 @@ export function boxBadgeStyle(position, rookie, positionStyles) {
   return { background: styles.bg, color: styles.text, border: border };
 }
 
-export function boxBadgeLabel(position, rookie) {
+export function positionLegendLabel(position, rookie) {
   if (!position) return "?";
   return rookie === true ? `R${position}` : position;
 }
 
-export function deriveBoxBadge(players, positionGroups) {
+export function derivePositionLegend(players, positionGroups) {
   if (!players?.length) return { position_type: null, rookie: null };
 
   const positions = [...new Set(players.map((p) => normalizePosition(p.position, positionGroups)))];

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { boxBadgeStyle } from "@/utils/boxBadgeUtils";
+import { positionLegendStyle } from "@/utils/positionLegendUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
 import { ToggleGroup } from "@c/shared/ToggleGroup";
@@ -41,7 +41,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionSty
     <div className="box-config-row">
       <span
         className="position-legend"
-        style={boxBadgeStyle(box.position, box.rookie, positionStyles)}>
+        style={positionLegendStyle(box.position, box.rookie, positionStyles)}>
         {box.rookie === true ? `R${box.position}` : box.position}
       </span>
 

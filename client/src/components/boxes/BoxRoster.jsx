@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ListEnd, ArrowUp, ArrowDown, X } from "lucide-react";
 import DraggablePlayer from "./DraggablePlayer";
-import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
+import { positionLegendStyle, positionLegendLabel } from "@/utils/positionLegendUtils";
 import { EditableField } from "@c/shared/EditableField";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { matchesSearch } from "@/utils/searchUtils";
@@ -39,8 +39,8 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
       <div className="panel__header panel__header--gap">
         <span
           className="position-legend"
-          style={boxBadgeStyle(box.position_type, box.rookie, positionStyles)}>
-          {boxBadgeLabel(box.position_type, box.rookie)}
+          style={positionLegendStyle(box.position_type, box.rookie, positionStyles)}>
+          {positionLegendLabel(box.position_type, box.rookie)}
         </span>
         <span className="box-column__name">
           <EditableField

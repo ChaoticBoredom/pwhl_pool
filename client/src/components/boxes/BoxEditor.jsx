@@ -15,7 +15,7 @@ import DraggablePlayer from "./DraggablePlayer";
 import Player from "@c/players/Player";
 import { matchesSearch } from "@/utils/searchUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
-import { deriveBoxBadge } from "@/utils/boxBadgeUtils";
+import { derivePositionLegend } from "@/utils/positionLegendUtils";
 
 export default function BoxEditor({
   poolId,
@@ -240,7 +240,7 @@ export default function BoxEditor({
         <div className="box-editor__layout">
           <div className="box-editor__boxes">
             {boxes.map((box, i) => {
-              const { position_type, rookie } = deriveBoxBadge(box.players, positionGroups);
+              const { position_type, rookie } = derivePositionLegend(box.players, positionGroups);
               return (
                 <BoxRoster
                   key={`${box.name}-${i}`}

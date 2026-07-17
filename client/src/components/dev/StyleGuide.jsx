@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
 import { ToggleGroup } from "@c/shared/ToggleGroup";
-import { boxBadgeStyle, boxBadgeLabel } from "@/utils/boxBadgeUtils";
+import { positionLegendStyle, positionLegendLabel } from "@/utils/positionLegendUtils";
 
 export default function StyleGuide() {
   const { teamCodes, teams, positionStyles } = useLeagueConstants();
@@ -39,22 +39,22 @@ export default function StyleGuide() {
         <h2>Position Badges (false / true / mixed)</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-false`} className="position-legend" style={boxBadgeStyle(pos, false, positionStyles)}>
-              {boxBadgeLabel(pos, false)}
+            <span key={`${pos}-false`} className="position-legend" style={positionLegendStyle(pos, false, positionStyles)}>
+              {positionLegendLabel(pos, false)}
             </span>
           ))}
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-true`} className="position-legend" style={boxBadgeStyle(pos, true, positionStyles)}>
-              {boxBadgeLabel(pos, true)}
+            <span key={`${pos}-true`} className="position-legend" style={positionLegendStyle(pos, true, positionStyles)}>
+              {positionLegendLabel(pos, true)}
             </span>
           ))}
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-mixed`} className="position-legend" style={boxBadgeStyle(pos, null, positionStyles)}>
-              {boxBadgeLabel(pos, null)}
+            <span key={`${pos}-mixed`} className="position-legend" style={positionLegendStyle(pos, null, positionStyles)}>
+              {positionLegendLabel(pos, null)}
             </span>
           ))}
         </div>
