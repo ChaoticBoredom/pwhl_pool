@@ -38,7 +38,7 @@ export default forwardRef(function BoxRoster({ box, isOver, onActions, searchTer
     >
       <div className="panel__header panel__header--gap">
         <span
-          className="box-badge"
+          className="position-legend"
           style={boxBadgeStyle(box.position_type, box.rookie, positionStyles)}>
           {boxBadgeLabel(box.position_type, box.rookie)}
         </span>

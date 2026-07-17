@@ -56,8 +56,8 @@ const BoxSelection = ({
                   />
                 </Player>
                 <div className="box-selection__badges">
-                  {hasDrop && <span className="action-badge action-badge--drop">Drop pending</span>}
-                  {hasAdd && <span className="action-badge action-badge--add">Add pending</span>}
+                  {hasDrop && <span className="badge badge--drop">Drop pending</span>}
+                  {hasAdd && <span className="badge badge--add">Add pending</span>}
                 </div>
               </div>
               <div className="score-display-vertical">

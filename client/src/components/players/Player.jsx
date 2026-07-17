@@ -11,7 +11,7 @@ const Player = ({ player, children }) => {
         <div className="player-meta">
           <TeamBadge shortCode={player.current_team_short_code} />
           {player.position && (
-            <span className="player-position-badge">{player.position}</span>
+            <span className="badge badge--neutral">{player.position}</span>
           )}
           {player.rookie && (
             <span className="player-rookie-star" title="Rookie">★</span>

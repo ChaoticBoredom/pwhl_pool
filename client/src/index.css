@@ -454,6 +454,40 @@ input::placeholder { color: var(--placeholder); }
 }
 
 /* ============================================================
+   BADGE — small uppercase pill, base + color modifiers
+   ============================================================ */
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.badge--add  { background: var(--success-bg); color: var(--success-text); min-width: 36px; }
+.badge--drop { background: var(--warning-bg); color: var(--warning-text); min-width: 36px; }
+
+.badge--neutral {
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.badge--commissioner { background: var(--accent-bg); color: var(--accent); }
+
+.badge--pending { background: var(--trade-pending-bg); color: var(--trade-pending-text); }
+.badge--approved,
+.badge--auto_approved { background: var(--trade-approved-bg); color: var(--trade-approved-text); }
+.badge--rejected,
+.badge--auto_rejected { background: var(--trade-rejected-bg); color: var(--trade-rejected-text); }
+.badge--cancelled,
+.badge--auto_cancelled { background: var(--trade-cancelled-bg); color: var(--trade-cancelled-text); }
+
+/* ============================================================
    EDITABLE FIELD
    ============================================================ */
 
@@ -661,18 +695,6 @@ input::placeholder { color: var(--placeholder); }
   align-items: center;
   gap: 0.25rem;
   flex-wrap: wrap;
-}
-
-.player-position-badge {
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 1px 4px;
-  border-radius: 3px;
-  background: var(--card-bg);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
 }
 
 .player-rookie-star {
@@ -1033,7 +1055,7 @@ input::placeholder { color: var(--placeholder); }
 
 .box-config-row { background: var(--card-bg-elevated); }
 
-.box-badge {
+.position-legend {
   font-size: 11px;
   font-weight: 700;
   padding: 2px 7px;
@@ -1063,15 +1085,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .box-remove-btn:hover { color: var(--danger-text); }
-
-.reference-season-badge {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  font-weight: 600;
-}
 
 .result-box-list { display: flex; flex-direction: column; gap: 8px; }
 
@@ -1926,21 +1939,6 @@ input::placeholder { color: var(--placeholder); }
   padding-left: 2rem;
 }
 
-.action-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 1px 6px;
-  border-radius: 3px;
-  flex-shrink: 0;
-  min-width: 36px;
-  text-align: center;
-}
-
-.action-badge--add { background: var(--success-bg); color: var(--success-text); }
-.action-badge--drop { background: var(--warning-bg); color: var(--warning-text); }
-
 /* ============================================================
    SELECTION DETAIL PANEL
    ============================================================ */
@@ -2244,24 +2242,6 @@ input::placeholder { color: var(--placeholder); }
 .trade-group__pair .trade-checkbox {
   margin-top: 0.25rem;
 }
-
-.trade-status-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.trade-status-badge--pending { background: var(--trade-pending-bg); color: var(--trade-pending-text); }
-.trade-status-badge--approved,
-.trade-status-badge--auto_approved { background: var(--trade-approved-bg); color: var(--trade-approved-text); }
-.trade-status-badge--rejected,
-.trade-status-badge--auto_rejected { background: var(--trade-rejected-bg); color: var(--trade-rejected-text); }
-.trade-status-badge--cancelled,
-.trade-status-badge--auto_cancelled { background: var(--trade-cancelled-bg); color: var(--trade-cancelled-text); }
 
 .trades-panel__cancel-all {
   display: flex;

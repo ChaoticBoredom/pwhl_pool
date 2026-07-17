@@ -40,7 +40,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionSty
   return (
     <div className="box-config-row">
       <span
-        className="box-badge"
+        className="position-legend"
         style={boxBadgeStyle(box.position, box.rookie, positionStyles)}>
         {box.rookie === true ? `R${box.position}` : box.position}
       </span>

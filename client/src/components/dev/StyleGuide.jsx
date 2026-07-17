@@ -17,21 +17,21 @@ export default function StyleGuide() {
       <section>
         <h2>Trade Status Badges</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <span className="trade-status-badge trade-status-badge--pending">Pending</span>
-          <span className="trade-status-badge trade-status-badge--approved">Approved</span>
-          <span className="trade-status-badge trade-status-badge--auto_approved">Auto-Approved</span>
-          <span className="trade-status-badge trade-status-badge--rejected">Rejected</span>
-          <span className="trade-status-badge trade-status-badge--auto_rejected">Auto-Rejected</span>
-          <span className="trade-status-badge trade-status-badge--cancelled">Cancelled</span>
-          <span className="trade-status-badge trade-status-badge--auto_cancelled">Auto-Cancelled</span>
+          <span className="badge badge--pending">Pending</span>
+          <span className="badge badge--approved">Approved</span>
+          <span className="badge badge--auto_approved">Auto-Approved</span>
+          <span className="badge badge--rejected">Rejected</span>
+          <span className="badge badge--auto_rejected">Auto-Rejected</span>
+          <span className="badge badge--cancelled">Cancelled</span>
+          <span className="badge badge--auto_cancelled">Auto-Cancelled</span>
         </div>
       </section>
 
       <section>
         <h2>Action Badges</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <span className="action-badge action-badge--add">Add</span>
-          <span className="action-badge action-badge--drop">Drop</span>
+          <span className="badge badge--add">Add</span>
+          <span className="badge badge--drop">Drop</span>
         </div>
       </section>
 
@@ -39,21 +39,21 @@ export default function StyleGuide() {
         <h2>Position Badges (false / true / mixed)</h2>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-false`} className="box-badge" style={boxBadgeStyle(pos, false, positionStyles)}>
+            <span key={`${pos}-false`} className="position-legend" style={boxBadgeStyle(pos, false, positionStyles)}>
               {boxBadgeLabel(pos, false)}
             </span>
           ))}
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-true`} className="box-badge" style={boxBadgeStyle(pos, true, positionStyles)}>
+            <span key={`${pos}-true`} className="position-legend" style={boxBadgeStyle(pos, true, positionStyles)}>
               {boxBadgeLabel(pos, true)}
             </span>
           ))}
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
           {Object.keys(positionStyles).map((pos) => (
-            <span key={`${pos}-mixed`} className="box-badge" style={boxBadgeStyle(pos, null, positionStyles)}>
+            <span key={`${pos}-mixed`} className="position-legend" style={boxBadgeStyle(pos, null, positionStyles)}>
               {boxBadgeLabel(pos, null)}
             </span>
           ))}

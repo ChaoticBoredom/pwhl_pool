@@ -113,7 +113,7 @@ function TeamDetail({ team, labels, colourMap }) {
                       </span>
                     ))}
                   </span>
-                  {!p.is_active && <span className="action-badge action-badge--drop">dropped</span>}
+                  {!p.is_active && <span className="badge badge--drop">dropped</span>}
                 </span>
                 <span className="rp-tenure">{tenureStr(p.tenures)}</span>
                 {keys.map(k => (
