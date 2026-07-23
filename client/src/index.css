@@ -2076,6 +2076,7 @@ input::placeholder { color: var(--placeholder); }
 
 .pool-team-name--clamped {
   max-width: 200px;
+  @apply truncate;
 }
 
 .trade-checkbox {
