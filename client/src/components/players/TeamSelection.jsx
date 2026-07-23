@@ -235,7 +235,7 @@ export default function TeamSelection() {
         </div>
 
         {isDesktop && (
-          <aside className="selection-panel-aside">
+          <aside className="sticky-column">
             <SelectionDetailPanel
               panel={detailPanel}
               boxes={boxes}

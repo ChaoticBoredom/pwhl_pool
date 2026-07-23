@@ -49,7 +49,7 @@ function GroupHeader({ selection, team, requestedAt, status }) {
         <span className="pool-owner-name"> · {owner}</span>
       </div>
       <span className="trades-panel__group-date">{formatDateTime(requestedAt)}</span>
-      <span className={`trade-status-badge trade-status-badge--${status}`}>{STATUS_LABELS[status] ?? status}</span>
+      <span className={`badge badge--${status}`}>{STATUS_LABELS[status] ?? status}</span>
     </div>
   );
 }

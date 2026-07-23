@@ -19,10 +19,6 @@ export default function BoxGenerator() {
         <section className="generator-section generator-results">
           <div className="generator-section-header">
             <h2>Results</h2>
-            {/* This is not a field on the API response right now... */}
-            {draft.using_reference_season && (
-              <span className="reference-season-badge">reference season</span>
-            )}
             {/* TODO: save action not yet wired up — this generator flow is preview-only for now */}
             <button className="btn-primary btn-sm" disabled>Save boxes</button>
           </div>

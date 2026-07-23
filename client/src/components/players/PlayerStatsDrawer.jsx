@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { formatDate } from "@/utils/formatDate";
+import IconButton from "@c/shared/IconButton";
 import { ToggleGroup } from "@c/shared/ToggleGroup";
 import { X } from "lucide-react";
 
@@ -108,13 +109,7 @@ export function PlayerStatsDrawer({ player, isOpen, onClose, drawerState, onDraw
             />
           )}
           {onClose && (
-            <button
-              onClick={onClose}
-              className="player-drawer-close"
-              aria-label={`Close ${player.name} stats`}
-            >
-              <X size={13} />
-            </button>
+            <IconButton icon={X} label={`Close ${player.name} stats`} onClick={onClose} size={13} />
           )}
         </div>
       </div>

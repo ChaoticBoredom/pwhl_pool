@@ -42,24 +42,24 @@ const BoxSelection = ({
           const playerRequests = pendingByPlayer[player.id] ?? [];
           const hasDrop = playerRequests.some(r => r.action === "drop");
           const hasAdd = playerRequests.some(r => r.action === "add");
+          const pendingBadges = (hasDrop || hasAdd) && (
+            <>
+              {hasDrop && <span className="badge badge--drop">Drop pending</span>}
+              {hasAdd && <span className="badge badge--add">Add pending</span>}
+            </>
+          );
 
           return (
             <label key={player.id} className="player-option">
-              <div className="box-selection__player-row">
-                <Player player={player}>
-                  <input
-                    type="radio"
-                    name={`box-${box.id}`}
-                    checked={isSelected}
-                    onChange={() => onSelect(player.id)}
-                    disabled={hasPending}
-                  />
-                </Player>
-                <div className="box-selection__badges">
-                  {hasDrop && <span className="action-badge action-badge--drop">Drop pending</span>}
-                  {hasAdd && <span className="action-badge action-badge--add">Add pending</span>}
-                </div>
-              </div>
+              <Player player={player} badges={pendingBadges}>
+                <input
+                  type="radio"
+                  name={`box-${box.id}`}
+                  checked={isSelected}
+                  onChange={() => onSelect(player.id)}
+                  disabled={hasPending}
+                />
+              </Player>
               <div className="score-display-vertical">
                 <span className="score-label">
                   {isCurrentSeason ? "SEASON-TO-DATE" : "LAST SEASON"}

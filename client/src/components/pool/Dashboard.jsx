@@ -46,10 +46,7 @@ export function Dashboard() {
             <div className="player-display-row">
               <div className="player-identity-vertical">
                 <span className="player-name">{pool.name}</span>
-                <span className="team-badge" style={{
-                  background: pool.is_admin ? "var(--accent-bg)" : "var(--card-bg)",
-                  color: pool.is_admin ? "var(--accent)" : "var(--text-muted)",
-                }}>
+                <span className={`badge badge--${pool.is_admin ? "commissioner" : "neutral"}`}>
                   {pool.is_admin ? "Commissioner" : "Member"}
                 </span>
               </div>
