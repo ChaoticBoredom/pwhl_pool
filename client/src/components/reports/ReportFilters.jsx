@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { isValidDate } from "@/utils/reportUtils";
+import IconButton from "@c/shared/IconButton";
 import { ToggleGroup } from "@c/shared/ToggleGroup";
+import { X } from "lucide-react";
 
 const PERIODS = [
   { value: "day",   label: "Day"   },
@@ -65,13 +67,13 @@ export default function ReportFilters({
             onChange={e => setLocalTo(e.target.value)}
           />
           {(localFrom || localTo) && (
-            <button
-              className="reports-date-clear"
+            <IconButton
+              icon={X}
+              label="Clear date range"
               onClick={() => { setLocalFrom(""); setLocalTo(""); }}
-              title="Clear date range"
-            >
-              ✕
-            </button>
+              className="icon-btn--hover-bg"
+              size={13}
+            />
           )}
         </div>
       </div>

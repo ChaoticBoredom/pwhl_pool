@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
+import { X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { positionLegendStyle } from "@/utils/positionLegendUtils";
 import { useLeagueConstants } from "@/constants/useLeagueConstants";
+import IconButton from "@c/shared/IconButton";
 import { TeamToggleList } from "@c/shared/TeamToggleList";
 import { ToggleGroup } from "@c/shared/ToggleGroup";
 
@@ -85,7 +87,7 @@ function BoxConfigRow({ box, index, onChange, onRemove, derivedRank, positionSty
         />
       </div>
 
-      <button className="box-remove-btn" onClick={() => onRemove(index)} aria-label="Remove box">×</button>
+      <IconButton icon={X} label="Remove box" onClick={() => onRemove(index)} size={16} />
     </div>
   );
 }

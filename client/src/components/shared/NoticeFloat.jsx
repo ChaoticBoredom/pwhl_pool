@@ -1,4 +1,6 @@
 import useNotices from "@/hooks/useNotices";
+import { Check, Info, TriangleAlert, X } from "lucide-react";
+import IconButton from "@c/shared/IconButton";
 
 const ICONS = {
   error: "✕",
@@ -37,13 +39,7 @@ export default function NoticeFloat() {
             )}
           </div>
           {notice.dismissable !== false && (
-            <button
-              className="notice-float__close"
-              onClick={() => dismiss(notice.id)}
-              aria-label="Dismiss"
-            >
-              ×
-            </button>
+            <IconButton icon={X} label="Dismiss" onClick={() => dismiss(notice.id)} className="notice-float__close" size={13} />
           )}
         </div>
       ))}

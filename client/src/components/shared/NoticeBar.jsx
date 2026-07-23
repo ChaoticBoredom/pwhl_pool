@@ -1,4 +1,6 @@
 import useNotices from "@/hooks/useNotices";
+import { Check, Info, TriangleAlert, X } from "lucide-react";
+import IconButton from "@c/shared/IconButton";
 
 const ICONS = {
   success: "✓",
@@ -24,13 +26,7 @@ export default function NoticeBar() {
               </a>
             )}
           </span>
-          <button
-            className="notice-bar__dismiss"
-            onClick={() => dismiss(notice.id)}
-            aria-label="Dismiss"
-          >
-            ×
-          </button>
+          <IconButton icon={X} label="Dismiss" onClick={() => dismiss(notice.id)} className="notice-bar__dismiss" size={13} />
         </div>
       ))}
     </div>
