@@ -286,6 +286,13 @@ code {
 
 .label-eyebrow--accent { color: var(--accent); }
 
+.sticky-column {
+  position: sticky;
+  top: calc(var(--top-bar-height) + 1.5rem);
+  max-height: calc(100svh - var(--top-bar-height) - 3rem);
+  overflow-y: auto;
+}
+
 .stat-value {
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -1868,13 +1875,6 @@ input::placeholder { color: var(--placeholder); }
 
 .selection-grid { min-width: 0; }
 
-.selection-panel-aside {
-  position: sticky;
-  top: calc(var(--top-bar-height) + 1.5rem);
-  max-height: calc(100svh - var(--top-bar-height) - 3rem);
-  overflow-y: auto;
-}
-
 /* ============================================================
    BOX SELECTION — header and badges
    ============================================================ */
@@ -2413,13 +2413,6 @@ input::placeholder { color: var(--placeholder); }
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.box-editor__sidebar {
-  position: sticky;
-  top: calc(var(--top-bar-height) + 1.5rem);
-  max-height: calc(100svh - var(--top-bar-height) - 3rem);
-  overflow-y: auto;
 }
 
 .box-column { transition: border-color 0.15s; }

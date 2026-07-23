@@ -260,7 +260,7 @@ export default function BoxEditor({
             })}
           </div>
 
-          <div className="box-editor__sidebar">
+          <div className="sticky-column">
             <FreeAgentsPanel
               players={freeAgents}
               isDragTarget={activePlayer !== null && overBoxName === null}
