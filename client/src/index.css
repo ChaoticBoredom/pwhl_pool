@@ -621,9 +621,7 @@ input::placeholder { color: var(--placeholder); }
 .pool-team-name {
   font-weight: 600;
   color: var(--accent);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @apply truncate;
 }
 
 .pool-team-cell { display: flex; flex-direction: column; min-width: 0; }
@@ -631,9 +629,7 @@ input::placeholder { color: var(--placeholder); }
 .pool-team-owner {
   font-size: 0.75rem;
   color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @apply truncate;
 }
 
 .pool-owner-name { text-align: right; color: var(--text); }
@@ -672,10 +668,8 @@ input::placeholder { color: var(--placeholder); }
 .standings-name {
   color: var(--text-h);
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
+  @apply truncate;
 }
 
 /* ============================================================
@@ -1179,12 +1173,10 @@ input::placeholder { color: var(--placeholder); }
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-h);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
   line-height: var(--top-bar-height);
   height: var(--top-bar-height);
+  @apply truncate;
 }
 
 .top-bar__actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
@@ -1259,11 +1251,9 @@ input::placeholder { color: var(--placeholder); }
   letter-spacing: 0.07em;
   color: var(--accent);
   padding: 0 0.875rem 0.75rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   border-bottom: 1px solid var(--border);
   margin-bottom: 0.5rem;
+  @apply truncate;
 }
 
 .side-nav__section { margin-bottom: 0.25rem; }
@@ -1538,7 +1528,7 @@ input::placeholder { color: var(--placeholder); }
 
 .rp-team-card--hidden { opacity: 0.35; }
 .rp-team-card:hover { background: var(--accent-bg); border-color: var(--accent-border); }
-.rp-team-card-name   { flex: 1; font-size: 0.875rem; font-weight: 600; color: var(--text-h); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rp-team-card-name   { flex: 1; font-size: 0.875rem; font-weight: 600; color: var(--text-h); @apply truncate; }
 .rp-team-card-score  { font-family: var(--mono); font-size: 0.875rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
 
 .rp-drilldown { padding: 1rem; }
@@ -1581,12 +1571,10 @@ input::placeholder { color: var(--placeholder); }
 .rp-player-name {
   font-weight: 600;
   color: var(--text-h);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  @apply truncate;
 }
 
 .rp-tenure   { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
@@ -1871,9 +1859,7 @@ input::placeholder { color: var(--placeholder); }
   color: var(--text-h);
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @apply truncate;
 }
 
 .selection-panel__subtitle {
@@ -1936,15 +1922,6 @@ input::placeholder { color: var(--placeholder); }
   flex: 1;
 }
 
-.selection-pending__name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-h);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .selection-pending__team {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -1999,10 +1976,8 @@ input::placeholder { color: var(--placeholder); }
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-h);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
+  @apply truncate;
 }
 
 .comparison-table__sort-btn {
@@ -2068,9 +2043,7 @@ input::placeholder { color: var(--placeholder); }
   color: var(--text-h);
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @apply truncate;
 }
 
 /* ============================================================
@@ -2103,9 +2076,6 @@ input::placeholder { color: var(--placeholder); }
 
 .pool-team-name--clamped {
   max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .trade-checkbox {
