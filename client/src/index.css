@@ -1668,11 +1668,11 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .notice-bar__icon {
-  font-size: 0.875rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   width: 16px;
-  text-align: center;
 }
 
 .notice-bar__message {
@@ -1732,28 +1732,7 @@ input::placeholder { color: var(--placeholder); }
   background: var(--action-notice-bg);
 }
 
-.notice-float__icon-wrap {
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 800;
-  margin-top: 1px;
-}
-
-.notice-float__item--error .notice-float__icon-wrap {
-  background: var(--danger-text);
-  color: white;
-}
-
-.notice-float__item--action .notice-float__icon-wrap {
-  background: var(--action-text);
-  color: white;
-}
+.notice-float__icon { flex-shrink: 0; margin-top: 1px; }
 
 .notice-float__body { flex: 1; min-width: 0; }
 
@@ -1802,21 +1781,6 @@ input::placeholder { color: var(--placeholder); }
 }
 
 .notice-float__btn--secondary:hover { color: var(--text-h); border-color: var(--text-muted); }
-
-.notice-float__close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  line-height: 1;
-  padding: 0 2px;
-  flex-shrink: 0;
-  transition: color 0.15s;
-  margin-top: 1px;
-}
-
-.notice-float__close:hover { color: var(--text-h); }
 
 /* ============================================================
    SELECTION LAYOUT — responsive two-column
