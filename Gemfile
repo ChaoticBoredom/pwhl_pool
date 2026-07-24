@@ -75,3 +75,6 @@ gem "sidekiq-cron", "~> 2.3"
 gem "redis"
 
 gem "props_template", "~> 1.0"
+
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
