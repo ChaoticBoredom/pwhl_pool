@@ -43,6 +43,8 @@ gem "positioning"
 gem "colorize"
 
 group :development, :test do
+  gem "dotenv-rails"
+
   gem "pry"
   gem "pry-byebug"
   gem "pry-rails"
