@@ -6,15 +6,15 @@ class Session < ApplicationRecord
 
   def self.create_exchange_code_for(session)
     code = SecureRandom.hex(16)
-    Rails.cache.write("session_excahnge:#{code}", session.token, expires_in: EXCHANGE_CODE_TTL)
+    Rails.cache.write("session_exchange:#{code}", session.token, expires_in: EXCHANGE_CODE_TTL)
     code
   end
 
   def self.find_by_exchange_code(code)
-    token = Rails.cache.read("session_excahnge:#{code}")
+    token = Rails.cache.read("session_exchange:#{code}")
     return nil unless token
 
-    Rails.cache.delete("session_excahnge:#{code}")
+    Rails.cache.delete("session_exchange:#{code}")
     find_by(token: token)
   end
 
