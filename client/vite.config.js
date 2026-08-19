@@ -33,6 +33,14 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         bypass: (req) => req.headers.accept?.includes('text/html') ? '/' : null
+      },
+      '/auth/google_oauth2': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/auth/failure': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
       }
     }
   }

@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
 
     if session
       Current.session = session
-      render json: { data: { token: session.token, user: session.user.id, god: session.user.admmin } }
+      render json: { data: { token: session.token, user: session.user.id, god: session.user.admin } }
     else
       render json: {}, status: :unauthorized
     end

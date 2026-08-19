@@ -1,7 +1,13 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :google_oauth2,
-    Rails.application.credentials.dig(:google, :client_id),
-    Rails.application.credentials.dig(:google, :client_secret)
+    ENV.fetch("GOOGLE_CLIENT_ID", nil),
+    ENV.fetch("GOOGLE_CLIENT_SECRET", nil)
 end
 
-OmniAuth.config.allowed_request_methods = [:get]
+OmniAuth.config.on_failure = Proc.new do |env|
+  if env["omniauth.error.type"] == :access_denied
+    OmniAuth::FailureEndpoint.new(env).redirect_to_failure
+  else
+    OmniAuth::FailureEndpoint.call(env)
+  end
+end
