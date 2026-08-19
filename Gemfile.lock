@@ -256,9 +256,6 @@ GEM
     omniauth-oauth2 (1.9.0)
       oauth2 (>= 2.0.2, < 3)
       omniauth (~> 2.0)
-    omniauth-rails_csrf_protection (2.0.1)
-      actionpack (>= 4.2)
-      omniauth (~> 2.0)
     ostruct (0.6.3)
     parallel (2.1.0)
     parser (3.3.11.1)
@@ -484,7 +481,6 @@ DEPENDENCIES
   image_processing (~> 1.2)
   kamal
   omniauth-google-oauth2
-  omniauth-rails_csrf_protection
   pg (~> 1.1)
   positioning
   props_template (~> 1.0)
