@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import LoadingState from "@c/shared/LoadingState";
@@ -7,33 +8,34 @@ export default function AuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const hasRun = useRef(false);
+  const code = searchParams.get("code");
+
+  const { data, isError } = useQuery({
+    queryKey: ["session-exchange", code],
+    queryFn: async () => {
+      const response = await fetch("/api/session/exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (!response.ok) throw new Error("Sign-in failed");
+      return response.json();
+    },
+    enabled: Boolean(code),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    if (hasRun.current) return;
-    hasRun.current = true;
-
-    const code = searchParams.get("code");
     if (!code) {
       navigate("/login");
-      return;
+    } else if (data) {
+      login(data.data.user, data.data.token, data.data.god);
+      navigate("/");
+    } else if (isError) {
+      navigate("/login?error=oauth_failed");
     }
-
-    fetch("/api/session/exchange", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Sign-in failed");
-        return response.json();
-      })
-      .then((result) => {
-        login(result.data.user, result.data.token, result.data.god);
-        navigate("/");
-      })
-      .catch(() => navigate("/login?error=oauth_failed"));
-  }, [searchParams, navigate, login]);
+  }, [code, data, isError, navigate, login]);
 
   return <LoadingState />;
 }
