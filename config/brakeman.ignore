@@ -1,0 +1,28 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "bd22eab57577085ada053c547808ca4f31a46b339753796941b3f288fb80981b",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/omniauth_callbacks_controller.rb",
+      "line": 9,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(\"#{frontend_url}/auth/callback?code=#{Session.create_exchange_code_for(start_new_session_for(find_or_create_user(request.env[\"omniauth.auth\"])))}\", :allow_other_host => true)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "OmniauthCallbacksController",
+        "method": "create"
+      },
+      "user_input": "Session.create_exchange_code_for(start_new_session_for(find_or_create_user(request.env[\"omniauth.auth\"])))",
+      "confidence": "Weak",
+      "cwe_id": [
+        601
+      ],
+      "note": "This redirect is protected, the string comes from en\b\bENV vars \b, not i\buser input"
+    }
+  ],
+  "brakeman_version": "8.0.6"
+}
