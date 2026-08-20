@@ -43,6 +43,8 @@ gem "positioning"
 gem "colorize"
 
 group :development, :test do
+  gem "dotenv-rails"
+
   gem "pry"
   gem "pry-byebug"
   gem "pry-rails"
@@ -75,3 +77,5 @@ gem "sidekiq-cron", "~> 2.3"
 gem "redis"
 
 gem "props_template", "~> 1.0"
+
+gem "omniauth-google-oauth2"

@@ -116,6 +116,12 @@ function AuthFormInner() {
         </button>
       </form>
 
+      <form action="/auth/google_oauth2" method="POST" className="stack">
+        <button type="submit" className="btn-secondary">
+          Sign in with Google
+        </button>
+      </form>
+
       <button onClick={() => setIsLogin(!isLogin)} className="btn-link">
         {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Log In"}
       </button>

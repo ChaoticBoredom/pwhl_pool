@@ -9,6 +9,7 @@ import LoadingState from "@c/shared/LoadingState";
 import CreatePool from "@c/pool/CreatePool";
 
 import AuthForm from "@c/auth/AuthForm";
+import AuthCallback from "@c/auth/AuthCallback";
 import JoinPoolPrompt from "@c/pool/JoinPoolPrompt";
 import PoolDetails from "@c/pool/PoolDetails";
 import ScoringView from "@c/pool/ScoringView";
@@ -35,6 +36,7 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<AuthForm />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
       <Route element={<RequireAuth />}>
         <Route element={<AccountLayout />}>

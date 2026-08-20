@@ -29,6 +29,11 @@ module PwhlPoolApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Required to make omniauth work properly
+    config.session_store :cookie_store, key: "_pwhl_pool_session"
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
+
     # Show emails in console, but continue to filter elsewhere
     console do
       ActiveSupport.on_load(:active_record) do

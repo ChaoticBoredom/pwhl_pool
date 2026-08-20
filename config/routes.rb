@@ -12,6 +12,10 @@ Sidekiq::Web.use(Rack::Session::Cookie, secret: secret_key_base)
 Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
 
+  get "/auth/:provider/callback", to: "omniauth_callbacks#create"
+  get "/auth/failure", to: "omniauth_callbacks#failure"
+  post "/api/session/exchange", to: "sessions#exchange"
+
   scope :api, defaults: { format: :json } do
     post "/users", to: "users#create"
     resource :session
