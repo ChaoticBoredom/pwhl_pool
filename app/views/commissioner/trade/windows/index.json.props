@@ -1,0 +1,3 @@
+json.array! @trade_windows do |trade_window|
+  json.partial! partial: "trade/windows/trade_window", locals: { trade_window: trade_window }
+end

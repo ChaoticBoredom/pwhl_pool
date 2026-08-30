@@ -1,0 +1,2 @@
+json.partial! partial: "trade/windows/trade_window", locals: { trade_window: @trade_window }
+
