@@ -68,6 +68,7 @@ Rails.application.routes.draw do
         namespace :reports do
           resource :score_summary, only: [:show], controller: "score_summary"
         end
+        resources :trade_windows, only: [:index, :create, :update, :destroy], controller: "trade/windows"
       end
     end
   end
