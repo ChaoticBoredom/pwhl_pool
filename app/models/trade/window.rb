@@ -12,6 +12,6 @@ class Trade::Window < ApplicationRecord
     # Validations do not short circuit, need to ensure this is set or will throw unrelated errors
     return if open_window.nil?
 
-    errors.add(:open_window, "start must be before end") if open_window.begin > open_window.end
+    errors.add(:open_window, "start must be before end") if open_window.begin >= open_window.end
   end
 end

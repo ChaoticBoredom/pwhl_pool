@@ -17,10 +17,10 @@ RSpec.describe Trade::Window, type: :model do
       expect(window).to be_valid
     end
 
-    it "is valid when the start is the same as the end" do
+    it "is invalid when the start is the same as the end" do
       window_date = 4.days.from_now
       window = build(:trade_window, open_window: window_date..window_date)
-      expect(window).to be_valid
+      expect(window).to_not be_valid
     end
   end
 
