@@ -8,8 +8,7 @@ class Commissioner::Trade::WindowsController < Commissioner::BaseController
   end
 
   def create
-    @trade_window = @pool.trade_windows.new(open_window: window_range)
-    @trade_window.save!
+    @trade_window = @pool.trade_windows.create!(open_window: window_range)
 
     render :show, status: :created
   rescue ArgumentError => e
