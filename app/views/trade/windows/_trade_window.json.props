@@ -1,0 +1,3 @@
+json.id trade_window.id
+json.window_start trade_window.open_window.begin.iso8601(3)
+json.window_end trade_window.open_window.end.iso8601(3)
