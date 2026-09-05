@@ -109,7 +109,7 @@ export default function TradeWindowRow({ window, isNew, onSave, onDelete }) {
   }
 
   return (
-    <div className="stack">
+    <div className="stack trade-window-row--editing">
       <DataRow columns={tradeWindowColumns}>
         <div className="page-actions">
           <input

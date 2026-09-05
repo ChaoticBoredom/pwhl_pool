@@ -2155,6 +2155,18 @@ input::placeholder { color: var(--placeholder); }
 }
 
 /* ============================================================
+   TRADE WINDOWS
+   ============================================================ */
+
+.trade-window-row--editing .data-row--content,
+.trade-window-row--editing .data-row--content:hover {
+  cursor: default;
+  background: var(--card-bg-elevated);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ============================================================
    CREATE POOL / SETUP FLOW
    ============================================================ */
 
