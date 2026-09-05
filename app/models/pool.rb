@@ -97,4 +97,10 @@ class Pool < ApplicationRecord
       trade_windows.current.exists? ? :allowed : :pending_approval
     end
   end
+
+  def next_trade_window
+    return nil unless trade_policy_windowed? || trade_policy_windowed_overflow?
+
+    trade_windows.upcoming.first
+  end
 end

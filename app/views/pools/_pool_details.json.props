@@ -6,6 +6,14 @@ json.season_id pool.season_id
 json.reference_season_id pool.reference_season_id
 json.trade_policy pool.trade_policy
 
+json.next_trade_window do
+  window = pool.next_trade_window
+  if window
+    json.window_start window.open_window.begin.iso8601(3)
+    json.window_end window.open_window.end.iso8601(3)
+  end
+end
+
 json.pool_boxes_count pool.active_box_count
 json.pool_scoring_count pool.configured_scoring_count
 

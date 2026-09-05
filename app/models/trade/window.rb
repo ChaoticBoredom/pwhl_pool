@@ -5,6 +5,7 @@ class Trade::Window < ApplicationRecord
   belongs_to :pool
 
   scope :current, -> { where("open_window @> ?::timestamptz", Time.current) }
+  scope :upcoming,  -> { where("upper(open_window) > ?", Time.current).order(open_window: :asc) }
 
   private
 

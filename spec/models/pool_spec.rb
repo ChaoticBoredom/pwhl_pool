@@ -231,4 +231,38 @@ RSpec.describe Pool, type: :model do
       expect(subject.trade_policy_result).to be(:blocked)
     end
   end
+
+  describe "#next_trade_window" do
+    context "when the pool's trade policy is not windowed" do
+      let!(:existing_window) { create(:trade_window, pool: subject) }
+
+      [:disabled, :open, :approval_required].each do |policy|
+        it "returns nil for #{policy}" do
+          subject.update(trade_policy: policy)
+          expect(subject.next_trade_window).to be_nil
+        end
+      end
+    end
+
+    [:windowed, :windowed_overflow].each do |policy|
+      context "with #{policy}" do
+        before(:each) { subject.update(trade_policy: policy) }
+
+        it "returns nil when there are no trade windows" do
+          expect(subject.next_trade_window).to be_nil
+        end
+
+        it "returns the upcoming window when none are current" do
+          future_window = create(:trade_window, :future, pool: subject)
+          expect(subject.next_trade_window).to eq(future_window)
+        end
+
+        it "returns the current window over a later upcoming one" do
+          current_window = create(:trade_window, pool: subject)
+          future_window = create(:trade_window, :future, pool: subject)
+          expect(subject.next_trade_window).to eq(current_window)
+        end
+      end
+    end
+  end
 end
