@@ -48,7 +48,7 @@ function PoolTeamDetails() {
   });
 
   const { pool } = usePool();
-   const { tradingIsBlocked, tradingIsPendingApproval } = getTradingState(poolTeam?.trade_state);
+  const { tradingIsBlocked, tradingIsPendingApproval } = getTradingState(poolTeam?.trade_state);
 
   const { mutateAsync: saveTeamName } = useMutation({
     mutationFn: (newName) => fetch(`/api/pool_teams/${teamId}`, {
