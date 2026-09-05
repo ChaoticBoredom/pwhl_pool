@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { usePool } from "@/context/PoolContext";
-import { Plus } from "lucide-react";
-// import TradeWindowRow from "./TradeWindowRow";
+import TradeWindowRow from "./TradeWindowRow";
 
 export default function TradeWindows() {
   const { pool } = usePool();
@@ -10,15 +9,15 @@ export default function TradeWindows() {
   const queryClient = useQueryClient();
 
   const windowsQuery = useQuery({
-    queryKey: ["trade-windows", pool.id],
+    queryKey: ["commissioner-trade-windows", pool.id],
     queryFn: async () => {
-      const res = await  fetch(`/api/commissioner/${pool.id}/trade_windows`, { headers: authHeaders });
+      const res = await fetch(`/api/commissioner/${pool.id}/trade_windows`, { headers: authHeaders });
       if (!res.ok) throw new Error("Failed to load trade windows");
       return res.json();
     },
   });
 
-  const invalidateWindows = () => queryClient.invalidateQueries({ queryKey: ["trade-windows", pool.id] });
+  const removeWindows = () => queryClient.removeQueries({ queryKey: ["commissioner-trade-windows", pool.id] });
 
   const createMutation = useMutation({
     mutationFn: async ({ window_start, window_end }) => {
@@ -35,7 +34,7 @@ export default function TradeWindows() {
 
       return res.json();
     },
-    onSuccess: invalidateWindows,
+    onSuccess: removeWindows,
   });
 
   const updateMutation = useMutation({
@@ -48,12 +47,12 @@ export default function TradeWindows() {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || err.errors.join(", ") || "Failed to update trade window");
+        throw new Error(err.error || err.errors?.join(", ") || "Failed to update trade window");
       }
 
       return res.json();
     },
-    onSuccess: invalidateWindows,
+    onSuccess: removeWindows,
   });
 
   const deleteMutation = useMutation({
@@ -65,7 +64,7 @@ export default function TradeWindows() {
 
       if (!res.ok) throw new Error("Failed to delete trade window");
     },
-    onSuccess: invalidateWindows,
+    onSuccess: removeWindows,
   });
 
   return (
@@ -81,7 +80,7 @@ export default function TradeWindows() {
 
       {windowsQuery.data && (
         <div className="stack">
-          {/*{windowsQuery.data.map((window) => (
+          {windowsQuery.data.map((window) => (
             <TradeWindowRow
               key={window.id}
               window={window}
@@ -93,7 +92,7 @@ export default function TradeWindows() {
           <TradeWindowRow
             isNew
             onSave={(values) => createMutation.mutateAsync(values)}
-          />*/}
+          />
         </div>
       )}
     </div>
