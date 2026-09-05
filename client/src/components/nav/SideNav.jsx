@@ -6,7 +6,7 @@ import { usePool } from "@/context/PoolContext";
 import {
   Trophy, Shirt, Star, StarPlus, FileBarChart, BarChart2,
   Home, ChevronDown, ChevronRight, ReplaceAll, SquarePen,
-  ArrowRightLeft,
+  ArrowRightLeft, CalendarRange
 } from "lucide-react";
 
 // eslint-disable-next-line no-unused-vars
@@ -160,6 +160,15 @@ export default function SideNav({ poolId, collapsed, onNavigate, className = "" 
                   collapsed={collapsed}
                   onClick={onNavigate}
                 />
+                {(pool.trade_policy === "windowed" || pool.trade_policy === "windowed_overflow") && (
+                  <NavItem
+                    to={`${base}/trade_windows`}
+                    icon={CalendarRange}
+                    label="Trade Windows"
+                    collapsed={collapsed}
+                    onClick={onNavigate}
+                  />
+                )}
               </>
             )}
           </NavSection>

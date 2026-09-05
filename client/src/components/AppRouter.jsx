@@ -21,7 +21,8 @@ const PoolBuilder = lazy(() => import("@c/pool/PoolBuilder"));
 const BoxGenerator = lazy(() => import("@c/boxes/BoxGenerator"));
 const BoxConfig = lazy(() => import("@c/boxes/BoxConfig"));
 const PoolSettingsConfig = lazy(() => import("@c/pool/PoolSettingsConfig"));
-const TradeReview = lazy(() => import("@c/trade_review/TradeReview"));
+const TradeReview = lazy(() => import("@c/trade/TradeReview"));
+const TradeWindows = lazy(() => import("@c/trade/TradeWindows"));
 const ScoringConfig = lazy(() => import("@c/pool/ScoringConfig"));
 const ReportStandings = lazy(() => import("@c/reports/ReportStandings"));
 const ReportCategories = lazy(() => import("@c/reports/ReportCategories"));
@@ -77,6 +78,7 @@ export function AppRouter() {
             <Route path="/pools/:poolId/boxes/edit" element={<BoxConfig />} />
             <Route path="/pools/:poolId/scoring/edit" element={<ScoringConfig />} />
             <Route path="/pools/:poolId/trade_review" element={<TradeReview />} />
+            <Route path="/pools/:poolId/trade_windows" element={<TradeWindows />} />
             <Route path="/pools/:poolId/box_generator" element={<BoxGenerator />} />
             <Route path="/pools/:poolId/reports/standings" element={<ReportStandings />} />
             <Route path="/pools/:poolId/reports/categories" element={<ReportCategories />} />

@@ -36,7 +36,7 @@ export default function PoolLayout() {
     }
   };
 
-  const { data: pool } = useQuery({
+  const { data: pool, isLoading } = useQuery({
     queryKey: ["pool", poolId],
     queryFn: () =>
       fetch(`/api/pools/${poolId}`, { headers: authHeaders }).then(r => r.json()),
@@ -51,6 +51,8 @@ export default function PoolLayout() {
   }, [pool]);
 
   const isCommissioner = pool && (pool.admin.id === currentUser || isGod);
+
+  if (isLoading || !pool) return <div className="loading-state">Loading pool...</div>;
 
   return (
     <NoticeProvider>

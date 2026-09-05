@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
+import { usePool } from "@/context/PoolContext";
 import { DataRow } from "@c/shared/DataRow";
 import { EditableField } from "@c/shared/EditableField";
 import { GameData } from "@c/shared/GameData";
 import { PlayerStatsDrawer } from "@c/players/PlayerStatsDrawer";
 import { useDrawerState } from "@/hooks/useDrawerState";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate, formatDateRange } from "@/utils/formatDate";
 import getTradingState from "@/utils/tradingState";
 
 import Player from "@c/players/Player";
@@ -46,7 +47,8 @@ function PoolTeamDetails() {
     gcTime: 5 * 60 * 1000,
   });
 
-  const { tradingIsBlocked } = getTradingState(poolTeam?.trade_state);
+  const { pool } = usePool();
+  const { tradingIsBlocked, tradingIsPendingApproval } = getTradingState(poolTeam?.trade_state);
 
   const { mutateAsync: saveTeamName } = useMutation({
     mutationFn: (newName) => fetch(`/api/pool_teams/${teamId}`, {
@@ -79,6 +81,16 @@ function PoolTeamDetails() {
           </h2>
           <span className="helper-text">Manager: {poolTeam.owner?.name}</span>
           <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
+          {isOwner && pool.next_trade_window && (
+            <span className="helper-text">
+              Next Trade Window: {formatDateRange(pool.next_trade_window.window_start, pool.next_trade_window.window_end)}
+            </span>
+          )}
+          {isOwner && tradingIsPendingApproval && (
+            <span className="helper-text">
+              Trades requested now will be pending until approved by the commissioner.
+            </span>
+          )}
         </div>
         {isOwner && (
           <button

@@ -12,7 +12,7 @@ export default function PoolSettingsConfig() {
   const handleSave = (save) => {
     save().then(() => {
       queryClient.invalidateQueries({ queryKey: ["pool", poolId] });
-      navigate(-1);
+      navigate(`/pools/${poolId}`);
     });
   };
 

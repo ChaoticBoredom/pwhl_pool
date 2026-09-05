@@ -33,4 +33,14 @@ RSpec.describe Trade::Window, type: :model do
       expect(described_class.current).to match_array([current_window])
     end
   end
+
+  describe ".upcoming" do
+    let!(:current_window) { create(:trade_window) }
+    let!(:future_window) { create(:trade_window, :future) }
+    let!(:past_window) { create(:trade_window, :past) }
+
+    it "returns current and future windows ordered soonest first" do
+      expect(described_class.upcoming).to eq([current_window, future_window])
+    end
+  end
 end
