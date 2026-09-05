@@ -8,7 +8,7 @@ import { EditableField } from "@c/shared/EditableField";
 import { GameData } from "@c/shared/GameData";
 import { PlayerStatsDrawer } from "@c/players/PlayerStatsDrawer";
 import { useDrawerState } from "@/hooks/useDrawerState";
-import { formatDate, formatDateTime } from "@/utils/formatDate";
+import { formatDate, formatDateRange } from "@/utils/formatDate";
 import getTradingState from "@/utils/tradingState";
 
 import Player from "@c/players/Player";
@@ -83,7 +83,7 @@ function PoolTeamDetails() {
           <span className="helper-text">Last Updated At: {lastFetchedAt}</span>
           {isOwner && pool.next_trade_window && (
             <span className="helper-text">
-              Next Trade Window: {formatDateTime(pool.next_trade_window.window_start)} &ndash; {formatDateTime(pool.next_trade_window.window_end)}
+              Next Trade Window: {formatDateRange(pool.next_trade_window.window_start, pool.next_trade_window.window_end)}
             </span>
           )}
           {isOwner && tradingIsPendingApproval && (

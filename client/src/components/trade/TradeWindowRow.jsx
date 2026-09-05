@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import IconButton from "@c/shared/IconButton";
 import { DataRow } from "@c/shared/DataRow";
+import { formatDateRange } from "@/utils/formatDate";
 
 const tradeWindowColumns = [
   { width: "1fr" },
@@ -19,8 +20,6 @@ function formatLocalInputValue(d) {
 function toLocalInputValue(isoString) {
   if (!isoString) return "";
 
-  const d = new Date(isoString);
-  
   return formatLocalInputValue(new Date(isoString));
 }
 
@@ -29,13 +28,6 @@ function defaultLocalValue(hours, minutes) {
   d.setHours(hours, minutes, 0, 0);
 
   return formatLocalInputValue(d);
-}
-
-function formatDisplay(isoString) {
-  return new Date(isoString).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
 }
 
 export default function TradeWindowRow({ window, isNew, onSave, onDelete }) {
@@ -99,7 +91,7 @@ export default function TradeWindowRow({ window, isNew, onSave, onDelete }) {
   if (!isEditing) {
     return (
       <DataRow columns={tradeWindowColumns}>
-        <span>{formatDisplay(window.window_start)} &ndash; {formatDisplay(window.window_end)}</span>
+        <span>{formatDateRange(window.window_start, window.window_end, { year: "numeric" })}</span>
         <div className="box-column__move">
           <IconButton icon={Pencil} label="Edit trade window" onClick={() => setIsEditing(true)} />
           <IconButton icon={Trash2} label="Delete trade window" onClick={onDelete} />
