@@ -3,9 +3,10 @@ class Pool::TeamPlayer < ApplicationRecord
   belongs_to :pool
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
-  belongs_to :pool_box, class_name: "Pool::Box"
+  belongs_to :pool_box, class_name: "Pool::Box", optional: true
 
   validates :added_at, presence: true
+  validates :pool_box, presence: true, if: -> { pool.box_select? }
   validate :dropped_at_after_added_at
 
   delegate :name, :current_team_id, :records, to: :league_player
