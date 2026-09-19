@@ -462,6 +462,12 @@ input::placeholder { color: var(--placeholder); }
   border-radius: 4px;
 }
 
+.toggle-group--multi .toggle-btn--active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ============================================================
    ICON BUTTON — reset button wrapping a single icon
    ============================================================ */
