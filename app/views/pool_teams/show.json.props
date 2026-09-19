@@ -18,7 +18,7 @@ json.current_team do
     json.id tp.id
     json.partial! partial: "players/player", locals: { player: player, id_field: "league_player_id" }
     json.added_at tp.added_at
-    json.pool_box_position tp.pool_box.position
+    json.pool_box_position tp.pool_box.position if tp.pool_box
 
     json.scores do
       json.pool_score summary[:pool_score]
