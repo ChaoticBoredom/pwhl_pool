@@ -51,6 +51,6 @@ class Pool::TeamPlayer < ApplicationRecord
   def pool_box_matches_pool
     return if pool_box.nil?
 
-    errors.add(:pool_box, "must belong to the same pool") if pool_box.pool_id != pool_i
+    errors.add(:pool_box, "must belong to the same pool") if pool_box.pool_id != pool_id
   end
 end
