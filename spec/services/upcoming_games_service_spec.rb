@@ -12,10 +12,12 @@ RSpec.describe UpcomingGamesService do
   let(:pool_team) { create(:pool_team, pool: pool) }
 
   let(:skater) { create(:pwhl_skater, league: league, current_team: home_team) }
+  let(:pool_box) { create(:pool_box, pool: pool, league_player_ids: [skater.id]) }
   let(:skater_team_player) do
     create(:pool_team_player,
       league_player: skater,
       pool_team: pool_team,
+      pool_box: pool_box,
       added_at: 5.months.ago)
   end
 
