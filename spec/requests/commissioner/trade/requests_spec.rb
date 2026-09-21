@@ -69,6 +69,7 @@ RSpec.describe "Commissioner::Trade::Requests", type: :request do
         create(:pool_team_player,
           pool_team: pool_team,
           league_player: skater_a,
+          pool_box: box,
           added_at: added_at,
           dropped_at: nil,
         )
