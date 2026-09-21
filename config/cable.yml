@@ -9,7 +9,9 @@ test:
   adapter: test
 
 production:
-  adapter: solid_cable
+  adapter: redis
+  url: <%= ENV.fetch("REDIS_URL", "redis://localhost:6379/0") %>
+  channel_prefix: pwhl_pool_production
   connects_to:
     database:
       writing: cable

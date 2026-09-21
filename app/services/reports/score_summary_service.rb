@@ -125,7 +125,7 @@ class Reports::ScoreSummaryService
       map(&:league_team_id).
       uniq.
       filter_map { |id| @teams_by_id[id] }
-    {
+    data = {
       league_player_id: team_player.league_player_id,
       name: player.name,
       added_at: team_player.added_at,
@@ -135,12 +135,17 @@ class Reports::ScoreSummaryService
       bucket_scores: bucket_scores,
       position: player.position,
       team_short_codes: team_short_codes,
-      pool_box: {
+    }
+
+    if team_player.pool_box
+      data[:pool_box] = {
         id: team_player.pool_box.id,
         name: team_player.pool_box.name,
         position: team_player.pool_box.position,
-      },
-    }
+      }
+    end
+
+    data
   end
 
   def normalize_by_category(by_field, roster_type)
