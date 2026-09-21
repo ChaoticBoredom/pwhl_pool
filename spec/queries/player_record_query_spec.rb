@@ -71,10 +71,12 @@ RSpec.describe PlayerRecordQuery do
       let(:skater) { create(:pwhl_skater, league: league) }
       let(:pool) { create(:pool, league: league, season_id: season_id) }
       let(:pool_team) { create(:pool_team, pool: pool) }
+      let(:pool_box) { create(:pool_box, pool: pool) }
       let(:team_player) do
         create(:pool_team_player,
           league_player: skater,
           pool_team: pool_team,
+          pool_box: pool_box,
           added_at: 2.weeks.ago,
           dropped_at: 1.week.ago)
       end
@@ -89,10 +91,11 @@ RSpec.describe PlayerRecordQuery do
         expect(result).to have_key(skater.id)
       end
 
-      it "deduplicates when multiple team_players share a league_player_id" do
+      it "groups records under one key when multiple team_players reference the same league_player" do
         team_player_2 = create(:pool_team_player,
           league_player: skater,
           pool_team: pool_team,
+          pool_box: pool_box,
           added_at: 1.day.ago)
 
         create(:pwhl_skater_stat,
