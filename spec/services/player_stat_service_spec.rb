@@ -26,6 +26,7 @@ RSpec.describe PlayerStatService do
     create(:pool_team_player,
       league_player: league_player,
       pool_team: pool_team,
+      pool_box: create(:pool_box, pool: pool),
       added_at: added_at,
       dropped_at: dropped_at
     )

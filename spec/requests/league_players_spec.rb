@@ -6,7 +6,8 @@ RSpec.describe "Players", type: :request do
   let(:pool) { create(:pool, league: pwhl, season_id: "9") }
   let(:pool_team) { create(:pool_team, pool: pool) }
   let(:skater) { create(:pwhl_skater, league: pwhl) }
-  let(:team_player) { create(:pool_team_player, pool_team: pool_team, league_player: skater) }
+  let(:pool_box) { create(:pool_box, pool: pool) }
+  let(:team_player) { create(:pool_team_player, pool_team: pool_team, league_player: skater, pool_box: pool_box) }
   let(:scoring) { create(:pool_scoring, :skater, :goals, value: 3.0, pool: pool) }
   let(:user) { pool_team.owner }
 

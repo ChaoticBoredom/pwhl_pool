@@ -10,7 +10,6 @@ FactoryBot.define do
     after(:build) do |tp, evaluator|
       tp.pool_team = evaluator.pool_team
       tp.pool = evaluator.pool_team.pool || build(:pool)
-      tp.pool_box ||= create(:pool_box, pool: evaluator.pool_team.pool)
     end
   end
 end

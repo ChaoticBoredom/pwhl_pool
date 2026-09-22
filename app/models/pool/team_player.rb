@@ -3,10 +3,12 @@ class Pool::TeamPlayer < ApplicationRecord
   belongs_to :pool
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
-  belongs_to :pool_box, class_name: "Pool::Box"
+  belongs_to :pool_box, class_name: "Pool::Box", optional: true
 
   validates :added_at, presence: true
+  validates :pool_box, presence: true, if: -> { pool&.box_select? }
   validate :dropped_at_after_added_at
+  validate :pool_box_matches_pool
 
   delegate :name, :current_team_id, :records, to: :league_player
 
@@ -44,5 +46,11 @@ class Pool::TeamPlayer < ApplicationRecord
     return if dropped_at.nil?
 
     errors.add(:dropped_at, "can't be before added_at") if dropped_at < added_at
+  end
+
+  def pool_box_matches_pool
+    return if pool_box.nil?
+
+    errors.add(:pool_box, "must belong to the same pool") if pool_box.pool_id != pool_id
   end
 end

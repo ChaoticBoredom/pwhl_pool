@@ -151,6 +151,7 @@ RSpec.describe Trade::RequestDecisionService do
           create(:pool_team_player,
             pool_team: pool_team,
             league_player: skater_a,
+            pool_box: box,
             added_at: added_at,
             dropped_at: nil,
           )
@@ -204,6 +205,7 @@ RSpec.describe Trade::RequestDecisionService do
           create(:pool_team_player,
             pool_team: pool_team,
             league_player: skater_c,
+            pool_box: box,
             added_at: 2.days.ago,
             dropped_at: nil,
           )

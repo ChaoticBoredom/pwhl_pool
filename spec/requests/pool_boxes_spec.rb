@@ -87,7 +87,7 @@ RSpec.describe "PoolBoxes", type: :request do
           let!(:pool_team) { create(:pool_team, pool: pool, owner: user) }
 
           it "marks a player on the current team as selected" do
-            create(:pool_team_player, pool_team: pool_team, league_player: player_a)
+            create(:pool_team_player, pool_team: pool_team, pool_box: box, league_player: player_a)
             get_index
             players = response.parsed_body["boxes"].first["players"]
             expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)
@@ -136,7 +136,7 @@ RSpec.describe "PoolBoxes", type: :request do
         end
 
         it "marks a player on the specified team as selected" do
-          create(:pool_team_player, pool_team: pool_team, league_player: player_a)
+          create(:pool_team_player, pool_team: pool_team, pool_box: box, league_player: player_a)
           get_index_with_team
           players = response.parsed_body["boxes"].first["players"]
           expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)
@@ -144,10 +144,12 @@ RSpec.describe "PoolBoxes", type: :request do
 
         it "does not use the current user's team for selection" do
           create(:pool_team, pool: pool, owner: user).tap do |current_users_team|
-            create(:pool_team_player, pool_team: current_users_team, league_player: player_b)
+            create(:pool_team_player, pool_team: current_users_team, pool_box: box, league_player: player_b)
           end
-          create(:pool_team_player, pool_team: pool_team, league_player: player_a)
+          create(:pool_team_player, pool_team: pool_team, pool_box: box, league_player: player_a)
+
           get_index_with_team
+
           players = response.parsed_body["boxes"].first["players"]
           expect(players.find { |p| p["id"] == player_b.id }["selected"]).to be(false)
           expect(players.find { |p| p["id"] == player_a.id }["selected"]).to be(true)

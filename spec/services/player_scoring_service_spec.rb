@@ -50,6 +50,7 @@ RSpec.describe PlayerScoringService do
     create(:pool_team_player,
       league_player: league_player,
       pool_team: pool_team,
+      pool_box: create(:pool_box, pool: pool_team.pool),
       added_at: added_at,
       dropped_at: dropped_at
     )
@@ -172,6 +173,36 @@ RSpec.describe PlayerScoringService do
         end
       end
 
+      context "with a player who was dropped and re-added" do
+        let(:records) do
+          {
+            skater.id => [
+              build_stat(start_time: 9.days.ago, goals: 1),
+              build_stat(start_time: 6.days.ago, goals: 5),
+              build_stat(start_time: 3.days.ago, goals: 2),
+            ],
+          }
+        end
+
+        let(:stint_one) { create_team_player(skater, pool_team, added_at: 10.days.ago, dropped_at: 7.days.ago) }
+        let(:stint_two) { create_team_player(skater, pool_team, added_at: 4.days.ago, dropped_at: nil) }
+
+        it "keeps each stint as its own entry" do
+          result = service.player_summaries([stint_one, stint_two], records)
+          expect(result.keys).to contain_exactly(stint_one.id, stint_two.id)
+        end
+
+        it "clips the first stint's pool_score to its own window" do
+          result = service.player_summaries([stint_one, stint_two], records)
+          expect(result[stint_one.id][:pool_score]).to eq(3.0)
+        end
+
+        it "clips the second stint's pool_score to its own window" do
+          result = service.player_summaries([stint_one, stint_two], records)
+          expect(result[stint_two.id][:pool_score]).to eq(6.0)
+        end
+      end
+
       context "backdated add" do
         let(:backdated_add) { Time.zone.parse("2026-01-01 00:00:00") }
         let(:records) do
@@ -253,6 +284,7 @@ RSpec.describe PlayerScoringService do
       create(:pool_team_player,
         league_player: player,
         pool_team: pool_team,
+        pool_box: create(:pool_box, pool: pool_team.pool),
         added_at: added_at,
         dropped_at: dropped_at
       )
@@ -298,6 +330,24 @@ RSpec.describe PlayerScoringService do
 
         result = service.team_scores([pool_team_a], records)
         expect(result[pool_team_a.id]).to eq(0)
+      end
+    end
+
+    context "with a player who was dropped and re-added" do
+      it "sums scores from both active windows and excludes the gap" do
+        setup_team_player(skater, pool_team_a, added_at: 10.days.ago, dropped_at: 7.days.ago)
+        setup_team_player(skater, pool_team_a, added_at: 4.days.ago, dropped_at: nil)
+
+        records = {
+          skater.id => [
+            build_stat(start_time: 9.days.ago, goals: 1),
+            build_stat(start_time: 6.days.ago, goals: 5),
+            build_stat(start_time: 3.days.ago, goals: 1),
+          ],
+        }
+
+        result = service.team_scores([pool_team_a], records)
+        expect(result[pool_team_a.id]).to eq(6.0)
       end
     end
 

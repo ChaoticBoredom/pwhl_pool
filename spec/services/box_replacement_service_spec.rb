@@ -128,6 +128,7 @@ RSpec.describe BoxReplacementService do
         active_player = create(:pool_team_player,
           pool_team: pool_team,
           league_player: players[0],
+          pool_box: old_box,
           dropped_at: nil,
         )
 
@@ -142,6 +143,7 @@ RSpec.describe BoxReplacementService do
         already_dropped = create(:pool_team_player,
           pool_team: pool_team,
           league_player: players[1],
+          pool_box: old_box,
           added_at: added_at,
           dropped_at: dropped_at,
         )
@@ -219,6 +221,7 @@ RSpec.describe BoxReplacementService do
           active_player = create(:pool_team_player,
             pool_team: pool_team,
             league_player: players[0],
+            pool_box: old_box,
             dropped_at: nil,
           )
 
