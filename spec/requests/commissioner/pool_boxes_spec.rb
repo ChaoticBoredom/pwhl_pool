@@ -117,7 +117,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
         headers: admin_headers
     end
 
-    context "when the pool is in draft state" do
+    context "when the pool is in pending state" do
       it "returns created" do
         post_create
         expect(response).to have_http_status(:created)
@@ -183,7 +183,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
         headers: admin_headers
     end
 
-    context "when the pool is in draft state" do
+    context "when the pool is in pending state" do
       it "returns created" do
         put_update
         expect(response).to have_http_status(:created)

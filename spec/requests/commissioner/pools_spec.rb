@@ -155,7 +155,7 @@ RSpec.describe "Commissioner::Pools", type: :request do
       end
     end
 
-    context "when pool is not in draft state" do
+    context "when pool is not in pending state" do
       before do
         pool.pool_state_active!
         create(:pool_box, pool: pool, active: true)

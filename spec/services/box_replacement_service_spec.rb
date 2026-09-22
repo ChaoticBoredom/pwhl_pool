@@ -24,7 +24,7 @@ RSpec.describe BoxReplacementService do
   subject(:service) { described_class.new(pool, boxes_data) }
 
   describe "#call" do
-    context "when pool is in draft state" do
+    context "when pool is in pending state" do
       it "returns a successful result" do
         expect(service.call.success).to be(true)
       end
