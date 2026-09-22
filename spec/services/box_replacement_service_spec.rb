@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe BoxReplacementService do
   let(:admin) { create(:user) }
   let(:league) { create(:league, :pwhl) }
-  let(:pool) { create(:pool, league: league, admin: admin, state: :draft) }
+  let(:pool) { create(:pool, league: league, admin: admin, state: :pending) }
   let(:players) { create_list(:pwhl_skater, 3, league: league) }
 
   let(:boxes_data) do

@@ -53,7 +53,7 @@ export function Dashboard() {
               <div className="score-display-vertical">
                 <span className="score-label">{pool.state}</span>
                 <span className="score-label">{pool.season_label}</span>
-                {pool.is_admin && pool.state === "draft" && (
+                {pool.is_admin && pool.state === "pending" && (
                   <Link
                     to={`/pools/${pool.id}/setup`}
                     className="btn-primary btn-sm"

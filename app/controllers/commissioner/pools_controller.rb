@@ -8,8 +8,8 @@ class Commissioner::PoolsController < Commissioner::BaseController
   end
 
   def activate
-    unless @pool.pool_state_draft?
-      return render json: { error: "Pool must be in draft state to activate" }, status: :unprocessable_entity
+    unless @pool.pool_state_pending?
+      return render json: { error: "Pool must be in pending state to activate" }, status: :unprocessable_entity
     end
 
     unless @pool.pool_boxes.active.any?
