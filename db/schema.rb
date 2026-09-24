@@ -10,10 +10,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_091441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "draft_picks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "auto_picked", default: false, null: false
+    t.datetime "created_at", null: false
+    t.uuid "draft_id", null: false
+    t.uuid "league_player_id"
+    t.timestamptz "made_at"
+    t.integer "pick_number", null: false
+    t.uuid "pool_team_id", null: false
+    t.integer "round", null: false
+    t.uuid "tentative_league_player_id"
+    t.datetime "updated_at", null: false
+    t.index ["draft_id", "pick_number"], name: "index_draft_picks_on_draft_id_and_pick_number", unique: true
+    t.index ["draft_id"], name: "index_draft_picks_on_draft_id"
+    t.index ["league_player_id"], name: "index_draft_picks_on_league_player_id"
+    t.index ["pool_team_id"], name: "index_draft_picks_on_pool_team_id"
+    t.index ["tentative_league_player_id"], name: "index_draft_picks_on_tentative_league_player_id"
+  end
+
+  create_table "draft_roster_slots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "category", null: false
+    t.integer "count", null: false
+    t.datetime "created_at", null: false
+    t.uuid "pool_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pool_id", "category"], name: "index_draft_roster_slots_on_pool_id_and_category", unique: true
+    t.index ["pool_id"], name: "index_draft_roster_slots_on_pool_id"
+  end
+
+  create_table "drafts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "current_pick_number", default: 0, null: false
+    t.integer "pick_order_strategy", default: 0, null: false
+    t.uuid "pool_id", null: false
+    t.timestamptz "start_at", null: false
+    t.integer "state", default: 0, null: false
+    t.uuid "team_order", default: [], null: false, array: true
+    t.datetime "updated_at", null: false
+    t.index ["pool_id"], name: "index_drafts_on_pool_id", unique: true
+  end
 
   create_table "league_games", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "api_id", null: false
@@ -104,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.uuid "pool_box_id"
     t.uuid "pool_id", null: false
     t.uuid "pool_team_id", null: false
+    t.integer "position_category"
     t.integer "roster_type", null: false
     t.datetime "updated_at", null: false
     t.index ["league_player_id"], name: "index_pool_team_players_on_league_player_id"
@@ -253,6 +294,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
+  add_foreign_key "draft_picks", "drafts"
+  add_foreign_key "draft_picks", "league_players"
+  add_foreign_key "draft_picks", "league_players", column: "tentative_league_player_id"
+  add_foreign_key "draft_picks", "pool_teams"
+  add_foreign_key "draft_roster_slots", "pools"
+  add_foreign_key "drafts", "pools"
   add_foreign_key "league_games", "league_teams", column: "away_team_id"
   add_foreign_key "league_games", "league_teams", column: "home_team_id"
   add_foreign_key "league_games", "leagues"

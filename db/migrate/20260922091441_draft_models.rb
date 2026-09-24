@@ -4,6 +4,7 @@ class DraftModels < ActiveRecord::Migration[8.1]
       t.references :pool, type: :uuid, null: false, foreign_key: true, index: { unique: true }
       t.integer :state, null: false, default: 0
       t.integer :pick_order_strategy, null: false, default: 0
+      t.timestamp :start_at, null: false
       t.integer :current_pick_number, null: false, default: 0
       t.uuid :team_order, array: true, null: false, default: []
 
