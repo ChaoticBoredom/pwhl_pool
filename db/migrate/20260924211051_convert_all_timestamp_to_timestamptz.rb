@@ -2,7 +2,7 @@ class ConvertAllTimestampToTimestamptz < ActiveRecord::Migration[8.1]
   TABLES_WITH_TIMESTAMPS = [
   :league_games, :league_players, :league_teams, :leagues, :pool_boxes,
   :pool_scorings, :pool_team_players, :pool_teams, :pools, :pwhl_goalie_stats,
-  :pwhl_skater_stats, :sessions, :trade_requests, :trade_windows, :users,
+  :pwhl_skater_stats, :sessions, :trade_requests, :trade_windows, :users
 ].freeze
 
   def up
