@@ -10,25 +10,65 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "draft_picks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "auto_picked", default: false, null: false
+    t.timestamp "created_at", precision: 6, null: false
+    t.uuid "draft_id", null: false
+    t.uuid "league_player_id"
+    t.datetime "made_at", precision: nil
+    t.integer "pick_number", null: false
+    t.uuid "pool_team_id", null: false
+    t.integer "round", null: false
+    t.uuid "tentative_league_player_id"
+    t.timestamp "updated_at", precision: 6, null: false
+    t.index ["draft_id", "pick_number"], name: "index_draft_picks_on_draft_id_and_pick_number", unique: true
+    t.index ["draft_id"], name: "index_draft_picks_on_draft_id"
+    t.index ["league_player_id"], name: "index_draft_picks_on_league_player_id"
+    t.index ["pool_team_id"], name: "index_draft_picks_on_pool_team_id"
+    t.index ["tentative_league_player_id"], name: "index_draft_picks_on_tentative_league_player_id"
+  end
+
+  create_table "draft_roster_slots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "category", null: false
+    t.integer "count", null: false
+    t.timestamp "created_at", precision: 6, null: false
+    t.uuid "pool_id", null: false
+    t.timestamp "updated_at", precision: 6, null: false
+    t.index ["pool_id", "category"], name: "index_draft_roster_slots_on_pool_id_and_category", unique: true
+    t.index ["pool_id"], name: "index_draft_roster_slots_on_pool_id"
+  end
+
+  create_table "drafts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.timestamp "created_at", precision: 6, null: false
+    t.integer "current_pick_number", default: 0, null: false
+    t.integer "pick_order_strategy", default: 0, null: false
+    t.uuid "pool_id", null: false
+    t.datetime "start_at", precision: nil, null: false
+    t.integer "state", default: 0, null: false
+    t.uuid "team_order", default: [], null: false, array: true
+    t.timestamp "updated_at", precision: 6, null: false
+    t.index ["pool_id"], name: "index_drafts_on_pool_id", unique: true
+  end
 
   create_table "league_games", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "api_id", null: false
     t.uuid "away_team_id", null: false
     t.integer "away_team_score"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "current_description"
     t.uuid "home_team_id", null: false
     t.integer "home_team_score"
     t.uuid "league_id", null: false
     t.string "season_id", null: false
-    t.timestamptz "start_time", null: false
+    t.datetime "start_time", precision: nil, null: false
     t.integer "status"
     t.string "type", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["api_id", "league_id"], name: "index_league_games_on_api_id_and_league_id", unique: true
     t.index ["away_team_id"], name: "index_league_games_on_away_team_id"
     t.index ["home_team_id"], name: "index_league_games_on_home_team_id"
@@ -38,7 +78,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
   create_table "league_players", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "api_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.uuid "current_team_id"
     t.string "current_team_short_code"
     t.uuid "league_id", null: false
@@ -47,7 +87,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.boolean "rookie", default: false, null: false
     t.integer "roster_type", null: false
     t.string "type", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["api_id", "league_id"], name: "index_league_players_on_api_id_and_league_id", unique: true
     t.index ["current_team_id"], name: "index_league_players_on_current_team_id"
     t.index ["league_id"], name: "index_league_players_on_league_id"
@@ -55,42 +95,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "league_teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "api_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.uuid "league_id", null: false
     t.string "name", null: false
     t.string "short_code"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["api_id", "league_id"], name: "index_league_teams_on_api_id_and_league_id", unique: true
     t.index ["league_id"], name: "index_league_teams_on_league_id"
   end
 
   create_table "leagues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
     t.string "short_name"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["name"], name: "index_leagues_on_name", unique: true
   end
 
   create_table "pool_boxes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "active", default: true, null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.uuid "league_player_ids", default: [], null: false, array: true
     t.string "name", null: false
     t.uuid "pool_id", null: false
     t.integer "position", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["league_player_ids"], name: "index_pool_boxes_on_league_player_ids", using: :gin
     t.index ["pool_id"], name: "index_pool_boxes_on_pool_id"
     t.unique_constraint ["pool_id", "active", "position"], deferrable: :deferred, name: "pool_boxes_pool_id_active_position_unique"
   end
 
   create_table "pool_scorings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "field_name", null: false
     t.uuid "pool_id", null: false
     t.integer "roster_type", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.float "value", null: false
     t.index ["pool_id", "field_name", "roster_type"], name: "index_pool_scorings_on_pool_id_and_field_name_and_roster_type", unique: true
     t.index ["pool_id"], name: "index_pool_scorings_on_pool_id"
@@ -98,14 +138,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "pool_team_players", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "added_at", precision: nil, null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.datetime "dropped_at", precision: nil
     t.uuid "league_player_id", null: false
     t.uuid "pool_box_id"
     t.uuid "pool_id", null: false
     t.uuid "pool_team_id", null: false
+    t.integer "position_category"
     t.integer "roster_type", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["league_player_id"], name: "index_pool_team_players_on_league_player_id"
     t.index ["pool_box_id"], name: "index_pool_team_players_on_pool_box_id"
     t.index ["pool_team_id", "league_player_id"], name: "index_unique_active_player_per_team", unique: true, where: "(dropped_at IS NULL)"
@@ -113,10 +154,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
   end
 
   create_table "pool_teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.uuid "pool_id", null: false
     t.string "team_name", null: false
-    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.uuid "user_id", null: false
     t.index ["pool_id", "user_id"], name: "index_pool_teams_on_pool_id_and_user_id", unique: true
     t.index ["pool_id"], name: "index_pool_teams_on_pool_id"
@@ -125,7 +166,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "pools", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "admin_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.uuid "league_id", null: false
     t.string "name", null: false
     t.integer "pool_type", null: false
@@ -133,7 +174,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.string "season_id", null: false
     t.integer "state", default: 0, null: false
     t.integer "trade_policy", default: 0, null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["league_id"], name: "index_pools_on_league_id"
     t.check_constraint "reference_season_id::text <> season_id::text", name: "pools_reference_season_differs_from_season"
@@ -141,7 +182,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "pwhl_goalie_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "assists", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.boolean "game_started", default: false, null: false
     t.integer "goals", null: false
     t.integer "goals_against", null: false
@@ -153,9 +194,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.string "season_id", null: false
     t.integer "shots_against", null: false
     t.boolean "shutout", null: false
-    t.timestamptz "start_time", null: false
+    t.datetime "start_time", precision: nil, null: false
     t.interval "time_on_ice", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "win", null: false
     t.index ["league_game_id"], name: "index_pwhl_goalie_stats_on_league_game_id"
     t.index ["league_player_id", "league_game_id"], name: "index_goalie_stats_on_player_and_game"
@@ -167,7 +208,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "pwhl_skater_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "assists", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.integer "faceoffs_taken", null: false
     t.integer "faceoffs_won", null: false
     t.integer "game_winning_goals", default: 0, null: false
@@ -183,9 +224,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
     t.integer "short_handed_goals", null: false
     t.integer "shots", null: false
     t.integer "shots_blocked", null: false
-    t.timestamptz "start_time", null: false
+    t.datetime "start_time", precision: nil, null: false
     t.interval "time_on_ice", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["league_game_id"], name: "index_pwhl_skater_stats_on_league_game_id"
     t.index ["league_player_id", "league_game_id"], name: "index_pwhl_skater_stats_on_league_player_id_and_league_game_id", unique: true
     t.index ["league_player_id", "league_game_id"], name: "index_skater_stats_on_player_and_game"
@@ -195,10 +236,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
   end
 
   create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "ip_address"
     t.string "token"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "user_agent"
     t.uuid "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
@@ -206,19 +247,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
 
   create_table "trade_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "action", null: false
-    t.timestamptz "backdated_to"
-    t.datetime "created_at", null: false
-    t.timestamptz "decided_at"
+    t.datetime "backdated_to", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "decided_at", precision: nil
     t.uuid "decided_by_id"
     t.uuid "league_player_id", null: false
     t.uuid "pool_box_id"
     t.uuid "pool_team_id", null: false
     t.text "rejected_reason"
     t.uuid "request_group_id"
-    t.timestamptz "requested_at", null: false
+    t.datetime "requested_at", precision: nil, null: false
     t.uuid "requested_by_id", null: false
     t.integer "status", default: 0, null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["decided_by_id"], name: "index_trade_requests_on_decided_by_id"
     t.index ["league_player_id", "status"], name: "index_trade_requests_on_league_player_id_and_status"
     t.index ["league_player_id"], name: "index_trade_requests_on_league_player_id"
@@ -232,27 +273,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_085249) do
   end
 
   create_table "trade_windows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.tstzrange "open_window", null: false
     t.uuid "pool_id"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["open_window"], name: "index_trade_windows_on_open_window", using: :gist
     t.index ["pool_id"], name: "index_trade_windows_on_pool_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "admin", default: false, null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "email_address", null: false
     t.string "name", null: false
     t.string "password_digest", null: false
     t.string "provider"
     t.string "uid"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
+  add_foreign_key "draft_picks", "drafts"
+  add_foreign_key "draft_picks", "league_players"
+  add_foreign_key "draft_picks", "league_players", column: "tentative_league_player_id"
+  add_foreign_key "draft_picks", "pool_teams"
+  add_foreign_key "draft_roster_slots", "pools"
+  add_foreign_key "drafts", "pools"
   add_foreign_key "league_games", "league_teams", column: "away_team_id"
   add_foreign_key "league_games", "league_teams", column: "home_team_id"
   add_foreign_key "league_games", "leagues"
