@@ -1,8 +1,9 @@
 class Draft < ApplicationRecord
   belongs_to :pool
   has_many :draft_picks, class_name: "Draft::Pick", dependent: :destroy
+  has_many :draft_roster_slots, class_name: "Draft::RosterSlot", dependent: :destroy
 
-  validates :current_pick_numberm numericality: { equal_to: 0}, if: :pending?
+  validates :current_pick_number, numericality: { equal_to: 0}, if: :pending?
   validates :current_pick_number, numericality: { greater_than: 0 }, unless: :pending?
 
   validate :team_order_matches_pool_teams

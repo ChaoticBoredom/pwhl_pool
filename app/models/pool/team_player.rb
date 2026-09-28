@@ -1,5 +1,7 @@
 class Pool::TeamPlayer < ApplicationRecord
   include PlayerRosterTypes
+  include PlayerPositionTypes
+
   belongs_to :pool
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
@@ -7,6 +9,7 @@ class Pool::TeamPlayer < ApplicationRecord
 
   validates :added_at, presence: true
   validates :pool_box, presence: true, if: -> { pool&.box_select? }
+  validates :position_type, exclusion: { in: %[wildcard] }
   validate :dropped_at_after_added_at
   validate :pool_box_matches_pool
 

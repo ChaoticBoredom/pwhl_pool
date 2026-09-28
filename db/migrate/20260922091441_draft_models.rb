@@ -4,7 +4,7 @@ class DraftModels < ActiveRecord::Migration[8.1]
       t.references :pool, type: :uuid, null: false, foreign_key: true, index: { unique: true }
       t.integer :state, null: false, default: 0
       t.integer :pick_order_strategy, null: false, default: 0
-      t.timestamp :start_at, null: false
+      t.timestamptz :start_at, null: false
       t.integer :current_pick_number, null: false, default: 0
       t.uuid :team_order, array: true, null: false, default: []
 
@@ -30,15 +30,15 @@ class DraftModels < ActiveRecord::Migration[8.1]
     add_index :draft_picks, [:draft_id, :pick_number], unique: true
 
     create_table :draft_roster_slots, id: :uuid do |t|
-      t.references :pool, type: :uuid, null: false, foreign_key: true
-      t.integer :category, null: false
+      t.references :draft, type: :uuid, null: false, foreign_key: true
+      t.integer :position_type, null: false
       t.integer :count, null: false
 
       t.timestamps
     end
 
-    add_index :draft_roster_slots, [:pool_id, :category], unique: true
+    add_index :draft_roster_slots, [:draft_id, :position_type], unique: true
 
-    add_column :pool_team_players, :position_category, :integer
+    add_column :pool_team_players, :position_type, :integer
   end
 end

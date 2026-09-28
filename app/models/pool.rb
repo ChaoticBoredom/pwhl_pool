@@ -15,6 +15,7 @@ class Pool < ApplicationRecord
   has_many :trade_windows, class_name: "Trade::Window", dependent: :destroy
   has_many :trade_requests, through: :pool_teams, class_name: "Trade::Request"
   has_one :draft, dependent: :destroy
+  has_many :draft_roster_slots, through: :draft, class_name: "Draft::RosterSlot"
 
   enum :pool_type, {
     box_select: 100,
