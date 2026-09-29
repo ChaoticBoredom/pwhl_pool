@@ -48,7 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
     t.integer "current_pick_number", default: 0, null: false
     t.integer "pick_order_strategy", default: 0, null: false
     t.uuid "pool_id", null: false
-    t.datetime "start_at", precision: nil, null: false
+    t.datetime "start_at", precision: nil
     t.integer "state", default: 0, null: false
     t.uuid "team_order", default: [], null: false, array: true
     t.datetime "updated_at", null: false
