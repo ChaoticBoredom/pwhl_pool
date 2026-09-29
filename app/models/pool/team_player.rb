@@ -9,7 +9,7 @@ class Pool::TeamPlayer < ApplicationRecord
 
   validates :added_at, presence: true
   validates :pool_box, presence: true, if: -> { pool&.box_select? }
-  validates :position_type, exclusion: { in: %[wildcard] }
+  validates :position_type, exclusion: { in: %w[wildcard] }
   validate :dropped_at_after_added_at
   validate :pool_box_matches_pool
 

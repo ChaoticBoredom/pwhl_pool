@@ -14,7 +14,7 @@ module PlayerPositionTypes
       forward: 10,
       defense: 20,
       goalie: 30,
-    }, validate: true
+    }, prefix: :position, validate: false
   end
 
   class_methods do
