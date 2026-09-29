@@ -21,6 +21,8 @@ class Draft < ApplicationRecord
     fixed: 200,
   }
 
+  scope :scheduled, -> { pending.where.not(start_at: nil) }
+
   def scheduled?
     pending? && start_at.present?
   end
