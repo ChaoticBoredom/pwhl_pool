@@ -1,4 +1,4 @@
-module PlayerPositionCategories
+module PlayerPositionTypes
   extend ActiveSupport::Concern
 
   GROUP_NAMES = {
