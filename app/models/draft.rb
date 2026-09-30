@@ -38,7 +38,7 @@ class Draft < ApplicationRecord
 
   def pool_is_draft_type
     return if pool.nil?
-    return if pool.pool_type_draft?
+    return if pool.draft?
 
     errors.add(:pool, "must by a draft-style pool")
   end
