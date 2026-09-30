@@ -7,6 +7,7 @@ class Draft::RosterSlot < ApplicationRecord
     only_integer: true,
     greater_than_or_equal_to: 0,
   }
+
   validates :position_type, uniqueness: {
     scope: :draft_id,
     message: "should have one roster slot per position type per draft",
