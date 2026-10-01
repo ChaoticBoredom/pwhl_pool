@@ -16,6 +16,7 @@ class Pool::TeamPlayer < ApplicationRecord
   delegate :name, :current_team_id, :records, to: :league_player
 
   before_validation :denormalize_fields, on: :create
+  before_validation :derive_position_type, on: :create
 
   scope :current, -> { where(dropped_at: nil) }
   scope :non_current, -> { where.not(dropped_at: nil) }
@@ -43,6 +44,10 @@ class Pool::TeamPlayer < ApplicationRecord
   def denormalize_fields
     self.pool_id ||= pool_team.pool_id
     self.roster_type ||= league_player.roster_type
+  end
+
+  def derive_position_type
+    self.position_type ||= self.class.position_type_for(league_player)
   end
 
   def dropped_at_after_added_at

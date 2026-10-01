@@ -19,10 +19,12 @@ FactoryBot.define do
 
     factory :pwhl_skater, class: "Pwhl::Skater" do
       roster_type { :skater }
+      position { "F" }
     end
 
     factory :pwhl_goalie, class: "Pwhl::Goalie" do
       roster_type { :goalie }
+      position { "G" }
     end
   end
 end

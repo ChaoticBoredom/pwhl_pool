@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :draft_pick, class: "Draft::Pick" do
     association :draft
     pool_team { create(:pool_team, pool: draft.pool) }
-    sequence(:pick_name) { |n| n }
+    sequence(:pick_number) { |n| n }
     round { 1 }
 
     trait :pick_made do

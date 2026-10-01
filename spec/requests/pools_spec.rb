@@ -116,6 +116,8 @@ RSpec.describe "Pools", type: :request do
       expect(json["seasons"]).to eq([
         { "name" => "2025-26 Regular Season", "id" => "8" },
         { "name" => "2025-26 Playoffs", "id" => "9" },
+        { "name" => "2026-27 Pre-Season", "id" => "10" },
+        { "name" => "2026-27 Regular Season", "id" => "11" },
       ])
     end
 

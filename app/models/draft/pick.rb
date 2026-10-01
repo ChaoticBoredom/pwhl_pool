@@ -5,7 +5,7 @@ class Draft::Pick < ApplicationRecord
   belongs_to :tentative_league_player, class_name: "League::Player", optional: true
 
   validates :pick_number, presence: true, uniqueness: { scope: :draft_id }
-  validates :round, presnce: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :round, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :league_player_id, uniqueness: { scope: :draft_id }, allow_nil: true
   validates :made_at, presence: true, if: -> { league_player_id.present? }
   validates :league_player_id, presence: true, if: -> { made_at.present? }

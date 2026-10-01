@@ -1,16 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Draft::RosterSlot, type: :model do
+  it_behaves_like "PlayerPositionTypes"
+
   it { is_expected.to validate_presence_of(:count) }
   it { is_expected.to validate_numericality_of(:count).only_integer.is_greater_than_or_equal_to(0) }
-
-  it { is_expected.to define_enum_for(:position_type).with_values(
-      wildcard: 0,
-      ir: 1,
-      forward: 10,
-      defense: 20,
-      goalie: 30,
-    ).with_prefix(:position) }
 
   describe "position_type uniqueness" do
     let(:draft) { create(:draft) }
