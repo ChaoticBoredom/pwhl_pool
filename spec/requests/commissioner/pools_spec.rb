@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Commissioner::Pools", type: :request do
   let(:admin) { create(:user) }
   let(:other_user) { create(:user) }
-  let(:pool) { create(:pool, admin: admin, state: :draft) }
+  let(:pool) { create(:pool, admin: admin, state: :pending) }
   let(:admin_headers) { auth_headers_for(admin) }
   let(:other_headers) { auth_headers_for(other_user) }
   let(:json) { JSON.parse(response.body) }
@@ -20,7 +20,7 @@ RSpec.describe "Commissioner::Pools", type: :request do
 
       expect(json["id"]).to eq(pool.id)
       expect(json["name"]).to eq(pool.name)
-      expect(json["state"]).to eq("draft")
+      expect(json["state"]).to eq("pending")
       expect(json["trade_policy"]).to eq(pool.trade_policy)
     end
 
@@ -155,7 +155,7 @@ RSpec.describe "Commissioner::Pools", type: :request do
       end
     end
 
-    context "when pool is not in draft state" do
+    context "when pool is not in pending state" do
       before do
         pool.pool_state_active!
         create(:pool_box, pool: pool, active: true)
@@ -167,10 +167,10 @@ RSpec.describe "Commissioner::Pools", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it "returns an error mentioning draft" do
+      it "returns an error mentioning pending" do
         patch "/api/commissioner/#{pool.id}/activate", headers: admin_headers
 
-        expect(json["error"]).to match(/draft/i)
+        expect(json["error"]).to match(/pending/i)
       end
     end
 

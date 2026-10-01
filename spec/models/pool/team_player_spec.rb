@@ -1,6 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Pool::TeamPlayer, type: :model do
+  it_behaves_like "PlayerRosterTypes"
+  it_behaves_like "PlayerPositionTypes"
+
   let(:league) { create(:league, :pwhl) }
   let(:pool_team) { create(:pool_team) }
   let(:league_player) { create(:pwhl_skater, league: league) }
@@ -151,6 +154,31 @@ RSpec.describe Pool::TeamPlayer, type: :model do
         team_player.valid?
         expect(team_player.errors[:dropped_at]).to include("can't be before added_at")
       end
+    end
+  end
+
+  describe "position_type exclusion" do
+    it "is invalid with a wildcard position_type" do
+      team_player.position_type = :wildcard
+      expect(team_player).to_not be_valid
+    end
+  end
+
+  describe "#derive_position_type" do
+    before(:each) do
+      team_player.league_player.update(position: "G")
+    end
+
+    it "derives position_type from the 'league_player's position" do
+      team_player.league_player.update(position: "LW")
+      team_player.valid?
+      expect(team_player.position_type).to eq("forward")
+    end
+
+    it "does not override an explicitly set position_type" do
+      team_player.position_type = :defense
+      team_player.valid?
+      expect(team_player.position_type).to eq("defense")
     end
   end
 

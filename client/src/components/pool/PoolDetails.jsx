@@ -44,7 +44,7 @@ export default function PoolDetails() {
       <p className="helper-text">Commissioner: {pool.admin.name}</p>
       <p className="helper-text">Last Updated At: {lastFetchedAt}</p>
 
-      {pool.state === "draft" && (
+      {pool.state === "pending" && (
         <Link to={`/pools/${poolId}/setup`} className="btn-primary btn-top">
           Continue Setup →
         </Link>

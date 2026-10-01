@@ -56,7 +56,7 @@ export default function PoolBuilder() {
   };
 
   useEffect(() => {
-    if (pool && pool.state !== "draft") {
+    if (pool && pool.state !== "pending") {
       navigate(`/pools/${poolId}/invite`, { replace: true });
     }
   }, [pool, poolId, navigate]);

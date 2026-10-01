@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe BoxReplacementService do
   let(:admin) { create(:user) }
   let(:league) { create(:league, :pwhl) }
-  let(:pool) { create(:pool, league: league, admin: admin, state: :draft) }
+  let(:pool) { create(:pool, league: league, admin: admin, state: :pending) }
   let(:players) { create_list(:pwhl_skater, 3, league: league) }
 
   let(:boxes_data) do
@@ -24,7 +24,7 @@ RSpec.describe BoxReplacementService do
   subject(:service) { described_class.new(pool, boxes_data) }
 
   describe "#call" do
-    context "when pool is in draft state" do
+    context "when pool is in pending state" do
       it "returns a successful result" do
         expect(service.call.success).to be(true)
       end

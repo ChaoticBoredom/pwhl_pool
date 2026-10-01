@@ -5,7 +5,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
 
   let(:admin) { create(:user) }
   let(:other_user) { create(:user) }
-  let(:pool) { create(:pool, admin: admin, state: :draft, league: pwhl) }
+  let(:pool) { create(:pool, admin: admin, state: :pending, league: pwhl) }
   let(:season_id) { pool.display_season_id }
   let(:admin_headers) { auth_headers_for(admin) }
   let(:other_headers) { auth_headers_for(other_user) }
@@ -117,7 +117,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
         headers: admin_headers
     end
 
-    context "when the pool is in draft state" do
+    context "when the pool is in pending state" do
       it "returns created" do
         post_create
         expect(response).to have_http_status(:created)
@@ -183,7 +183,7 @@ RSpec.describe "Commissioner::PoolBoxes", type: :request do
         headers: admin_headers
     end
 
-    context "when the pool is in draft state" do
+    context "when the pool is in pending state" do
       it "returns created" do
         put_update
         expect(response).to have_http_status(:created)

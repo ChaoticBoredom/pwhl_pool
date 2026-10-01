@@ -37,7 +37,8 @@ module Pwhl
     SEASON_LABELS = {
       "8" => "2025-26 Regular Season",
       "9" => "2025-26 Playoffs",
-      # "10" => "2026-27 Regular Season",
+      "10" => "2026-27 Pre-Season",
+      "11" => "2026-27 Regular Season",
       # "DEMO" => "Demo",
     }.freeze
 

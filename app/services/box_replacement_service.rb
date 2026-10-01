@@ -7,8 +7,8 @@ class BoxReplacementService
   end
 
   def call
-    if @pool.pool_state_draft?
-      replace_draft
+    if @pool.pool_state_pending?
+      replace_pool_boxes
     elsif @pool.pool_state_active?
       replace_active
     else
@@ -18,7 +18,7 @@ class BoxReplacementService
 
   private
 
-  def replace_draft
+  def replace_pool_boxes
     Pool::Box.transaction do
       @pool.pool_boxes.destroy_all
       create_boxes!

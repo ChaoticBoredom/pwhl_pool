@@ -116,6 +116,8 @@ RSpec.describe "Pools", type: :request do
       expect(json["seasons"]).to eq([
         { "name" => "2025-26 Regular Season", "id" => "8" },
         { "name" => "2025-26 Playoffs", "id" => "9" },
+        { "name" => "2026-27 Pre-Season", "id" => "10" },
+        { "name" => "2026-27 Regular Season", "id" => "11" },
       ])
     end
 
@@ -161,12 +163,18 @@ RSpec.describe "Pools", type: :request do
     end
     let(:payload) { valid_params.to_json }
 
-    it "creates a pool in draft state" do
+    it "creates a pool" do
       expect {
         post "/api/pools", params: payload, headers: headers
       }.to change { Pool.count }.by(1)
 
       expect(response).to have_http_status(:created)
+    end
+
+    it "creates the pool in the pending state" do
+      post "/api/pools", params: payload, headers: headers
+
+      expect(Pool.last.state).to eq("pending")
     end
 
     it "assigns the current user as admin" do
@@ -182,14 +190,12 @@ RSpec.describe "Pools", type: :request do
     end
 
     context "with a valid reference_season_id" do
-      it "creates the pool" do
-        expect {
-          post "/api/pools",
-            params: valid_params.deep_merge(pool: { reference_season_id: "8" }).to_json,
-            headers: headers
-        }.to change { Pool.count }.by(1)
+      it "creates the pool with the given reference_season_id" do
+        post "/api/pools",
+          params: valid_params.deep_merge(pool: { reference_season_id: "8" }).to_json,
+          headers: headers
 
-        expect(response).to have_http_status(:created)
+        expect(Pool.last.reference_season_id).to eq("8")
       end
     end
 

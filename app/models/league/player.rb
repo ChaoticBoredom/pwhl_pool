@@ -1,5 +1,6 @@
 class League::Player < ApplicationRecord
   include PlayerRosterTypes
+
   before_validation :sync_sti_type, if: -> { roster_type_changed? || league_id_changed? }
   before_save :sync_current_team_short_code, if: :current_team_id_changed?
 

@@ -1,5 +1,7 @@
 class Pool::TeamPlayer < ApplicationRecord
   include PlayerRosterTypes
+  include PlayerPositionTypes
+
   belongs_to :pool
   belongs_to :pool_team, class_name: "Pool::Team"
   belongs_to :league_player, class_name: "League::Player"
@@ -7,12 +9,14 @@ class Pool::TeamPlayer < ApplicationRecord
 
   validates :added_at, presence: true
   validates :pool_box, presence: true, if: -> { pool&.box_select? }
+  validates :position_type, exclusion: { in: %w[wildcard] }
   validate :dropped_at_after_added_at
   validate :pool_box_matches_pool
 
   delegate :name, :current_team_id, :records, to: :league_player
 
   before_validation :denormalize_fields, on: :create
+  before_validation :derive_position_type, on: :create
 
   scope :current, -> { where(dropped_at: nil) }
   scope :non_current, -> { where.not(dropped_at: nil) }
@@ -40,6 +44,10 @@ class Pool::TeamPlayer < ApplicationRecord
   def denormalize_fields
     self.pool_id ||= pool_team.pool_id
     self.roster_type ||= league_player.roster_type
+  end
+
+  def derive_position_type
+    self.position_type ||= self.class.position_type_for(league_player)
   end
 
   def dropped_at_after_added_at
