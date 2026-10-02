@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_092445) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -85,7 +85,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
     t.string "name", null: false
     t.string "position"
     t.boolean "rookie", default: false, null: false
-    t.integer "roster_type", null: false
+    t.integer "stat_type", null: false
     t.string "type", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["api_id", "league_id"], name: "index_league_players_on_api_id_and_league_id", unique: true
@@ -129,10 +129,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
     t.datetime "created_at", precision: nil, null: false
     t.string "field_name", null: false
     t.uuid "pool_id", null: false
-    t.integer "roster_type", null: false
+    t.integer "stat_type", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.float "value", null: false
-    t.index ["pool_id", "field_name", "roster_type"], name: "index_pool_scorings_on_pool_id_and_field_name_and_roster_type", unique: true
+    t.index ["pool_id", "field_name", "stat_type"], name: "index_pool_scorings_on_pool_id_and_field_name_and_stat_type", unique: true
     t.index ["pool_id"], name: "index_pool_scorings_on_pool_id"
   end
 
@@ -145,7 +145,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_211051) do
     t.uuid "pool_id", null: false
     t.uuid "pool_team_id", null: false
     t.integer "position_type"
-    t.integer "roster_type", null: false
+    t.integer "stat_type", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["league_player_id"], name: "index_pool_team_players_on_league_player_id"
     t.index ["pool_box_id"], name: "index_pool_team_players_on_pool_box_id"
