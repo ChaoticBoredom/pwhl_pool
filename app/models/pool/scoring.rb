@@ -1,5 +1,5 @@
 class Pool::Scoring < ApplicationRecord
-  include PlayerRosterTypes
+  include PlayerStatTypes
 
   belongs_to :pool
 

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe League::Player, type: :model do
-  it_behaves_like "PlayerRosterTypes"
+  it_behaves_like "PlayerStatTypes"
 
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:type) }

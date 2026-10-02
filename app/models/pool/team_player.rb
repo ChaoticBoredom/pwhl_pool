@@ -1,5 +1,5 @@
 class Pool::TeamPlayer < ApplicationRecord
-  include PlayerRosterTypes
+  include PlayerStatTypes
   include PlayerPositionTypes
 
   belongs_to :pool

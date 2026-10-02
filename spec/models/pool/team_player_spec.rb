@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Pool::TeamPlayer, type: :model do
-  it_behaves_like "PlayerRosterTypes"
+  it_behaves_like "PlayerStatTypes"
   it_behaves_like "PlayerPositionTypes"
 
   let(:league) { create(:league, :pwhl) }

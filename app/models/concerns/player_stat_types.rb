@@ -1,4 +1,4 @@
-module PlayerRosterTypes
+module PlayerStatTypes
   extend ActiveSupport::Concern
 
   included do
