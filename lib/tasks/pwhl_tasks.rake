@@ -82,7 +82,7 @@ namespace :pwhl do
         pl = League::Player.find_or_create_by(
           league: league,
           api_id: p.dig("row", "player_id"),
-          roster_type: args.position,
+          stat_type: args.position,
         )
         pl.name = p.dig("row", "name")
         pl.rookie = p.dig("row", "rookie") == "1"
