@@ -1,4 +1,4 @@
-export const PWHL_ROSTER_TYPE_LABELS = {
+export const PWHL_STAT_TYPE_LABELS = {
   skater: "Skaters (Forwards and Defence)",
   goalie: "Goalies",
 };

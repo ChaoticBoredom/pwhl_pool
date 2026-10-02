@@ -6,18 +6,18 @@ import { useLeagueConstants } from "@/constants/useLeagueConstants";
 
 export default function ScoringEditor({ poolId, data, editable, onSave, onCancel, saveLabel }) {
   const { authHeaders } = useAuth();
-  const { rosterTypeLabels } = useLeagueConstants();
+  const { statTypeLabels } = useLeagueConstants();
 
   const [values, setValues] = useState(() =>
     Object.fromEntries(
       Object.values(data).flatMap((fields) =>
-        fields.map((f) => [`${f.roster_type}/${f.field_name}`, f.value])
+        fields.map((f) => [`${f.stat_type}/${f.field_name}`, f.value])
       )
     )
   );
 
-  const handleChange = (fieldName, rosterType, value) => {
-    setValues((prev) => ({ ...prev, [`${rosterType}/${fieldName}`]: value }));
+  const handleChange = (fieldName, statType, value) => {
+    setValues((prev) => ({ ...prev, [`${statType}/${fieldName}`]: value }));
   };
 
   const saveMutation = useMutation({
@@ -32,8 +32,8 @@ export default function ScoringEditor({ poolId, data, editable, onSave, onCancel
           scoring: allFields.map((f) => ({
             id: f.id,
             field_name: f.field_name,
-            roster_type: f.roster_type,
-            value: Number(values[`${f.roster_type}/${f.field_name}`]),
+            stat_type: f.stat_type,
+            value: Number(values[`${f.stat_type}/${f.field_name}`]),
           })),
         }),
       });
@@ -52,13 +52,13 @@ export default function ScoringEditor({ poolId, data, editable, onSave, onCancel
     <>
       {saveMutation.isError && <div className="generator-error">{saveMutation.error.message}</div>}
 
-      {Object.entries(data).map(([rosterType, fields]) => (
+      {Object.entries(data).map(([statType, fields]) => (
         <ScoringSection
-          key={rosterType}
-          title={rosterTypeLabels[rosterType] ?? rosterType}
+          key={statType}
+          title={statTypeLabels[statType] ?? statType}
           scorings={fields.map((f) => ({
             ...f,
-            value: editable ? values[`${rosterType}/${f.field_name}`] : f.value,
+            value: editable ? values[`${statType}/${f.field_name}`] : f.value,
           }))}
           editable={editable}
           onChange={handleChange}

@@ -26,7 +26,7 @@ export default function ReviewSetup({
 }) {
   const { authHeaders } = useAuth();
   const { pool } = usePool();
-  const { rosterTypeLabels } = useLeagueConstants();
+  const { statTypeLabels } = useLeagueConstants();
   const { scoring, boxes } = data;
 
   const activateMutation = useMutation({
@@ -57,10 +57,10 @@ export default function ReviewSetup({
 
       
       <ReviewSection title="Scoring" editPath={`/pools/${poolId}/scoring/edit`}>
-        {scoring && Object.entries(scoring).map(([rosterType, fields]) => (
+        {scoring && Object.entries(scoring).map(([statType, fields]) => (
           <ScoringSection
-            key={rosterType}
-            title={rosterTypeLabels[rosterType] ?? rosterType}
+            key={statType}
+            title={statTypeLabels[statType] ?? statType}
             scorings={fields.filter((f) => f.value !== null && f.value !== 0)}
             editable={false}
           />
