@@ -2,11 +2,11 @@ FactoryBot.define do
   factory :pool_scoring, class: "Pool::Scoring" do
     association :pool
     field_name { "goals" }
-    roster_type { :skater }
+    stat_type { :skater }
     value      { 1.0 }
 
     trait :skater do
-      roster_type { :skater }
+      stat_type { :skater }
     end
 
     trait :goals do
@@ -45,7 +45,7 @@ FactoryBot.define do
     end
 
     trait :goalie do
-      roster_type { :goalie }
+      stat_type { :goalie }
     end
 
     trait :saves do

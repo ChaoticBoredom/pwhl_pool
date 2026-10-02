@@ -20,7 +20,7 @@ function StatCard({ scoring, editable, onChange }) {
           step="0.05"
           value={scoring.value}
           placeholder="0"
-          onChange={(e) => onChange(scoring.field_name, scoring.roster_type, e.target.value)}
+          onChange={(e) => onChange(scoring.field_name, scoring.stat_type, e.target.value)}
         />
       ) : (
         <div className="scoring-card-value">

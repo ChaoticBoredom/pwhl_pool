@@ -24,10 +24,10 @@ RSpec.describe "scorings", type: :request do
           ["skater", "hits", 0.5],
           ["goalie", "win", 2.0],
           ["goalie", "saves", 0.1],
-        ].each do |roster_type, field, value|
-          entry = body[roster_type].find { |s| s["field_name"] == field }
+        ].each do |stat_type, field, value|
+          entry = body[stat_type].find { |s| s["field_name"] == field }
           expect(entry["value"]).to eq(value),
-            "#{roster_type} #{field} value mismatch: expected #{value.inspect}, got #{entry["value"].inspect}"
+            "#{stat_type} #{field} value mismatch: expected #{value.inspect}, got #{entry["value"].inspect}"
         end
       end
     end

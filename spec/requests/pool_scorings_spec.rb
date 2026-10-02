@@ -11,7 +11,7 @@ RSpec.describe "PoolScoring#index", type: :request do
     let!(:skater_assists) { create(:pool_scoring, :skater, :assists, pool: pool) }
     let!(:goalie_wins) { create(:pool_scoring, :goalie, :wins, pool: pool) }
 
-    it "groups the skater rows under the skater roster type" do
+    it "groups the skater rows under the skater stat type" do
       get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       skater_field_names = response.parsed_body["skater"].
@@ -20,7 +20,7 @@ RSpec.describe "PoolScoring#index", type: :request do
       expect(skater_field_names).to match_array(["goals", "assists"])
     end
 
-    it "groups the goalie rows under the goalie roster type" do
+    it "groups the goalie rows under the goalie stat type" do
       get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
       goalie_field_names = response.parsed_body["goalie"].
@@ -37,7 +37,7 @@ RSpec.describe "PoolScoring#index", type: :request do
       expect(skater_goals_field).to match(
         "id" => skater_goals.id,
         "descriptive" => "Goals",
-        "roster_type" => "skater",
+        "stat_type" => "skater",
         "field_name" => "goals",
         "value" => 3.0,
       )
@@ -67,11 +67,11 @@ RSpec.describe "PoolScoring#index", type: :request do
       ["goalie", "shutout", 2.0],
       ["goalie", "saves", 0.05],
       ["goalie", "game_started", 0.0],
-    ].each do |roster_type, field_name, default_value|
-      it "returns #{default_value} for #{roster_type}/#{field_name}" do
+    ].each do |stat_type, field_name, default_value|
+      it "returns #{default_value} for #{stat_type}/#{field_name}" do
         get "/api/pools/#{pool.id}/pool_scoring", headers: headers
 
-        field = response.parsed_body[roster_type].find { |f| f["field_name"] == field_name }
+        field = response.parsed_body[stat_type].find { |f| f["field_name"] == field_name }
 
         expect(field["value"]).to eq(default_value)
       end

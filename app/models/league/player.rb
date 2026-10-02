@@ -1,7 +1,7 @@
 class League::Player < ApplicationRecord
-  include PlayerRosterTypes
+  include PlayerStatTypes
 
-  before_validation :sync_sti_type, if: -> { roster_type_changed? || league_id_changed? }
+  before_validation :sync_sti_type, if: -> { stat_type_changed? || league_id_changed? }
   before_save :sync_current_team_short_code, if: :current_team_id_changed?
 
   validates :name, :type, :api_id, presence: true
@@ -15,7 +15,7 @@ class League::Player < ApplicationRecord
 
   def sync_sti_type
     prefix = league.short_name.capitalize
-    suffix = roster_type.capitalize
+    suffix = stat_type.capitalize
     self.type = [prefix, suffix].compact.join("::")
   end
 

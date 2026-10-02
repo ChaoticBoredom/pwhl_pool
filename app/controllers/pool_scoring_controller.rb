@@ -5,9 +5,9 @@ class PoolScoringController < ApplicationController
     @stat_config = @pool.league.stat_config
     scorings_by_field = @pool.
       scoring.
-      to_h { |scoring| [[scoring.roster_type, scoring.field_name], scoring] }
+      to_h { |scoring| [[scoring.stat_type, scoring.field_name], scoring] }
 
-    @scorings_by_roster_type = @stat_config::SCOREABLE_STATS.to_h do |roster, fields|
+    @scorings_by_stat_type = @stat_config::SCOREABLE_STATS.to_h do |roster, fields|
       [
         roster,
         fields.filter_map do |field|
@@ -15,7 +15,7 @@ class PoolScoringController < ApplicationController
           next if scoring.nil? && scorings_by_field.any?
 
           value = scoring&.value || @stat_config::DEFAULT_SCORING.dig(roster, field.to_sym) || 0.0
-          { id: scoring&.id, field_name: field.to_s, roster_type: roster.to_s, value: value }
+          { id: scoring&.id, field_name: field.to_s, stat_type: roster.to_s, value: value }
         end,
       ]
     end

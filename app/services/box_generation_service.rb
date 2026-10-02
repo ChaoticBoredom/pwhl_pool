@@ -31,7 +31,7 @@ class BoxGenerationService
 
     players.each_with_object({}) do |player, r_hash|
       player_records = records[player.id] || []
-      r_hash[player.id] = calculator.calculate(player_records, player.roster_type)
+      r_hash[player.id] = calculator.calculate(player_records, player.stat_type)
     end
   end
 

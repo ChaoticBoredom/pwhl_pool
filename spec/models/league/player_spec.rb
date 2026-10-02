@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe League::Player, type: :model do
-  it_behaves_like "PlayerRosterTypes"
+  it_behaves_like "PlayerStatTypes"
 
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:type) }
@@ -15,17 +15,17 @@ RSpec.describe League::Player, type: :model do
       let(:league) { create(:league, :pwhl) }
 
       [
-        { roster_type: "skater", result: "Pwhl::Skater" },
-        { roster_type: "goalie", result: "Pwhl::Goalie" },
+        { stat_type: "skater", result: "Pwhl::Skater" },
+        { stat_type: "goalie", result: "Pwhl::Goalie" },
       ].each do |h|
-        it "should set type to #{h[:result]} when roster_type is #{h[:roster_type]}" do
+        it "should set type to #{h[:result]} when stat_type is #{h[:stat_type]}" do
           current_team = create(:league_team, league: league)
           player = League::Player.create(
             name: "Jane Doe",
             api_id: "api_key",
             current_team: current_team,
             league: league,
-            roster_type: h[:roster_type],
+            stat_type: h[:stat_type],
           )
           expect(player.type).to eq(h[:result])
         end

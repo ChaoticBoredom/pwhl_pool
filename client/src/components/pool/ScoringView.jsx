@@ -6,7 +6,7 @@ import LoadingState from "@c/shared/LoadingState";
 
 export default function ScoringView() {
   const { poolId } = useParams();
-  const { rosterTypeLabels } = useLeagueConstants();
+  const { statTypeLabels } = useLeagueConstants();
   const { data, isLoading, error } = useScoringIndex(poolId);
 
   if (isLoading || error) return <LoadingState error={error} />;
@@ -16,10 +16,10 @@ export default function ScoringView() {
       <h1 className="scoring-page-title">Scoring Rules</h1>
 
       {Object.entries(data).
-        map(([rosterType, fields]) => (
+        map(([statType, fields]) => (
         <ScoringSection
-          key={rosterType}
-          title={rosterTypeLabels[rosterType] ?? rosterType}
+          key={statType}
+          title={statTypeLabels[statType] ?? statType}
           scorings={fields.filter((f) => f.value !== 0)}
           editable={false}
         />

@@ -49,8 +49,8 @@ class LeaguePlayersController < ApplicationController
   def build_player_context
     @expanded_scores = @stats.transform_values do |windowed_summary|
       windowed_summary.transform_values do |window|
-        scored = @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.roster_type)
-        @config::STATS[@player.roster_type].each_with_object({}) do |field, h|
+        scored = @calculator.calculate_by_field(window.map { |k, v| { k => v } }, @player.stat_type)
+        @config::STATS[@player.stat_type].each_with_object({}) do |field, h|
           h[field] = scored.fetch(field.to_s, scored.fetch(field, 0.0))
         end
       end

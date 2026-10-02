@@ -1,10 +1,10 @@
-module PlayerRosterTypes
+module PlayerStatTypes
   extend ActiveSupport::Concern
 
   included do
-    enum :roster_type, {
+    enum :stat_type, {
       skater: 100,
       goalie: 200,
-    }, validate: true
+    }, prefix: :stat, validate: true
   end
 end
