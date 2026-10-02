@@ -3,14 +3,14 @@ class ScoringCalculator
     @scorings = format_scorings(scorings).with_indifferent_access
   end
 
-  def calculate(inputs, roster_type)
-    calculate_by_field(inputs, roster_type).values.sum
+  def calculate(inputs, stat_type)
+    calculate_by_field(inputs, stat_type).values.sum
   end
 
-  def calculate_by_field(inputs, roster_type)
+  def calculate_by_field(inputs, stat_type)
     return Hash.new(0.0) if inputs.empty?
 
-    scoring_fields = @scorings[roster_type]
+    scoring_fields = @scorings[stat_type]
     return Hash.new(0.0) if scoring_fields.nil?
 
     normalized = normalize_inputs(inputs)
@@ -33,7 +33,7 @@ class ScoringCalculator
   end
 
   def format_scorings(scorings)
-    scorings.pluck(:roster_type, :field_name, :value).
+    scorings.pluck(:stat_type, :field_name, :value).
       group_by { |row| row[0] }.
       transform_values { |rows| rows.map { |r| { field_name: r[1], value: r[2] } } }
   end

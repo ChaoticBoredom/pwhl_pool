@@ -32,7 +32,7 @@ class Commissioner::PoolScoringController < Commissioner::BaseController
       scoring_params.each { |entry| @pool.scoring.create!(entry.except(:id)) }
     end
 
-    @scorings_by_roster_type = @pool.scoring.reload.group_by(&:roster_type).transform_values do |scorings|
+    @scorings_by_stat_type = @pool.scoring.reload.group_by(&:stat_type).transform_values do |scorings|
       scorings.map { |s| { id: s.id, field_name: s.field_name, value: s.value } }
     end
 
@@ -54,7 +54,7 @@ class Commissioner::PoolScoringController < Commissioner::BaseController
   private
 
   def ensure_scoreable_fields_match!
-    submitted = scoring_params.map { |entry| [entry[:roster_type].to_s, entry[:field_name].to_s] }
+    submitted = scoring_params.map { |entry| [entry[:stat_type].to_s, entry[:field_name].to_s] }
     expected = @stat_config::SCOREABLE_STATS.flat_map do |roster, fields|
       fields.map { |field| [roster.to_s, field.to_s] }
     end
@@ -67,7 +67,7 @@ class Commissioner::PoolScoringController < Commissioner::BaseController
   end
 
   def scoring_params
-    params.permit(scoring: [:id, :field_name, :roster_type, :value])[:scoring] || []
+    params.permit(scoring: [:id, :field_name, :stat_type, :value])[:scoring] || []
   end
 
   def pool_includes

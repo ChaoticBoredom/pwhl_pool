@@ -43,7 +43,7 @@ class Pool::TeamPlayer < ApplicationRecord
 
   def denormalize_fields
     self.pool_id ||= pool_team.pool_id
-    self.roster_type ||= league_player.roster_type
+    self.stat_type ||= league_player.stat_type
   end
 
   def derive_position_type
