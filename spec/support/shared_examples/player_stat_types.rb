@@ -3,6 +3,6 @@ RSpec.shared_examples "PlayerStatTypes" do
     should define_enum_for(:stat_type).with_values(
       skater: 100,
       goalie: 200,
-    ).validating
+    ).with_prefix(:stat).validating
   }
 end

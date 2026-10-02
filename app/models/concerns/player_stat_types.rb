@@ -5,6 +5,6 @@ module PlayerStatTypes
     enum :stat_type, {
       skater: 100,
       goalie: 200,
-    }, validate: true
+    }, prefix: :stat, validate: true
   end
 end
