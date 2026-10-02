@@ -12,27 +12,27 @@ RSpec.describe "Commissioner::PoolScoring", type: :request do
     let(:full_scoring_params) do
       {
         scoring: [
-          { field_name: "goals", roster_type: "skater", value: 2.0 },
-          { field_name: "assists", roster_type: "skater", value: 1.0 },
-          { field_name: "penalty_minutes", roster_type: "skater", value: 0.25 },
-          { field_name: "shots", roster_type: "skater", value: 0.25 },
-          { field_name: "hits", roster_type: "skater", value: 0.25 },
-          { field_name: "plus_minus", roster_type: "skater", value: 0.0 },
-          { field_name: "power_play_goals", roster_type: "skater", value: 1.0 },
-          { field_name: "short_handed_goals", roster_type: "skater", value: 2.0 },
-          { field_name: "shots_blocked", roster_type: "skater", value: 0.0 },
-          { field_name: "faceoffs_taken", roster_type: "skater", value: 0.0 },
-          { field_name: "faceoffs_won", roster_type: "skater", value: 0.0 },
-          { field_name: "game_winning_goals", roster_type: "skater", value: 0.0 },
-          { field_name: "goals", roster_type: "goalie", value: 5.0 },
-          { field_name: "assists", roster_type: "goalie", value: 2.0 },
-          { field_name: "goals_against", roster_type: "goalie", value: 0.0 },
-          { field_name: "shots_against", roster_type: "goalie", value: 0.0 },
-          { field_name: "penalty_minutes", roster_type: "goalie", value: 0.25 },
-          { field_name: "win", roster_type: "goalie", value: 2.0 },
-          { field_name: "shutout", roster_type: "goalie", value: 2.0 },
-          { field_name: "saves", roster_type: "goalie", value: 0.05 },
-          { field_name: "game_started", roster_type: "goalie", value: 0.0 },
+          { field_name: "goals", stat_type: "skater", value: 2.0 },
+          { field_name: "assists", stat_type: "skater", value: 1.0 },
+          { field_name: "penalty_minutes", stat_type: "skater", value: 0.25 },
+          { field_name: "shots", stat_type: "skater", value: 0.25 },
+          { field_name: "hits", stat_type: "skater", value: 0.25 },
+          { field_name: "plus_minus", stat_type: "skater", value: 0.0 },
+          { field_name: "power_play_goals", stat_type: "skater", value: 1.0 },
+          { field_name: "short_handed_goals", stat_type: "skater", value: 2.0 },
+          { field_name: "shots_blocked", stat_type: "skater", value: 0.0 },
+          { field_name: "faceoffs_taken", stat_type: "skater", value: 0.0 },
+          { field_name: "faceoffs_won", stat_type: "skater", value: 0.0 },
+          { field_name: "game_winning_goals", stat_type: "skater", value: 0.0 },
+          { field_name: "goals", stat_type: "goalie", value: 5.0 },
+          { field_name: "assists", stat_type: "goalie", value: 2.0 },
+          { field_name: "goals_against", stat_type: "goalie", value: 0.0 },
+          { field_name: "shots_against", stat_type: "goalie", value: 0.0 },
+          { field_name: "penalty_minutes", stat_type: "goalie", value: 0.25 },
+          { field_name: "win", stat_type: "goalie", value: 2.0 },
+          { field_name: "shutout", stat_type: "goalie", value: 2.0 },
+          { field_name: "saves", stat_type: "goalie", value: 0.05 },
+          { field_name: "game_started", stat_type: "goalie", value: 0.0 },
         ],
       }
     end
@@ -50,10 +50,10 @@ RSpec.describe "Commissioner::PoolScoring", type: :request do
         params: full_scoring_params.to_json,
         headers: admin_headers
 
-      expect(pool.scoring.find_by(field_name: "plus_minus", roster_type: "skater").value).to eq(0.0)
+      expect(pool.scoring.find_by(field_name: "plus_minus", stat_type: "skater").value).to eq(0.0)
     end
 
-    it "returns the created rows grouped by roster type" do
+    it "returns the created rows grouped by stat type" do
       post "/api/commissioner/#{pool.id}/pool_scoring",
         params: full_scoring_params.to_json,
         headers: admin_headers
@@ -94,7 +94,7 @@ RSpec.describe "Commissioner::PoolScoring", type: :request do
     it "rejects a submission containing a field outside SCOREABLE_STATS" do
       junk_params = {
         scoring: full_scoring_params[:scoring] + [
-          { field_name: "not_a_real_stat", roster_type: "skater", value: 1.0 },
+          { field_name: "not_a_real_stat", stat_type: "skater", value: 1.0 },
         ],
       }
 
