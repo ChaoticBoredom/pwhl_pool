@@ -6,15 +6,14 @@ class PoolScoringController < ApplicationController
     scorings_by_field = @pool.
       scoring.
       to_h { |scoring| [[scoring.stat_type, scoring.field_name], scoring] }
+    defaults = scorings_by_field.empty? ? @stat_config::DEFAULT_SCORING : {}
 
     @scorings_by_stat_type = @stat_config::SCOREABLE_STATS.to_h do |roster, fields|
       [
         roster,
-        fields.filter_map do |field|
+        fields.map do |field|
           scoring = scorings_by_field[[roster.to_s, field.to_s]]
-          next if scoring.nil? && scorings_by_field.any?
-
-          value = scoring&.value || @stat_config::DEFAULT_SCORING.dig(roster, field.to_sym) || 0.0
+          value = scoring&.value || defaults.dig(roster, field.to_sym) || 0.0
           { id: scoring&.id, field_name: field.to_s, stat_type: roster.to_s, value: value }
         end,
       ]
