@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import { useScoringIndex } from "@/hooks/useScoring";
 import ScoringEditor from "./ScoringEditor";
 import LoadingState from "@c/shared/LoadingState";
@@ -7,16 +6,12 @@ import LoadingState from "@c/shared/LoadingState";
 export default function ScoringConfig() {
   const { poolId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { data, isLoading, error } = useScoringIndex(poolId);
 
   if (isLoading || error) return <LoadingState error={error} />;
 
   const handleSave = (save) => {
-    save().then(() => {
-      queryClient.removeQueries({ queryKey: ["pool-scoring", poolId] });
-      navigate(`/pools/${poolId}/scoring`);
-    });
+    save().then(() => navigate(`/pools/${poolId}/scoring`));
   };
 
   const handleCancel = () => navigate(-1);
