@@ -6,7 +6,6 @@ import LoadingState from "@c/shared/LoadingState";
 export default function ScoringConfig() {
   const { poolId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { data, isLoading, error } = useScoringIndex(poolId);
 
   if (isLoading || error) return <LoadingState error={error} />;

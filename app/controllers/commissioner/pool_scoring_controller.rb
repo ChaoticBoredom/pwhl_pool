@@ -83,7 +83,10 @@ class Commissioner::PoolScoringController < Commissioner::BaseController
   end
 
   def scoring_params
-    params.permit(scoring: [:id, :field_name, :stat_type, :value])[:scoring] || []
+    @scoring_params ||= params.require(:scoring).map do |entry|
+      entry.permit(:id, :field_name, :stat_type, :value)
+    end
+    # params.permit(scoring: [:id, :field_name, :stat_type, :value])[:scoring] || []
   end
 
   def pool_includes
