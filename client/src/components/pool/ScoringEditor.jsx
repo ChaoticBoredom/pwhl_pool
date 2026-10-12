@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { ScoringSection } from "./ScoringSection";
@@ -7,6 +7,7 @@ import { useLeagueConstants } from "@/constants/useLeagueConstants";
 export default function ScoringEditor({ poolId, data, editable, onSave, onCancel, saveLabel }) {
   const { authHeaders } = useAuth();
   const { statTypeLabels } = useLeagueConstants();
+  const queryClient = useQueryClient();
 
   const [values, setValues] = useState(() =>
     Object.fromEntries(
@@ -43,6 +44,7 @@ export default function ScoringEditor({ poolId, data, editable, onSave, onCancel
         throw new Error(err.error || "Failed to save scoring");
       }
     },
+    onSuccess: () => queryClient.removeQueries({ queryKey: ["pool-scoring", poolId] }),
   });
 
   const handleSaveClick = () => onSave(() => saveMutation.mutateAsync());
